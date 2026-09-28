@@ -1,2 +1,3 @@
 # GitHub language stats: count the skill's own tooling, not the example pages
 skills/*/assets/** linguist-documentation
+skills/*/scripts/audit.browser.js linguist-generated

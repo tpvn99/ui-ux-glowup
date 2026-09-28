@@ -21,9 +21,9 @@ ui-ux-glowup/
 ├── skills/
 │   └── ui-ux-glowup/
 │       ├── SKILL.md           # Required skill file (<500 lines)
-│       ├── references/        # Loaded on demand: sites, sections, craft, audit, checklist
+│       ├── references/        # Loaded on demand: sites, sections, craft, implement, audit, checklist
 │       ├── assets/examples/   # Tested Tailwind v4 examples + React dashboard
-│       ├── scripts/           # audit, extract-tokens, screenshot, compare (+ lib/)
+│       ├── scripts/           # audit, audit-site, locate, extract-tokens, screenshot, compare, login (+ lib/, audit.browser.js)
 │       └── evals/             # evals.json
 ├── tests/                     # node:test suite + fixtures
 ├── package.json               # Dev deps (playwright) and npm scripts
@@ -46,7 +46,7 @@ npm test                 # Unit tests (color math, analysis rules) + browser int
 CI=true npm test         # Also audits every example (needs network)
 ```
 
-**Scripts** are zero-dependency ES modules except Playwright, resolved from the user's project. Keep in-page code in `scripts/lib/probe.mjs` self-contained (it is serialized into the browser) and all judgement in `scripts/lib/analyze.mjs` (pure, unit-tested). Add a test for every new audit rule.
+**Scripts** are zero-dependency ES modules except Playwright, resolved from the user's project. Keep in-page code in `scripts/lib/probe.mjs` self-contained (it is serialized into the browser) and all judgement in `scripts/lib/analyze.mjs` (pure, unit-tested). Add a test for every new audit rule. After changing anything in `scripts/lib/`, run `node skills/ui-ux-glowup/scripts/build-browser-audit.mjs` — a test fails if `audit.browser.js` is stale.
 
 **Examples** must be checked visually after any change:
 

@@ -1,0 +1,226 @@
+<!doctype html>
+<!--
+  Pattern: dark data-dense dashboard (inspired by Linear app, Stripe Dashboard, Vercel dashboard)
+  Born from a real redesign test. Key points: page header with ONE primary action, status + insight
+  collapsed into one strip, KPI grid with shared hairline borders (3 cols desktop / 2 mobile),
+  amounts in tabular-nums + nowrap, table that drops secondary columns on mobile instead of scrolling,
+  secondary panels in a right column. Dark tokens: bg / surface / line / muted / up / down / warn.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Stockroom</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-bg: #09090b;
+    --color-surface: #111113;
+    --color-raised: #18181b;
+    --color-line: rgb(255 255 255 / .08);
+    --color-muted: #a1a1aa;
+    --color-subtle: #8b8b94;
+    --color-up: #4ade80;
+    --color-down: #f87171;
+    --color-warn: #fbbf24;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { font-size: 16px; font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+</style>
+</head>
+<body class="bg-bg font-sans text-[14px] text-zinc-100">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line lg:flex">
+    <div class="flex h-14 items-center gap-2.5 border-b border-line px-4">
+      <span class="grid size-7 place-items-center rounded-md bg-zinc-100 text-[13px] font-bold text-zinc-950" aria-hidden="true">S</span>
+      <span class="font-semibold tracking-tight">Stockroom</span>
+    </div>
+    <nav class="flex-1 space-y-6 overflow-y-auto px-3 py-4 text-[14px]" aria-label="Main navigation">
+      <div>
+        <p class="px-2 pb-2 text-[12px] font-medium text-subtle">Main</p>
+        <ul class="space-y-0.5 text-muted">
+          <li><a href="#" aria-current="page" class="flex h-9 items-center gap-2.5 rounded-md bg-white/[.06] px-2 font-medium text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Dashboard</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 13V6M8 13V3M13 13V8"/></svg>Sales</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 13.5h12M4 11V8M8 11V4M12 11V6"/></svg>Analytics</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2.5"/></svg>Goals</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M9.5 6c-.4-.6-1-.9-1.6-.9-1 0-1.6.5-1.6 1.2 0 1.6 3.4.9 3.4 2.6 0 .8-.7 1.3-1.7 1.3-.7 0-1.4-.3-1.8-.9M8 4v1M8 11v1"/></svg>Expenses</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="px-2 pb-2 text-[12px] font-medium text-subtle">More</p>
+        <ul class="space-y-0.5 text-muted">
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.5" y="5.5" width="11" height="8" rx="1.5"/><path d="M2.5 8.5h11M8 5.5v8M5.5 5.5C4 5.5 4 2.5 6 3.5L8 5.5l2-2c2-1 2 2 .5 2"/></svg>Cashback</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2.5 6.5l1-3.5h9l1 3.5M3 6.5v7h10v-7M2.5 6.5h11"/></svg>Marketplace</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 5.5h10l-2.5-2.5M13 10.5H3l2.5 2.5"/></svg>Team market</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M2.5 8h11M8 2.5c1.6 1.6 1.6 9.4 0 11M8 2.5c-1.6 1.6-1.6 9.4 0 11"/></svg>Public inventory</a></li>
+          <li><a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="6" cy="5.5" r="2.5"/><path d="M1.5 13c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5M11 3.2a2.5 2.5 0 010 4.6M12.5 9.8c1 .6 1.7 1.7 2 3.2"/></svg>Community</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="space-y-0.5 border-t border-line p-3 text-muted">
+      <a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="5.5" cy="10.5" r="3"/><path d="M7.7 8.3L13 3M11 5l1.5 1.5"/></svg>Licenses</a>
+      <a href="#" class="flex h-9 items-center gap-2.5 rounded-md px-2 hover:bg-white/[.04] hover:text-zinc-100"><svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4"/></svg>Settings</a>
+      <div class="mt-2 flex items-center gap-2.5 rounded-md px-2 py-2">
+        <span class="grid size-8 place-items-center rounded-full bg-zinc-800 text-[12px] font-semibold text-zinc-200">AM</span>
+        <div class="min-w-0 leading-tight"><p class="truncate font-medium text-zinc-100">Alex Martin</p><p class="truncate text-[12px] text-subtle">@alexm</p></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="min-w-0 flex-1">
+    <!-- Topbar -->
+    <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-line bg-bg/80 px-4 backdrop-blur md:px-6">
+      <nav class="flex items-center rounded-lg border border-line p-0.5 text-[13px]" aria-label="Workspace">
+        <a href="#" aria-current="page" class="flex h-8 items-center rounded-md bg-white/[.08] px-3 font-medium text-zinc-100">Global</a>
+        <a href="#" class="flex h-8 items-center rounded-md px-3 text-muted hover:text-zinc-100">Products</a>
+        <a href="#" class="hidden h-8 items-center rounded-md px-3 text-muted hover:text-zinc-100 sm:flex">Tickets</a>
+        <a href="#" class="hidden h-8 items-center rounded-md px-3 text-muted hover:text-zinc-100 sm:flex">Team</a>
+      </nav>
+      <button class="ml-auto flex h-9 w-9 items-center gap-2 rounded-lg border border-line px-2.5 text-muted hover:text-zinc-100 md:w-72" aria-label="Search">
+        <svg class="size-4 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+        <span class="hidden truncate whitespace-nowrap text-left text-[13px] md:inline">Search items, sales…</span>
+        <kbd class="ml-auto hidden rounded border border-line px-1.5 font-sans text-[12px] md:inline">⌘K</kbd>
+      </button>
+      <span class="hidden items-center gap-1.5 text-[13px] text-up md:flex"><span class="size-1.5 rounded-full bg-up"></span>Synced</span>
+      <a href="#" class="flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-warn/25 bg-warn/10 px-3 text-[13px] font-medium text-warn">
+        <svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 2.5h2l1.6 7.5h7.4l1.5-5.5H4.3"/><circle cx="6" cy="13" r="1"/><circle cx="12" cy="13" r="1"/></svg>
+        1 pending
+      </a>
+      <button class="grid size-9 place-items-center rounded-lg text-muted hover:bg-white/[.04] hover:text-zinc-100" aria-label="Notifications">
+        <svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 11V7a4 4 0 018 0v4l1 1.5H3zM6.5 14h3"/></svg>
+      </button>
+    </header>
+
+    <main class="mx-auto max-w-[1200px] px-4 py-8 md:px-8">
+      <!-- Page header -->
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="text-[13px] text-subtle">Monday, September 28</p>
+          <h1 class="mt-1 text-[28px] font-semibold leading-tight tracking-[-0.025em]">Good morning, Alex</h1>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex rounded-lg border border-line p-0.5 text-[13px]" role="radiogroup" aria-label="Period">
+            <button role="radio" aria-checked="true" class="h-8 max-sm:h-9 rounded-md bg-white/[.08] px-3 font-medium text-zinc-100">Month</button>
+            <button role="radio" aria-checked="false" class="h-8 max-sm:h-9 rounded-md px-3 text-muted hover:text-zinc-100">3 months</button>
+            <button role="radio" aria-checked="false" class="h-8 max-sm:h-9 rounded-md px-3 text-muted hover:text-zinc-100">Year</button>
+            <button role="radio" aria-checked="false" class="h-8 max-sm:h-9 rounded-md px-3 text-muted hover:text-zinc-100">All</button>
+            <button role="radio" aria-checked="false" class="hidden h-8 max-sm:h-9 rounded-md px-3 text-muted hover:text-zinc-100 sm:block">Custom</button>
+          </div>
+          <button class="grid size-9 place-items-center rounded-lg border border-line text-muted hover:text-zinc-100" aria-label="Share my stats">
+            <svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="3.5" r="1.75"/><circle cx="4" cy="8" r="1.75"/><circle cx="12" cy="12.5" r="1.75"/><path d="M5.6 7.1l4.8-2.7M5.6 8.9l4.8 2.7"/></svg>
+          </button>
+          <button class="flex h-9 items-center gap-2 rounded-lg border border-line px-3 font-medium text-zinc-200 hover:bg-white/[.04]">
+            <svg class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add
+          </button>
+          <button class="flex h-9 items-center gap-2 rounded-lg bg-zinc-100 px-3 font-medium text-zinc-950 hover:bg-white">
+            Record a sale
+          </button>
+        </div>
+      </div>
+
+      <!-- Status + insight strip -->
+      <div class="mt-6 grid overflow-hidden rounded-xl border border-line md:grid-cols-[auto_1fr]">
+        <div class="flex items-center gap-2.5 border-line bg-up/[.06] px-4 py-3 max-md:border-b md:border-r">
+          <svg class="size-4 text-up" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M5.5 8.2l1.7 1.7 3.3-3.6"/></svg>
+          <p class="text-[13px]"><span class="font-medium text-zinc-100">No alerts</span> <span class="text-muted">· everything is on track</span></p>
+        </div>
+        <a href="#" class="group flex items-center gap-3 px-4 py-3 hover:bg-white/[.02]">
+          <span class="rounded-md bg-violet-400/10 px-2 py-0.5 text-[12px] font-medium text-violet-300">Insight</span>
+          <p class="min-w-0 flex-1 text-[13px] text-zinc-200 md:truncate"><span class="font-medium">Air Max 1 “Patta Waves”</span> <span class="text-muted">has been in stock for 412 days — consider clearing it</span></p>
+          <span class="text-[13px] text-muted transition group-hover:translate-x-0.5 group-hover:text-zinc-100" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <!-- KPIs -->
+      <section class="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line lg:grid-cols-3" aria-label="This month’s metrics">
+        <div class="bg-surface p-4 sm:p-5">
+          <div class="flex min-h-6 flex-wrap items-center justify-between gap-1"><p class="text-[13px] text-muted">Revenue</p><span class="num rounded-md bg-up/10 px-1.5 py-0.5 text-[12px] font-medium text-up">↑ 38 %</span></div>
+          <p class="num mt-2 text-[22px] font-semibold leading-none tracking-[-0.03em] sm:text-[32px]">€4,870</p>
+          <div class="mt-3 flex items-end justify-between gap-4"><p class="text-[13px] text-subtle">34 sales this month</p>
+            <svg viewBox="0 0 96 28" class="hidden h-7 w-24 text-up sm:block" aria-hidden="true"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" points="0,24 12,23 24,24 36,20 48,22 58,8 66,18 76,14 86,6 96,10"/></svg></div>
+        </div>
+        <div class="bg-surface p-4 sm:p-5">
+          <div class="flex min-h-6 flex-wrap items-center justify-between gap-1"><p class="text-[13px] text-muted">Profit</p><span class="num rounded-md bg-up/10 px-1.5 py-0.5 text-[12px] font-medium text-up">↑ 22 %</span></div>
+          <p class="num mt-2 text-[22px] font-semibold leading-none tracking-[-0.03em] sm:text-[32px] text-up">+€1,392</p>
+          <div class="mt-3 flex items-end justify-between gap-4"><p class="text-[13px] text-subtle">ROI 40 %</p>
+            <svg viewBox="0 0 96 28" class="hidden h-7 w-24 text-up sm:block" aria-hidden="true"><polyline fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" points="0,25 12,24 24,25 36,22 48,23 58,10 66,20 76,16 86,5 96,9"/></svg></div>
+        </div>
+        <div class="bg-surface p-4 sm:p-5">
+          <div class="flex min-h-6 flex-wrap items-center justify-between gap-1"><p class="text-[13px] text-muted">Stock value</p></div>
+          <p class="num mt-2 text-[22px] font-semibold leading-none tracking-[-0.03em] sm:text-[32px]">€8,215</p>
+          <p class="mt-3 text-[13px] text-subtle">61 items · 12 tickets · 9 cards</p>
+        </div>
+        <div class="bg-surface p-4 sm:p-5">
+          <div class="flex min-h-6 flex-wrap items-center justify-between gap-1"><p class="text-[13px] text-muted">Average ROI</p><span class="num rounded-md bg-up/10 px-1.5 py-0.5 text-[12px] font-medium text-up">↑ 6 %</span></div>
+          <p class="num mt-2 text-[22px] font-semibold leading-none tracking-[-0.03em] sm:text-[32px]">40 %</p>
+          <p class="mt-3 text-[13px] text-subtle">on €3,478 invested this month</p>
+        </div>
+        <div class="bg-surface p-4 sm:p-5">
+          <div class="flex min-h-6 flex-wrap items-center justify-between gap-1"><p class="text-[13px] text-muted">Expenses</p></div>
+          <p class="num mt-2 text-[22px] font-semibold leading-none tracking-[-0.03em] sm:text-[32px] text-down">−€612</p>
+          <p class="mt-3 text-[13px] text-subtle">shipping, fees and subscriptions</p>
+        </div>
+        <div class="bg-surface p-4 sm:p-5">
+          <div class="flex min-h-6 flex-wrap items-center justify-between gap-1"><p class="text-[13px] text-muted">Profit per day</p></div>
+          <p class="num mt-2 text-[22px] font-semibold leading-none tracking-[-0.03em] sm:text-[32px]">+€46</p>
+          <p class="mt-3 text-[13px] text-subtle">30-day average</p>
+        </div>
+      </section>
+
+      <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <!-- Recent sales -->
+        <section class="overflow-hidden rounded-xl border border-line bg-surface" aria-labelledby="ventes">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
+            <h2 id="ventes" class="font-semibold">Recent sales</h2>
+            <div class="flex text-[13px]" role="tablist" aria-label="Detailed analysis">
+              <button role="tab" aria-selected="true" class="h-9 rounded-md bg-white/[.06] px-3 font-medium">Activity</button>
+              <button role="tab" aria-selected="false" class="h-9 rounded-md px-3 text-muted hover:text-zinc-100">Performance</button>
+              <button role="tab" aria-selected="false" class="h-9 rounded-md px-3 text-muted hover:text-zinc-100">Stock</button>
+              <button role="tab" aria-selected="false" class="hidden h-9 rounded-md px-3 text-muted hover:text-zinc-100 sm:block">Trends</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left sm:min-w-[620px]">
+              <thead class="whitespace-nowrap text-[12px] text-subtle">
+                <tr class="border-b border-line"><th class="px-5 py-2.5 font-medium">Item</th><th class="px-3 py-2.5 font-medium max-sm:hidden">Date</th><th class="px-3 py-2.5 text-right font-medium max-sm:hidden">Qty</th><th class="px-3 py-2.5 text-right font-medium max-sm:hidden">Sale price</th><th class="px-5 py-2.5 text-right font-medium">Profit</th></tr>
+              </thead>
+              <tbody class="divide-y divide-line">
+                <tr class="hover:bg-white/[.02]"><td class="w-full max-w-0 px-5 py-3"><p class="truncate font-medium">Pokemon 151 Ultra-Premium Collection</p><p class="text-[12px] text-subtle">Product</p><p class="num truncate text-[12px] text-subtle sm:hidden">Sep 25 · 1 × · €189</p></td><td class="num px-3 py-3 max-sm:hidden text-muted">Sep 25</td><td class="num px-3 py-3 max-sm:hidden text-right text-muted">1</td><td class="num px-3 py-3 max-sm:hidden text-right">€189</td><td class="num px-5 py-3 text-right font-medium text-up">+€72</td></tr>
+                <tr class="hover:bg-white/[.02]"><td class="w-full max-w-0 px-5 py-3"><p class="truncate font-medium">Funko Pop Mad Hatter #1060</p><p class="text-[12px] text-subtle">Product</p><p class="num truncate text-[12px] text-subtle sm:hidden">Sep 11 · 1 × · €26</p></td><td class="num px-3 py-3 max-sm:hidden text-muted">Sep 11</td><td class="num px-3 py-3 max-sm:hidden text-right text-muted">1</td><td class="num px-3 py-3 max-sm:hidden text-right">€26</td><td class="num px-5 py-3 text-right font-medium text-down">−€16</td></tr>
+                <tr class="hover:bg-white/[.02]"><td class="w-full max-w-0 px-5 py-3"><p class="truncate font-medium">Nike Dunk Low “Panda”</p><p class="text-[12px] text-subtle">Product · 5 sales</p><p class="num truncate text-[12px] text-subtle sm:hidden">Sep 7 · 5 × · €640</p></td><td class="num px-3 py-3 max-sm:hidden text-muted">Sep 7</td><td class="num px-3 py-3 max-sm:hidden text-right text-muted">5</td><td class="num px-3 py-3 max-sm:hidden text-right">€640</td><td class="num px-5 py-3 text-right font-medium text-up">+€185</td></tr>
+                <tr class="hover:bg-white/[.02]"><td class="w-full max-w-0 px-5 py-3"><p class="truncate font-medium">PSG vs Bayern — 2 tickets</p><p class="text-[12px] text-subtle">Ticket</p><p class="num truncate text-[12px] text-subtle sm:hidden">Sep 2 · 2 × · €420</p></td><td class="num px-3 py-3 max-sm:hidden text-muted">Sep 2</td><td class="num px-3 py-3 max-sm:hidden text-right text-muted">2</td><td class="num px-3 py-3 max-sm:hidden text-right">€420</td><td class="num px-5 py-3 text-right font-medium text-up">+€140</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <a href="#" class="flex h-11 items-center justify-center border-t border-line text-[13px] font-medium text-muted hover:text-zinc-100">View all sales →</a>
+        </section>
+
+        <div class="space-y-6">
+          <!-- Goal -->
+          <section class="rounded-xl border border-line bg-surface p-5" aria-labelledby="objectif">
+            <h2 id="objectif" class="font-semibold">Monthly goal</h2>
+            <p class="mt-1 text-[13px] text-muted">Set a revenue or profit target to track your progress day by day.</p>
+            <div class="mt-4 h-1.5 rounded-full bg-white/[.06]" aria-hidden="true"></div>
+            <button class="mt-4 flex h-9 w-full items-center justify-center rounded-lg border border-line font-medium hover:bg-white/[.04]">Set a goal</button>
+          </section>
+
+          <!-- Revenue split -->
+          <section class="rounded-xl border border-line bg-surface p-5" aria-labelledby="repartition">
+            <div class="flex items-baseline justify-between"><h2 id="repartition" class="font-semibold">Revenue split</h2><p class="num text-[13px] text-muted">€4,870</p></div>
+            <div class="mt-4 flex h-2 overflow-hidden rounded-full bg-white/[.06]" role="img" aria-label="Products 82 %, tickets 18 %"><span class="w-[82%] bg-zinc-200"></span><span class="w-[18%] bg-zinc-500"></span></div>
+            <dl class="mt-4 space-y-2 text-[13px]">
+              <div class="flex items-center justify-between"><dt class="flex items-center gap-2 text-muted"><span class="size-2 rounded-full bg-zinc-200"></span>Products</dt><dd class="num">€3,993 · 82 %</dd></div>
+              <div class="flex items-center justify-between"><dt class="flex items-center gap-2 text-muted"><span class="size-2 rounded-full bg-zinc-500"></span>Tickets</dt><dd class="num text-muted">€877 · 18 %</dd></div>
+            </dl>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

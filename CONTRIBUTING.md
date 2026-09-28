@@ -45,7 +45,11 @@ See [AGENTS.md](AGENTS.md#versioning). In short: bump `SKILL.md` `metadata.versi
 
 ## Adding an audit rule
 
-Rules live in `skills/ui-ux-glowup/scripts/lib/analyze.mjs` (pure functions over data collected by `lib/probe.mjs`). Add the measurement to the probe if needed, the rule to `analyze()`, and a test in `tests/analyze.test.mjs`.
+Rules live in `skills/ui-ux-glowup/scripts/lib/analyze.mjs` (pure functions over data collected by `lib/probe.mjs`). Add the measurement to the probe if needed, the rule to `analyze()`, a test in `tests/analyze.test.mjs`, then regenerate the in-browser bundle:
+
+```bash
+node skills/ui-ux-glowup/scripts/build-browser-audit.mjs
+```
 
 ## Before opening a PR
 

@@ -1,5 +1,8 @@
 # Pre-Delivery Checklist
 
+## Scope
+- [ ] Product decisions (grouping/hiding data, removing features, renaming) listed separately and confirmed
+
 ## References
 - [ ] 2–3 references chosen, specific borrowings named for each
 - [ ] Nothing copied verbatim (copy, logos, illustrations)
@@ -24,6 +27,7 @@
 
 ## Responsive
 - [ ] Works at 375, 768, 1280, 1536px, no horizontal scroll
+- [ ] No amount or button label wraps; no key column hidden off-screen on mobile
 - [ ] Touch targets ≥ 44px, CTA reachable on mobile
 
 ## Accessibility

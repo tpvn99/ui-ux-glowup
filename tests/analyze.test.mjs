@@ -70,3 +70,32 @@ test("inline text links are exempt from target size", () => {
   const p = page({ interactive: [{ sel: "p > a", tag: "a", width: 40, height: 18, inline: true, hasName: true, clickableNonInteractive: false, text: "terms" }] });
   assert.equal(analyze(p, p).filter((f) => f.rule.startsWith("tap-target")).length, 0);
 });
+
+test("wrapped numbers, wrapped buttons and clipped content are reported (v1.2 rules)", () => {
+  const mobile = page({
+    viewport: { width: 390, height: 844 },
+    texts: [text(), text({ sel: "div > p", text: "+1 314 €", chars: 8, isNumber: true, lines: 2 })],
+    interactive: [{ sel: "button.pill", tag: "button", width: 70, height: 48, inline: false, hasName: true, clickableNonInteractive: false, text: "1 en cours", lines: 2 }],
+    clipped: [
+      { sel: "div.scroll", hiddenPx: 262, scrollable: true, examples: ["Profit"], hiddenCount: 3 },
+      { sel: "div.clip", hiddenPx: 300, scrollable: false, examples: ["Statut"], hiddenCount: 1 },
+    ],
+  });
+  const rules = new Set(analyze(page(), mobile).map((f) => f.rule));
+  for (const r of ["wrapped-number", "wrapped-control", "hidden-scroll-content", "clipped-content"]) assert.ok(rules.has(r), r);
+});
+
+test("a single-line amount is not a wrap", () => {
+  const p = page({ texts: [text({ text: "+1 314 €", chars: 8, isNumber: true, lines: 1 })] });
+  assert.equal(analyze(p, p).filter((f) => f.rule === "wrapped-number").length, 0);
+});
+
+test("root font-size ≠ 16px is reported as the root cause instead of a generic grid warning", () => {
+  const p = page({ rootFontSize: 15, spacing: [7.5, 11.25, 15, 22.5, 3.75, 30] });
+  const f = analyze(p, p);
+  const root = f.find((x) => x.rule === "root-font-size");
+  assert.ok(root, "root-font-size finding");
+  assert.equal(root.severity, "error");
+  assert.match(root.message, /15px/);
+  assert.equal(f.filter((x) => x.rule === "spacing-grid").length, 0);
+});

@@ -12,6 +12,8 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Tested example code.** 7 complete sections in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
 - **Visual self-check.** A Playwright script captures the result at 1440px and 390px and flags horizontal overflow. The agent reviews, fixes and re-captures.
 - **Measured, not eyeballed.** `audit.mjs` checks contrast, touch targets, type scale, spacing grid, headings, labels and more at desktop and mobile, and scores the 8 audit criteria before and after. Nothing ships below 4/5.
+- **Catches real mobile bugs.** Amounts and button labels that wrap, table columns pushed off-screen, clipped content — and it names root causes (e.g. a 15px root font-size behind hundreds of fractional spacings).
+- **Works on real products.** Audits pages behind a login, whole sites (`audit-site.mjs`), and maps every finding to `file:line` in your codebase (`locate.mjs`) so fixes land in the real components.
 - **Real reference values.** `extract-tokens.mjs` measures a reference site's type scale, heading tracking, spacing rhythm, radii and shadows — so "like Linear" means Linear's actual numbers.
 - **Anti "AI look".** Explicit list of patterns to avoid (purple gradients, blobs, three identical icon cards…).
 
@@ -45,6 +47,7 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 | `features-stripe.html` | Stripe | Product explanation, B2B |
 | `pricing.html` | Linear, Vercel | Pricing pages |
 | `dashboard-shell.html` | Linear, Stripe Dashboard | Back-offices, CRMs, apps |
+| `dashboard-dark.html` | Linear app, Stripe, Vercel | Dark, data-dense apps |
 | `local-business.html` | Aesop, Mercury, Stripe | Trades, local services, health |
 | `product-page.html` | Aesop, Allbirds | E-commerce |
 | `react/DashboardShell.tsx` | — | React projects |
@@ -117,6 +120,7 @@ skills/ui-ux-glowup/
 │   ├── sites.md                # Reference sites by category + what to borrow
 │   ├── sections.md             # Patterns by section (hero, features, pricing, dashboard…)
 │   ├── craft.md                # Finishing details that make it look professional
+│   ├── implement.md            # Code mode: from findings to changes in the real codebase
 │   ├── audit.md                # 8-criteria audit grid
 │   └── checklist.md            # Pre-delivery checklist
 ├── assets/examples/            # Tested examples (Tailwind v4 + React)
@@ -124,8 +128,13 @@ skills/ui-ux-glowup/
 │   ├── audit.mjs               # Automated UI audit (desktop + mobile), scored /40
 │   ├── extract-tokens.mjs      # Measure a reference site's design tokens
 │   ├── screenshot.mjs          # Desktop + mobile capture with overflow warning
-│   ├── compare.mjs             # Before/after side-by-side image
-│   └── lib/                    # Browser loader, color math, page probe, analysis rules
+│   ├── compare.mjs             # Before/after side-by-side image (pages or screenshots)
+│   ├── audit-site.mjs          # Crawl + audit a whole site, recurring issues
+│   ├── locate.mjs              # Map findings to file:line in the codebase
+│   ├── login.mjs               # Save a logged-in session (--storage-state)
+│   ├── audit.browser.js        # Paste-in-DevTools audit (generated)
+│   ├── build-browser-audit.mjs # Regenerates audit.browser.js
+│   └── lib/                    # Browser loader, color math, page probe, analysis rules, locate, report
 └── evals/evals.json            # Test prompts with assertions
 ```
 
@@ -138,8 +147,16 @@ npm i -D playwright && npx playwright install chromium
 
 node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com
 node skills/ui-ux-glowup/scripts/extract-tokens.mjs https://stripe.com
-node skills/ui-ux-glowup/scripts/compare.mjs old.html new.html compare.png
+node skills/ui-ux-glowup/scripts/compare.mjs old.png new.html compare.png
+node skills/ui-ux-glowup/scripts/audit-site.mjs https://your-site.com --max 15
+
+# Behind a login
+node skills/ui-ux-glowup/scripts/login.mjs https://app.your-site.com      # log in, press Enter
+node skills/ui-ux-glowup/scripts/audit.mjs https://app.your-site.com/dashboard --storage-state state.json --json audit.json
+node skills/ui-ux-glowup/scripts/locate.mjs audit.json src                # file:line for each finding
 ```
+
+Or paste `skills/ui-ux-glowup/scripts/audit.browser.js` into the DevTools console of any tab.
 
 Example audit output:
 

@@ -46,3 +46,34 @@ test("every example scores at least 38/40 with no overflow", { skip: (!hasPlaywr
     assert.ok(r.total >= 38, `${f} scored ${r.total}`);
   }
 });
+
+const BUGS = new URL("./fixtures/mobile-bugs.html", import.meta.url).pathname;
+const SITE = new URL("./fixtures/index.html", import.meta.url).pathname;
+
+test("audit catches mobile wraps, hidden columns, clipping and root font-size", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const rules = new Set((await audit(BUGS)).findings.map((f) => f.rule));
+  for (const r of ["wrapped-number", "wrapped-control", "hidden-scroll-content", "clipped-content", "root-font-size"]) assert.ok(rules.has(r), r);
+});
+
+test("browser bundle runs in a page and matches the rules", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const { readFileSync } = await import("node:fs");
+  const { chromium } = await loadPlaywright();
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto("file://" + BUGS);
+    const { result } = await page.evaluate(readFileSync(new URL("../skills/ui-ux-glowup/scripts/audit.browser.js", import.meta.url), "utf8"));
+    const rules = new Set(result.findings.map((f) => f.rule));
+    assert.ok(rules.has("root-font-size") && rules.has("wrapped-number"));
+  } finally {
+    await browser.close();
+  }
+});
+
+test("site audit crawls local pages, skips logout, finds recurring issues", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const { auditSite } = await import("../skills/ui-ux-glowup/scripts/audit-site.mjs");
+  const site = await auditSite(SITE, { max: 5 });
+  const names = site.pages.map((p) => p.url.split("/").pop());
+  assert.deepEqual(names.sort(), ["before.html", "index.html", "mobile-bugs.html"]);
+  assert.ok(site.recurring.some((r) => r.rule === "root-font-size"));
+});

@@ -60,7 +60,8 @@ Forbidden: three identical icon + title + text cards as the only features sectio
 
 - **Layout** (Linear, Vercel): 240px sidebar with workspace switcher on top, grouped navigation, user at the bottom; content with a page header (title + actions on the right). → `dashboard-shell.html`
 - **KPIs**: 3–4 cards, large value, change with arrow + period, optional sparkline.
-- **Tables** (Stripe Dashboard): pill filters, search, sortable columns, actions on hover, sober pagination.
+- **Tables** (Stripe Dashboard): pill filters, search, sortable columns, actions on hover, sober pagination. On mobile, keep the key column visible and move secondary ones under the row title (→ `dashboard-shell.html`, `dashboard-dark.html`).
+- **Dark dashboards**: surfaces one step lighter than the background, hairline `white/8` borders, muted text ≥ 4.5:1 (zinc-400 on near-black, not zinc-500), semantic green/red only for deltas. → `dashboard-dark.html`
 - **Settings** (Vercel, GitHub): 2-column sections (title + description | fields), a "Save" button per section.
 - **Empty states** (Linear): sober icon, title, one sentence, primary action.
 - **Command palette** `⌘K` for rich apps.

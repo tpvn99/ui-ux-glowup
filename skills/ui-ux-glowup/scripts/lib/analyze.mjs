@@ -88,7 +88,17 @@ export function analyze(desktop, mobile) {
   // ---------- Spacing ----------
   const conformity = gridConformity(d.spacing);
   const offGrid = histogram(d.spacing.filter((v) => v >= 2 && !onGrid(v)));
-  if (conformity < 0.7) add("Spacing", "error", "spacing-grid", `Only ${Math.round(conformity * 100)}% of spacing values sit on the 4px grid (2px half-steps allowed under 16px).`, offGrid.map(([v, c]) => `${v}px ×${c}`));
+  const root = d.rootFontSize || 16;
+  if (root !== 16) {
+    const fractional = d.spacing.filter((v) => !Number.isInteger(v)).length / (d.spacing.length || 1);
+    add(
+      "Spacing",
+      fractional > 0.3 ? "error" : "warn",
+      "root-font-size",
+      `Root cause: <html> font-size is ${root}px instead of 16px, so every rem value (Tailwind spacing, text sizes, radii) is scaled by ${(root / 16).toFixed(4)} and ${Math.round(fractional * 100)}% of spacing values land on fractions. Set html { font-size: 100% } and size things with the scale instead.`,
+      offGrid.slice(0, 6).map(([v, c]) => `${v}px ×${c}`)
+    );
+  } else if (conformity < 0.7) add("Spacing", "error", "spacing-grid", `Only ${Math.round(conformity * 100)}% of spacing values sit on the 4px grid (2px half-steps allowed under 16px).`, offGrid.map(([v, c]) => `${v}px ×${c}`));
   else if (conformity < 0.85) add("Spacing", "warn", "spacing-grid", `${Math.round(conformity * 100)}% of spacing values sit on the 4px grid; aim for 85%+.`, offGrid.map(([v, c]) => `${v}px ×${c}`));
   const radii = histogram(d.radii);
   if (radii.length > 5) add("Spacing", "warn", "radii", `${radii.length} distinct border radii; keep 2–4.`, radii.map(([r, c]) => `${r}px ×${c}`));
@@ -113,6 +123,25 @@ export function analyze(desktop, mobile) {
   if (d.lorem) add("Content", "error", "lorem", "Placeholder lorem ipsum text found.");
   if (d.vagueLinks) add("Content", "warn", "vague-links", `${d.vagueLinks} vague link label(s) like "click here" / "read more"; use verb + object.`);
   if (!d.title) add("Content", "warn", "title", "Missing <title>.");
+
+  // ---------- Wrapping & clipping (checked at both widths) ----------
+  const views = [["desktop", d], ["mobile", m]].filter(([, v], i, arr) => i === 0 || v !== arr[0][1]);
+  const wrappedNumbers = new Map();
+  const wrappedControls = new Map();
+  const clipped = new Map();
+  for (const [label, v] of views) {
+    for (const t of v.texts || []) if (t.isNumber && t.lines > 1) wrappedNumbers.set(t.sel + t.text, `${t.sel} "${t.text}" (${label}, ${t.lines} lines)`);
+    for (const i of v.interactive || [])
+      if (["button", "a", "summary"].includes(i.tag) && !i.inline && i.lines > 1 && i.text.length <= 28) wrappedControls.set(i.sel + i.text, `${i.sel} "${i.text}" (${label})`);
+    for (const c of v.clipped || []) clipped.set(c.sel + label, { ...c, label });
+  }
+  if (wrappedNumbers.size) add("Responsive", "error", "wrapped-number", "Numbers break across lines; keep amounts on one line (white-space: nowrap + tabular-nums) and give the column room.", [...wrappedNumbers.values()]);
+  if (wrappedControls.size) add("Components", "warn", "wrapped-control", "Button or link labels wrap onto two lines; shorten the label, add whitespace-nowrap, or let the control shrink others.", [...wrappedControls.values()]);
+  const cut = [...clipped.values()].filter((c) => !c.scrollable);
+  const scroll = [...clipped.values()].filter((c) => c.scrollable);
+  if (cut.length) add("Responsive", "error", "clipped-content", "Content is cut off by an overflow: hidden container and can't be reached.", cut.map((c) => `${c.sel} (${c.label}) hides "${c.examples.join('", "')}"`));
+  if (scroll.length)
+    add("Responsive", "warn", "hidden-scroll-content", "Content sits off-screen in a horizontal scroll area; key columns (totals, status, actions) should stay visible — stack or drop secondary columns on mobile.", scroll.map((c) => `${c.sel} (${c.label}, ${c.hiddenPx}px hidden) e.g. "${c.examples.join('", "')}"`));
 
   // ---------- Responsive ----------
   if (!m.hasViewportMeta) add("Responsive", "error", "viewport-meta", 'Missing <meta name="viewport">.');

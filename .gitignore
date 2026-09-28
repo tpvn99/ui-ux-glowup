@@ -26,3 +26,7 @@ shots/
 *~
 .idea/
 .vscode/
+
+# Saved login sessions (login.mjs) — contain live tokens
+state.json
+*.state.json

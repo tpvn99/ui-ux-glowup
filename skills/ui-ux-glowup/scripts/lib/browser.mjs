@@ -44,17 +44,23 @@ export function resolveTarget(target) {
  * Open a page at a viewport and wait until it is visually settled.
  * options.route: optional (route) => void handler, used by tests to serve assets offline.
  * options.scroll: scroll through the page to trigger lazy content (default true).
+ * options.storageState: path to a Playwright storage state (cookies + localStorage) saved by
+ *   login.mjs, to audit pages behind a login. Defaults to $GLOWUP_STORAGE_STATE when set.
  */
 export async function openPage(browser, url, viewport, options = {}) {
+  const storageState = options.storageState ?? process.env.GLOWUP_STORAGE_STATE ?? undefined;
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     isMobile: viewport.isMobile,
     deviceScaleFactor: viewport.deviceScaleFactor,
     reducedMotion: "reduce",
+    ...(storageState ? { storageState } : {}),
   });
   if (options.route) await context.route("**/*", options.route);
   const page = await context.newPage();
   await page.goto(url, { waitUntil: "networkidle", timeout: 45000 }).catch(() => {});
+  if (options.waitFor) await page.waitForSelector(options.waitFor, { timeout: 15000 }).catch(() => {});
+  if (options.dismiss !== false) await dismissOverlays(page);
   await page.evaluate(() => document.fonts && document.fonts.ready).catch(() => {});
   if (options.scroll !== false) {
     await page.evaluate(async () => {
@@ -68,6 +74,36 @@ export async function openPage(browser, url, viewport, options = {}) {
     await page.waitForTimeout(300);
   }
   return { page, close: () => context.close() };
+}
+
+/**
+ * Close what usually hides the page on first load: cookie banners and "welcome back" modals.
+ * Only clicks explicit close/decline/dismiss controls — never "accept" or anything that submits data.
+ */
+export async function dismissOverlays(page) {
+  await page
+    .evaluate(() => {
+      const labels = /^(close|fermer|dismiss|no thanks|non merci|plus tard|later|decline|refuser|tout refuser|reject all|×|✕)$/i;
+      const dialogs = document.querySelectorAll('[role="dialog"], [aria-modal="true"], dialog[open]');
+      for (const d of dialogs) {
+        const btn = [...d.querySelectorAll("button, [role=button]")].find(
+          (b) => labels.test((b.getAttribute("aria-label") || b.textContent || "").trim())
+        );
+        if (btn) btn.click();
+      }
+    })
+    .catch(() => {});
+  await page.keyboard.press("Escape").catch(() => {});
+  await page.waitForTimeout(250);
+}
+
+/** Options shared by every CLI: --storage-state, --wait-for, --no-dismiss. */
+export function commonOptions(flags) {
+  return {
+    storageState: typeof flags["storage-state"] === "string" ? flags["storage-state"] : undefined,
+    waitFor: typeof flags["wait-for"] === "string" ? flags["wait-for"] : undefined,
+    dismiss: !flags["no-dismiss"],
+  };
 }
 
 /** Minimal flag parser: returns { _: positional[], flags: { name: value|true } }. */

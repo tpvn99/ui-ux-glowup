@@ -154,24 +154,27 @@ function OrdersTable() {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-left">
+          <table className="w-full text-left sm:min-w-[640px]">
             <thead className="text-[12.5px] text-zinc-500">
               <tr className="border-b border-line">
                 <th className="px-4 py-2.5 font-medium">Order</th>
-                <th className="px-4 py-2.5 font-medium">Customer</th>
+                <th className="px-4 py-2.5 font-medium max-sm:hidden">Customer</th>
                 <th className="px-4 py-2.5 font-medium">Status</th>
-                <th className="px-4 py-2.5 font-medium">Date</th>
+                <th className="px-4 py-2.5 font-medium max-sm:hidden">Date</th>
                 <th className="px-4 py-2.5 text-right font-medium">Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
               {rows.map((o) => (
                 <tr key={o.id} className="hover:bg-zinc-50">
-                  <td className="px-4 py-3 font-medium tabular-nums">#{o.id}</td>
-                  <td className="px-4 py-3">{o.customer}</td>
+                  <td className="px-4 py-3 font-medium tabular-nums">
+                    #{o.id}
+                    <span className="block text-[12.5px] font-normal text-zinc-500 sm:hidden">{o.customer} · {dateFmt.format(o.date)}</span>
+                  </td>
+                  <td className="px-4 py-3 max-sm:hidden">{o.customer}</td>
                   <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
-                  <td className="px-4 py-3 tabular-nums text-zinc-500">{dateFmt.format(o.date)}</td>
-                  <td className={cx("px-4 py-3 text-right tabular-nums", o.status === "refunded" && "text-zinc-400 line-through")}>
+                  <td className="px-4 py-3 tabular-nums text-zinc-500 max-sm:hidden">{dateFmt.format(o.date)}</td>
+                  <td className={cx("whitespace-nowrap px-4 py-3 text-right tabular-nums", o.status === "refunded" && "text-zinc-400 line-through")}>
                     {eur.format(o.amount)}
                   </td>
                 </tr>

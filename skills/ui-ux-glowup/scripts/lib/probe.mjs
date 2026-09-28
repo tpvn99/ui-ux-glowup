@@ -68,12 +68,38 @@ export function collectPageData() {
   };
 
   const px = (v) => (v === "normal" ? null : parseFloat(v));
+
+  // Number of rendered lines for an element's content (1 = no wrap).
+  // Only text boxes count (icons and mixed font sizes on one baseline don't), and boxes that
+  // overlap vertically belong to the same line.
+  const lineCount = (el) => {
+    const rects = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const range = document.createRange();
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.textContent.trim()) continue;
+      range.selectNodeContents(n);
+      for (const q of range.getClientRects()) if (q.width > 0 && q.height > 0) rects.push(q);
+    }
+    rects.sort((a, b) => a.top - b.top);
+    let lines = 0;
+    let bottom = -Infinity;
+    for (const q of rects) {
+      if (q.top >= bottom - 2) {
+        lines++;
+        bottom = q.bottom;
+      } else bottom = Math.max(bottom, q.bottom);
+    }
+    return Math.max(1, lines);
+  };
+  const NUMBER = /^[\s+\-−–]*(?:[€$£]\s?)?[\d][\d\s.,\u00a0\u202f]*\s?(?:€|\$|£|%|k|K|M|x|×)?$/;
   const all = [...document.body.querySelectorAll("*")].slice(0, MAX);
 
   const texts = [];
   const spacing = [];
   const radii = [];
   const shadows = [];
+  const clipped = [];
   for (const el of all) {
     if (["SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE"].includes(el.tagName.toUpperCase()) || el.closest("svg")) continue;
     if (!visible(el)) continue;
@@ -104,7 +130,27 @@ export function collectPageData() {
         bgLayers: bg.layers,
         bgImage: bg.hasImage,
         width: Math.round(r.width),
+        lines: ownText.length <= 40 ? lineCount(el) : null,
+        isNumber: NUMBER.test(ownText),
       });
+    }
+
+    // Content pushed out of a scroll/clip container: only counts when real text is hidden.
+    if (["auto", "scroll", "hidden", "clip"].includes(s.overflowX) && el.clientWidth > 0 && el.scrollWidth - el.clientWidth > 4) {
+      const box = el.getBoundingClientRect();
+      const hiddenText = [...el.querySelectorAll("*")].filter((c) => {
+        if (!c.childNodes.length || ![...c.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) return false;
+        const q = c.getBoundingClientRect();
+        return q.width > 0 && (q.left >= box.right - 1 || q.right > box.right + 8) && visible(c);
+      });
+      if (hiddenText.length)
+        clipped.push({
+          sel: selector(el),
+          hiddenPx: el.scrollWidth - el.clientWidth,
+          scrollable: s.overflowX === "auto" || s.overflowX === "scroll",
+          examples: hiddenText.slice(0, 3).map((c) => c.textContent.replace(/\s+/g, " ").trim().slice(0, 30)),
+          hiddenCount: hiddenText.length,
+        });
     }
 
     for (const prop of ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "marginTop", "marginBottom", "rowGap", "columnGap"]) {
@@ -148,6 +194,7 @@ export function collectPageData() {
         hasName: name.length > 0,
         clickableNonInteractive: el.hasAttribute("onclick") && !nativeInteractive,
         text: (el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 40),
+        lines: (el.textContent || "").trim().length && (el.textContent || "").trim().length <= 40 ? lineCount(el) : 1,
       };
     });
 
@@ -216,5 +263,7 @@ export function collectPageData() {
     spacing,
     radii,
     shadows,
+    clipped,
+    rootFontSize: parseFloat(getComputedStyle(document.documentElement).fontSize),
   };
 }

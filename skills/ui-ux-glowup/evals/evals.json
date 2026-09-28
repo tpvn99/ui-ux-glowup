@@ -83,6 +83,44 @@
         "Respects French typography rules in the copy"
       ],
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Audit my app's dashboard at https://app.example.com/dashboard — you need to be logged in, I use Google login.",
+      "expected_output": "Should not ask for the password. Should use login.mjs so the user logs in in a real browser window, then run audit.mjs / screenshot.mjs with --storage-state; or, when driving the user's own browser, paste scripts/audit.browser.js into the logged-in tab and rerun at 390px for mobile. Should report root causes first.",
+      "assertions": [
+        "Never asks for credentials",
+        "Uses login.mjs + --storage-state or audit.browser.js",
+        "Covers desktop and mobile",
+        "Names root causes before individual symptoms"
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Here's our React repo (src/). The sales page looks bad on mobile — fix it in the code, not a mockup.",
+      "expected_output": "Should work in code mode following references/implement.md: run the dev server, audit with --json, run locate.mjs to map findings to files, fix global tokens and shared components first, keep the project's components and conventions, keep behavior identical, verify with audit + screenshots + project tests. Should list product decisions (e.g. hiding a column, grouping rows) separately and ask before shipping them.",
+      "assertions": [
+        "Edits the real components rather than producing a separate mockup",
+        "Uses locate.mjs or equivalent to find source files",
+        "Fixes root causes / shared components first",
+        "Keeps the project's components, language and styling approach",
+        "Lists product decisions separately for confirmation",
+        "Re-runs audit and project checks"
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Can you do a full UX audit of our marketing site https://example.com before the redesign? I want to know what to fix first.",
+      "expected_output": "Should run audit-site.mjs to crawl and audit several pages, then highlight issues that recur across pages (fix once globally) and the worst pages, then drill into the worst page with audit.mjs and screenshots. Should prioritize by impact and not redesign yet.",
+      "assertions": [
+        "Uses audit-site.mjs across multiple pages",
+        "Separates recurring/global issues from page-specific ones",
+        "Prioritizes by impact",
+        "Does not jump into a redesign"
+      ],
+      "files": []
     }
   ]
 }

@@ -2,7 +2,7 @@
 // Captures a page (local file or URL) at desktop + mobile widths for visual review.
 //
 // Usage:
-//   node screenshot.mjs <file.html | url> [output-dir] [--fold]
+//   node screenshot.mjs <file.html | url> [output-dir] [--fold] [--storage-state state.json]
 //
 //   --fold   capture only the visible viewport (useful for long reference sites)
 //
@@ -11,10 +11,10 @@
 
 import { resolve } from "node:path";
 import { mkdirSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 
 /** Capture desktop + mobile screenshots. Returns [{ label, file, overflow }]. */
-export async function capture(target, outDir = "screenshots", { fold = false, route } = {}) {
+export async function capture(target, outDir = "screenshots", { fold = false, route, ...options } = {}) {
   const { chromium } = await loadPlaywright();
   const { url, name } = resolveTarget(target);
   mkdirSync(outDir, { recursive: true });
@@ -22,7 +22,7 @@ export async function capture(target, outDir = "screenshots", { fold = false, ro
   const results = [];
   try {
     for (const vp of [VIEWPORTS.desktop, VIEWPORTS.mobile]) {
-      const { page, close } = await openPage(browser, url, vp, { route, scroll: !fold });
+      const { page, close } = await openPage(browser, url, vp, { route, scroll: !fold, ...options });
       // Horizontal overflow = a common responsive bug
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -45,7 +45,7 @@ if (isMain(import.meta.url)) {
     process.exit(1);
   }
   try {
-    for (const r of await capture(target, outDir, { fold: Boolean(flags.fold) })) {
+    for (const r of await capture(target, outDir, { fold: Boolean(flags.fold), ...commonOptions(flags) })) {
       if (r.overflow > 1) console.warn(`⚠ ${r.label}: horizontal overflow of ${r.overflow}px`);
       console.log(r.file);
     }

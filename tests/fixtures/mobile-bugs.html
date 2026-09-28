@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<style>
+  html { font-size: 15px; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: #09090b; color: #f4f4f5; }
+  main { padding: 1rem; }
+  h1 { font-size: 2rem; margin: 0 0 1rem; }
+  .top { display: flex; gap: .5rem; align-items: center; }
+  .pill { width: 70px; padding: .5rem; border: 1px solid #333; border-radius: .5rem; background: none; color: #fbbf24; font-size: 1rem; }
+  .card { border: 1px solid #27272a; border-radius: .75rem; overflow: hidden; margin-top: 1rem; }
+  .scroll { overflow-x: auto; }
+  table { min-width: 620px; border-collapse: collapse; width: 100%; }
+  td, th { padding: .75rem; text-align: left; font-size: 1rem; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: 1rem; }
+  .kpi { border: 1px solid #27272a; border-radius: .75rem; padding: .75rem; }
+  .kpi p { font-size: 1.6rem; font-weight: 600; margin: 0; }
+  .clip { overflow: hidden; white-space: nowrap; width: 100%; }
+  .clip span { display: inline-block; width: 300px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><h1>Ventes</h1><button class="pill">1 en cours</button></div>
+  <p>Suivi des ventes du mois, avec le détail par article et le profit réalisé sur chaque vente.</p>
+  <div class="kpis">
+    <div class="kpi">CA<p>+1 314 €</p></div>
+    <div class="kpi">Profit<p>+12 582 €</p></div>
+    <div class="kpi">Stock<p>2 608 €</p></div>
+  </div>
+  <div class="card scroll">
+    <table>
+      <tr><th>Article</th><th>Date</th><th>Qté</th><th>Prix</th><th>Profit</th></tr>
+      <tr><td>Nike Dunk Low</td><td>7 sept.</td><td>8</td><td>823 €</td><td>+576 €</td></tr>
+    </table>
+  </div>
+  <div class="card clip"><span>Première colonne</span><span>Statut : livré</span></div>
+</main>
+</body>
+</html>

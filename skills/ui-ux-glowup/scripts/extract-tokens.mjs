@@ -11,19 +11,19 @@
 // Colors are reported for context only: never copy a reference site's palette onto the user's brand.
 
 import { writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { collectPageData } from "./lib/probe.mjs";
 import { summarizeTokens, histogram } from "./lib/analyze.mjs";
 import { flattenBackground, toHex } from "./lib/color.mjs";
 
 /** Extract tokens from one page. Returns the summary plus dominant colors. */
-export async function extractTokens(target, { mobile = false, route } = {}) {
+export async function extractTokens(target, { mobile = false, route, ...options } = {}) {
   const { chromium } = await loadPlaywright();
   const { url } = resolveTarget(target);
   const browser = await chromium.launch();
   try {
     const vp = mobile ? VIEWPORTS.mobile : VIEWPORTS.desktop;
-    const { page, close } = await openPage(browser, url, vp, { route });
+    const { page, close } = await openPage(browser, url, vp, { route, ...options });
     const data = await page.evaluate(collectPageData);
     await close();
     const weighted = (pick) => {
@@ -75,7 +75,7 @@ if (isMain(import.meta.url)) {
     process.exit(1);
   }
   try {
-    const tokens = await extractTokens(target, { mobile: Boolean(flags.mobile) });
+    const tokens = await extractTokens(target, { mobile: Boolean(flags.mobile), ...commonOptions(flags) });
     console.log(formatTokens(tokens));
     if (flags.json) writeFileSync(flags.json === true ? "tokens.json" : flags.json, JSON.stringify(tokens, null, 2));
   } catch (e) {
