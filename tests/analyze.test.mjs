@@ -31,11 +31,12 @@ test("bodyFontSize prefers paragraphs", () => {
   assert.equal(bodyFontSize(page()), 16);
 });
 
-test("a clean page has no errors and scores 40/40", () => {
+test("a clean page has no errors and scores the maximum (5 per criterion)", () => {
   const findings = analyze(page(), page({ viewport: { width: 390, height: 844 } }));
   assert.deepEqual(findings.filter((f) => f.severity !== "info"), []);
   const s = score(findings);
-  assert.equal(s.total, 40);
+  assert.equal(s.total, CRITERIA.length * 5);
+  assert.equal(CRITERIA.length, 9);
   assert.deepEqual(Object.keys(s.scores), CRITERIA);
 });
 
@@ -63,7 +64,7 @@ test("detects the classic problems", () => {
   for (const r of ["h1-missing", "lorem", "viewport-meta", "overflow", "img-alt", "form-labels", "clickable-div", "tap-target-min", "spacing-grid", "distorted-images", "lang"]) {
     assert.ok(rules.has(r), `expected rule ${r}`);
   }
-  assert.ok(score(analyze(bad, bad)).total < 32);
+  assert.ok(score(analyze(bad, bad)).total < CRITERIA.length * 5 - 8);
 });
 
 test("inline text links are exempt from target size", () => {
@@ -98,4 +99,62 @@ test("root font-size ≠ 16px is reported as the root cause instead of a generic
   assert.equal(root.severity, "error");
   assert.match(root.message, /15px/);
   assert.equal(f.filter((x) => x.rule === "spacing-grid").length, 0);
+});
+
+test("mobile interaction rules: zoom, input zoom, crowded taps, overlays, carousels (v1.3)", () => {
+  const mobile = page({
+    viewport: { width: 390, height: 844 },
+    mobile: {
+      zoomBlocked: true,
+      smallInputs: [{ sel: "input#email", fontSize: 14 }],
+      crowded: [{ sel: "button.prev", text: "‹", other: "button.next", gap: 2 }],
+      overlays: [{ sel: "div.cookie", coverage: 45, position: "fixed" }],
+      touchBlockers: ["div.map"],
+      carousels: [{ sel: "div.track", kind: "native", snap: false, items: 4, controls: 2, namedControls: 0, smallControls: 2, indicators: 0 }],
+    },
+  });
+  const rules = new Set(analyze(page(), mobile).map((f) => f.rule));
+  for (const r of ["zoom-blocked", "input-zoom", "tap-crowded", "fixed-overlay", "touch-blocked", "carousel-snap", "carousel-controls", "carousel-small-controls"]) assert.ok(rules.has(r), r);
+  const ok = page({ viewport: { width: 390, height: 844 }, mobile: { zoomBlocked: false, smallInputs: [], crowded: [], overlays: [{ sel: "nav.cta", coverage: 9, position: "fixed" }], touchBlockers: [], carousels: [{ sel: "ul.snap", kind: "native", snap: true, items: 5, controls: 2, namedControls: 2, smallControls: 0, indicators: 5 }] } });
+  assert.deepEqual(analyze(page(), ok).filter((f) => f.severity !== "info"), []);
+});
+
+test("section spacing: tight gaps and uneven rhythm are reported (v1.3)", () => {
+  const d = page({ sectionGaps: [{ between: ["section.hero", "section.features"], gap: 8 }, { between: ["section.features", "section.pricing"], gap: 40 }, { between: ["section.pricing", "section.faq"], gap: 48 }, { between: ["section.faq", "footer"], gap: 160 }] });
+  const rules = new Set(analyze(d, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
+  assert.ok(rules.has("section-gap-desktop"));
+  assert.ok(rules.has("section-rhythm"));
+});
+
+test("SEO rules: missing title/description, noindex, OG, favicon, heavy images (v1.3)", () => {
+  const d = page({
+    seo: { title: "", description: "", robots: "noindex", ogTitle: "", ogImage: "", favicon: false, canonical: "", jsonLd: false, words: 400 },
+    images: [
+      { sel: "img", src: "a.jpg", format: "jpg", naturalWidth: 3000, renderedWidth: 600, hasAlt: true, hasDimensions: true, broken: false, naturalRatio: 1.5, renderedRatio: 1.5, objectFit: "cover", lazy: false, belowFold: true },
+      { sel: "img", src: "b.png", format: "png", naturalWidth: 1600, renderedWidth: 800, hasAlt: true, hasDimensions: true, broken: false, naturalRatio: 1.5, renderedRatio: 1.5, objectFit: "cover", lazy: false, belowFold: true },
+    ],
+  });
+  const findings = analyze(d, page({ viewport: { width: 390, height: 844 } }));
+  const rules = new Set(findings.map((f) => f.rule));
+  for (const r of ["seo-title", "seo-description", "seo-noindex", "seo-open-graph", "seo-favicon", "image-format", "image-oversized", "image-lazy"]) assert.ok(rules.has(r), r);
+  assert.ok(score(findings).scores.SEO <= 2);
+  const good = page({ seo: { title: "Emergency plumber in Leeds, 24/7 — Hollis", description: "Same-day boiler and leak repairs across Leeds. Fixed prices, 12-month guarantee and 4.9/5 from 127 reviews. Call or book online in two minutes.", robots: "", ogTitle: "x", ogImage: "x", favicon: true, canonical: "x", jsonLd: true, words: 600 } });
+  assert.deepEqual(analyze(good, page({ viewport: { width: 390, height: 844 } })).filter((f) => f.category === "SEO"), []);
+});
+
+test("readability rules: long paragraphs, long sentences, justified and uppercase text (v1.3)", () => {
+  const d = page({ readability: [
+    { sel: "p.intro", words: 140, avgSentence: 35, justified: true, uppercase: false, text: "We are" },
+    { sel: "p.legal", words: 20, avgSentence: 10, justified: false, uppercase: true, text: "TERMS" },
+  ] });
+  const rules = new Set(analyze(d, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
+  for (const r of ["long-paragraphs", "long-sentences", "justified-text", "uppercase-text"]) assert.ok(rules.has(r), r);
+});
+
+test("AI-look rules: gradients, glass, radii, identical cards, emoji, clichés (v1.3)", () => {
+  const d = page({ aiLook: { gradients: ["section.hero"], glass: 5, bigRadius: 8, radiusElements: 10, bigRadiusSample: ["div.card 32px"], identicalCards: ["div.features (3 cards)"], emoji: ["h2 \"Why us 🚀\""], cliches: ["Transform your workflow"], centeredShare: 90 } });
+  const rules = new Set(analyze(d, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
+  for (const r of ["ai-gradient", "ai-glass", "ai-radius", "ai-identical-cards", "ai-emoji", "ai-cliche", "ai-centered"]) assert.ok(rules.has(r), r);
+  const clean = page({ aiLook: { gradients: [], glass: 1, bigRadius: 1, radiusElements: 10, bigRadiusSample: [], identicalCards: [], emoji: [], cliches: [], centeredShare: 30 } });
+  assert.equal(analyze(clean, page({ viewport: { width: 390, height: 844 } })).filter((f) => f.rule.startsWith("ai-")).length, 0);
 });

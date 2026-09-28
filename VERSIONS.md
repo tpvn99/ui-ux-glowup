@@ -4,9 +4,23 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.2.0 | 2026-09-28 |
+| ui-ux-glowup | 1.3.0 | 2026-09-28 |
 
 ## Recent Changes
+
+### 1.3.0 (2026-09-28)
+
+- **ui-ux-glowup** (1.2.0 → 1.3.0): intake, recap, phones, SEO, visuals and "nothing forgotten".
+  - **Intake questionnaire** (`references/intake.md`): one message, multiple choice, from zero or for a redesign — project type and style family (SaaS/tech, portfolio/agency, business showcase, e-commerce, dashboard), goal, **modernity level** (Classic / Modern / Bold), assets, icons, dark mode, charts, must-keep, audience and SEO phrases → a written brief. Modern touches per level in `craft.md`.
+  - **"Directions taken" recap** mandatory after every job (brief, score, references, typography, components, icons, charts/KPIs, mobile, SEO, text edits before → after, inventory, product decisions).
+  - **Phones**: new audit rules `zoom-blocked`, `input-zoom`, `tap-crowded`, `fixed-overlay`, `touch-blocked`, `carousel-snap`, `carousel-controls`, `carousel-small-controls`, `carousel-affordance`; `references/mobile.md` (taps, forms, scroll-snap carousel snippet, overlays, safe areas).
+  - **Spacing between blocks, readability, SEO**: new SEO criterion (audit now /45) — `section-gap-*`, `section-rhythm`, `long-paragraphs`, `long-sentences`, `justified-text`, `uppercase-text`, `seo-*` (title, description, noindex, Open Graph, favicon, canonical, JSON-LD, thin content), `image-format`, `image-oversized`, `image-lazy`; `references/seo-readability.md` with copy rules (understand first, keep facts and voice, never stuff keywords, list every edit).
+  - **Anti-AI**: `ai-gradient`, `ai-glass`, `ai-radius`, `ai-identical-cards`, `ai-emoji`, `ai-cliche`, `ai-centered`; `references/anti-ai.md`.
+  - **Nothing forgotten**: `scripts/inventory.mjs` lists every element of a page; `--compare` reports what a redesign lost.
+  - **Icons & favicons**: `scripts/find-icons.mjs` (Iconify search online or local `@iconify-json/*`, licenses, React import hints, Flaticon link, `--download`); `scripts/make-favicon.mjs` (ICO/SVG/apple-touch/PWA + head snippet, monogram mode); `references/icons.md`.
+  - **Visuals, charts & KPIs**: `references/visuals.md` (clean 3D, bento + micro-animations, semi-flat, Recharts/Chart.js/Framer Motion, donut, KPI card designs, dark mode for charts, WebP/AVIF + SVG, style per project type); new example `kpi-cards.html` (light/dark auto + toggle).
+  - All examples get full SEO head tags; `local-business` and `product-page` get JSON-LD.
+  - Tests: 40 (new rule groups, inventory diff, icon/favicon helpers, fixture with phone bugs). 6 new evals.
 
 ### 1.2.0 (2026-09-28)
 

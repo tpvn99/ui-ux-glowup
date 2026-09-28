@@ -1,7 +1,7 @@
 // Pure analysis of data collected by probe.mjs. No browser needed — fully unit-testable.
 import { flattenBackground, composite, contrastRatio, requiredRatio } from "./color.mjs";
 
-export const CRITERIA = ["Hierarchy", "Typography", "Spacing", "Components", "Visuals", "Content", "Responsive", "Accessibility"];
+export const CRITERIA = ["Hierarchy", "Typography", "Spacing", "Components", "Visuals", "Content", "Responsive", "Accessibility", "SEO"];
 
 const PENALTY = { error: 1, warn: 0.5, info: 0 };
 
@@ -122,7 +122,6 @@ export function analyze(desktop, mobile) {
   // ---------- Content ----------
   if (d.lorem) add("Content", "error", "lorem", "Placeholder lorem ipsum text found.");
   if (d.vagueLinks) add("Content", "warn", "vague-links", `${d.vagueLinks} vague link label(s) like "click here" / "read more"; use verb + object.`);
-  if (!d.title) add("Content", "warn", "title", "Missing <title>.");
 
   // ---------- Wrapping & clipping (checked at both widths) ----------
   const views = [["desktop", d], ["mobile", m]].filter(([, v], i, arr) => i === 0 || v !== arr[0][1]);
@@ -142,6 +141,83 @@ export function analyze(desktop, mobile) {
   if (cut.length) add("Responsive", "error", "clipped-content", "Content is cut off by an overflow: hidden container and can't be reached.", cut.map((c) => `${c.sel} (${c.label}) hides "${c.examples.join('", "')}"`));
   if (scroll.length)
     add("Responsive", "warn", "hidden-scroll-content", "Content sits off-screen in a horizontal scroll area; key columns (totals, status, actions) should stay visible — stack or drop secondary columns on mobile.", scroll.map((c) => `${c.sel} (${c.label}, ${c.hiddenPx}px hidden) e.g. "${c.examples.join('", "')}"`));
+
+  // ---------- Mobile interaction (clicks, forms, sliders) ----------
+  const mi = m.mobile;
+  if (mi) {
+    if (mi.zoomBlocked) add("Accessibility", "error", "zoom-blocked", "The viewport meta blocks pinch-zoom (user-scalable=no / maximum-scale=1); remove it — users with low vision need to zoom.");
+    if (mi.smallInputs?.length) add("Responsive", "warn", "input-zoom", "Form fields under 16px make iOS Safari zoom in on focus; use font-size: 16px on inputs.", mi.smallInputs.map((f) => `${f.sel} ${f.fontSize}px`));
+    if (mi.crowded?.length) add("Responsive", "warn", "tap-crowded", "Touch targets under 36px packed less than 8px apart — easy to hit the wrong one on a phone; add spacing or enlarge them (44px is comfortable).", mi.crowded.map((c) => `${c.sel}${c.text ? ` "${c.text}"` : ""} ↔ ${c.other} (${c.gap}px)`));
+    const big = (mi.overlays || []).filter((o) => o.coverage >= 25);
+    if (big.length) add("Responsive", big.some((o) => o.coverage >= 40) ? "error" : "warn", "fixed-overlay", "Fixed/sticky elements cover a large part of the mobile screen; shrink them, make them dismissible, or only stick a slim bar.", big.map((o) => `${o.sel} covers ${o.coverage}% (${o.position})`));
+    if (mi.touchBlockers?.length) add("Responsive", "warn", "touch-blocked", "Large areas with touch-action: none block scrolling on phones.", mi.touchBlockers);
+  }
+  const cars = [...(d.mobile?.carousels || []), ...(mi?.carousels || [])].filter((c, i, arr) => arr.findIndex((x) => x.sel === c.sel) === i);
+  const noSnap = cars.filter((c) => c.kind === "native" && !c.snap);
+  if (noSnap.length) add("Components", "warn", "carousel-snap", "Swipe areas without scroll-snap stop between slides; add scroll-snap-type: x mandatory on the track and scroll-snap-align on items.", noSnap.map((c) => `${c.sel} (${c.items} items)`));
+  const unnamed = cars.filter((c) => c.controls > c.namedControls);
+  if (unnamed.length) add("Accessibility", "warn", "carousel-controls", "Slider arrows without an accessible name; add aria-label=\"Previous slide\" / \"Next slide\".", unnamed.map((c) => c.sel));
+  const tinyCtl = cars.filter((c) => c.smallControls > 0);
+  if (tinyCtl.length) add("Responsive", "warn", "carousel-small-controls", "Slider controls under 32px are hard to tap; use at least 40–44px.", tinyCtl.map((c) => `${c.sel} (${c.smallControls} small)`));
+  const noCue = cars.filter((c) => c.kind === "native" && !c.indicators && c.controls === 0);
+  if (noCue.length) add("Components", "info", "carousel-affordance", "Horizontal lists with no arrows or dots: let the next item peek (~15%) so people know they can swipe.", noCue.map((c) => c.sel));
+
+  // ---------- Space between blocks ----------
+  for (const [label, v, min] of [["desktop", d, 24], ["mobile", m, 20]]) {
+    const gaps = (v.sectionGaps || []).filter((g) => g.gap > -1);
+    const tight = gaps.filter((g) => g.gap < min);
+    if (tight.length) add("Spacing", "warn", `section-gap-${label}`, `Blocks almost touching on ${label} (< ${min}px of air between their content); give sections consistent vertical padding.`, tight.map((g) => `${g.between[0]} → ${g.between[1]}: ${g.gap}px`));
+    const roomy = gaps.filter((g) => g.gap >= 16).map((g) => g.gap);
+    if (label === "desktop" && roomy.length >= 3 && Math.max(...roomy) / Math.min(...roomy) > 3)
+      add("Spacing", "warn", "section-rhythm", `Uneven rhythm between sections (${Math.min(...roomy)}px to ${Math.max(...roomy)}px); use one or two section spacings (e.g. 96/128px desktop, 64px mobile).`, gaps.map((g) => `${g.between[1]}: ${g.gap}px`));
+  }
+
+  // ---------- SEO ----------
+  const seo = d.seo;
+  if (seo) {
+    if (!seo.title) add("SEO", "error", "seo-title", "Missing <title>.");
+    else if (seo.title.length < 25 || seo.title.length > 65) add("SEO", "warn", "seo-title-length", `Title is ${seo.title.length} characters; aim for 30–60, main topic first, brand last.`, [seo.title]);
+    if (!seo.description) add("SEO", "error", "seo-description", "Missing meta description (the snippet under the result in Google).");
+    else if (seo.description.length < 70 || seo.description.length > 165) add("SEO", "warn", "seo-description-length", `Meta description is ${seo.description.length} characters; aim for 120–160.`, [seo.description]);
+    if (/noindex/i.test(seo.robots)) add("SEO", "error", "seo-noindex", "Page is set to noindex — it won't appear in search results. Intended?");
+    if (!seo.ogTitle || !seo.ogImage) add("SEO", "warn", "seo-open-graph", "Missing Open Graph tags (og:title, og:description, og:image): links shared on social apps and messengers look empty.");
+    if (!seo.favicon) add("SEO", "warn", "seo-favicon", "No favicon — the tab and search result show a blank icon. Use scripts/make-favicon.mjs.");
+    if (!seo.canonical) add("SEO", "info", "seo-canonical", "No canonical URL; add <link rel=\"canonical\"> on indexable pages.");
+    if (!seo.jsonLd) add("SEO", "info", "seo-structured-data", "No structured data (JSON-LD): LocalBusiness, Product, Organization or FAQ markup can earn rich results.");
+    if (seo.words && seo.words < 120 && d.headings.some((h) => h.level === 1)) add("SEO", "info", "seo-thin", `Only ~${seo.words} words of content; pages that should rank usually need more substance (not filler).`);
+  }
+  const imgs = d.images || [];
+  const legacy = imgs.filter((i) => ["png", "jpg", "jpeg", "gif"].includes(i.format) && i.naturalWidth > 300);
+  if (legacy.length >= 2) add("SEO", "warn", "image-format", "Photos served as JPG/PNG; WebP or AVIF are 25–50% lighter and speed up the page (Core Web Vitals).", legacy.map((i) => `${i.src} (${i.format})`));
+  const heavy = imgs.filter((i) => i.naturalWidth > 1000 && i.renderedWidth && i.naturalWidth > i.renderedWidth * 2.5);
+  if (heavy.length) add("SEO", "warn", "image-oversized", "Images much larger than their displayed size; resize or use srcset.", heavy.map((i) => `${i.src} ${i.naturalWidth}px shown at ${i.renderedWidth}px`));
+  const eager = imgs.filter((i) => i.belowFold && !i.lazy);
+  if (eager.length >= 2) add("SEO", "info", "image-lazy", "Below-the-fold images without loading=\"lazy\".", eager.map((i) => i.src));
+
+  // ---------- Readability ----------
+  const rd = d.readability || [];
+  const longPara = rd.filter((p) => p.words > 90);
+  if (longPara.length) add("Content", "warn", "long-paragraphs", "Paragraphs over ~90 words are skipped on screens; split them (one idea each, 2–4 sentences).", longPara.map((p) => `${p.sel} ${p.words} words "${p.text}…"`));
+  const longSent = rd.filter((p) => p.avgSentence > 28 && p.words > 30);
+  if (longSent.length) add("Content", "warn", "long-sentences", "Sentences average over 28 words; shorter sentences read faster (15–20 words).", longSent.map((p) => `${p.sel} ~${p.avgSentence} words/sentence`));
+  const justified = rd.filter((p) => p.justified);
+  if (justified.length) add("Typography", "warn", "justified-text", "Justified text creates uneven gaps (rivers) on screens, worst on mobile; align left.", justified.map((p) => p.sel));
+  const caps = rd.filter((p) => p.uppercase);
+  if (caps.length) add("Typography", "warn", "uppercase-text", "Long passages in uppercase are hard to read; keep caps for short labels.", caps.map((p) => p.sel));
+  const smallBodyDesk = d.paragraphs.filter((p) => p.fontSize < 15);
+  if (smallBodyDesk.length > 1) add("Typography", "warn", "body-size", "Body paragraphs under 15px on desktop; 16–18px reads comfortably.", smallBodyDesk.map((p) => `${p.sel} ${p.fontSize}px`));
+
+  // ---------- "AI look" ----------
+  const ai = d.aiLook;
+  if (ai) {
+    if (ai.gradients.length) add("Visuals", "warn", "ai-gradient", "Large purple→blue/pink gradients — the most recognizable \"AI template\" signature. Use the brand color flat, or a subtle same-hue gradient.", ai.gradients);
+    if (ai.glass > 3) add("Visuals", "warn", "ai-glass", `${ai.glass} glassmorphism (backdrop blur) surfaces outside the header; keep blur for overlays and sticky bars.`);
+    if (ai.radiusElements > 6 && ai.bigRadius / ai.radiusElements > 0.5) add("Visuals", "warn", "ai-radius", "Most surfaces use very large radii (≥ 24px); use 8–12px for cards, reserve large radii for a few hero elements.", ai.bigRadiusSample);
+    if (ai.identicalCards.length) add("Visuals", "warn", "ai-identical-cards", "Row of 3–4 identical icon + title + text cards — the default AI layout. Vary sizes (bento), use real visuals, or a numbered list.", ai.identicalCards);
+    if (ai.emoji.length) add("Content", "warn", "ai-emoji", "Emojis in headings or buttons read as generated; use proper icons or none.", ai.emoji);
+    if (ai.cliches.length) add("Content", "warn", "ai-cliche", "Generic marketing phrases (\"Transform your…\", \"Unlock…\", \"seamless\", \"innovative solutions\"); say what the product concretely does.", ai.cliches);
+    if (ai.centeredShare > 75) add("Visuals", "info", "ai-centered", `${ai.centeredShare}% of headings and paragraphs are centered; left-aligned editorial layouts read as more intentional.`);
+  }
 
   // ---------- Responsive ----------
   if (!m.hasViewportMeta) add("Responsive", "error", "viewport-meta", 'Missing <meta name="viewport">.');

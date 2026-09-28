@@ -38,12 +38,12 @@ test("screenshot + compare produce files", { skip: !hasPlaywright && "playwright
   assert.ok(existsSync(file));
 });
 
-test("every example scores at least 38/40 with no overflow", { skip: (!hasPlaywright || !process.env.CI) && "needs playwright + network (CI)" }, async () => {
+test("every example scores at least max − 2 with no errors", { skip: (!hasPlaywright || !process.env.CI) && "needs playwright + network (CI)" }, async () => {
   for (const f of readdirSync(EXAMPLES).filter((f) => f.endsWith(".html"))) {
     const r = await audit(join(EXAMPLES, f));
     const errors = r.findings.filter((x) => x.severity === "error" && !["h1-missing", "broken-images"].includes(x.rule));
     assert.deepEqual(errors.map((e) => e.rule), [], `${f} has errors`);
-    assert.ok(r.total >= 38, `${f} scored ${r.total}`);
+    assert.ok(r.total >= r.max - 2, `${f} scored ${r.total}/${r.max}`);
   }
 });
 
@@ -76,4 +76,27 @@ test("site audit crawls local pages, skips logout, finds recurring issues", { sk
   const names = site.pages.map((p) => p.url.split("/").pop());
   assert.deepEqual(names.sort(), ["before.html", "index.html", "mobile-bugs.html"]);
   assert.ok(site.recurring.some((r) => r.rule === "root-font-size"));
+});
+
+const INTERACTIONS = new URL("./fixtures/mobile-interactions.html", import.meta.url).pathname;
+
+test("audit catches phone bugs, tight sections, readability, SEO and AI tells on a real page (v1.3)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const r = await audit(INTERACTIONS);
+  const rules = new Set(r.findings.map((f) => f.rule));
+  for (const rule of ["zoom-blocked", "input-zoom", "tap-crowded", "fixed-overlay", "carousel-snap", "carousel-small-controls", "section-gap-mobile", "seo-favicon", "seo-open-graph", "long-paragraphs", "justified-text", "ai-identical-cards", "ai-emoji"]) {
+    assert.ok(rules.has(rule), `expected ${rule}`);
+  }
+});
+
+test("inventory lists every element and --compare reports what a redesign lost", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const { inventory, diffInventories } = await import("../skills/ui-ux-glowup/scripts/inventory.mjs");
+  const inv = await inventory(SITE);
+  assert.ok(inv.navigation.length > 0 && inv.headings.length > 0, "navigation and headings collected");
+  const same = diffInventories(inv, inv);
+  assert.equal(same.missing.length, 0);
+  const stripped = structuredClone(inv);
+  stripped.navigation = stripped.navigation.slice(1);
+  stripped.meta.favicon = null;
+  const diff = diffInventories(inv, stripped);
+  assert.ok(diff.missing.some((m) => m.category === "navigation link"));
 });

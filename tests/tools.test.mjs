@@ -6,6 +6,8 @@ import { tmpdir } from "node:os";
 import { parseItem, findInSources, findRootFontSize, listSourceFiles, locate } from "../skills/ui-ux-glowup/scripts/lib/locate.mjs";
 import { isImage } from "../skills/ui-ux-glowup/scripts/compare.mjs";
 import { normalizeUrl, sameSite } from "../skills/ui-ux-glowup/scripts/audit-site.mjs";
+import { needsAttribution, usageHints, svgFromCollection, RECOMMENDED_SETS } from "../skills/ui-ux-glowup/scripts/find-icons.mjs";
+import { buildIco, monogramSvg } from "../skills/ui-ux-glowup/scripts/make-favicon.mjs";
 import { buildBrowserAudit, stripModule } from "../skills/ui-ux-glowup/scripts/build-browser-audit.mjs";
 
 const fakeApp = () => {
@@ -55,4 +57,28 @@ test("audit.browser.js is up to date with lib/ (run build-browser-audit.mjs)", (
   const committed = readFileSync(new URL("../skills/ui-ux-glowup/scripts/audit.browser.js", import.meta.url), "utf8");
   assert.equal(committed, buildBrowserAudit());
   assert.doesNotMatch(stripModule('import { a } from "./a.mjs";\nexport function f() {}\nexport { g };\n'), /import|export/);
+});
+
+test("find-icons: licenses, import hints and SVG building", () => {
+  assert.ok(needsAttribution({ title: "CC BY 4.0", spdx: "CC-BY-4.0" }));
+  assert.ok(!needsAttribution({ title: "MIT", spdx: "MIT" }));
+  assert.ok(!needsAttribution({ title: "CC0 1.0", spdx: "CC0-1.0" }));
+  assert.match(usageHints("lucide:arrow-right")[0], /import \{ ArrowRight \} from "lucide-react"/);
+  assert.match(usageHints("tabler:truck-delivery")[0], /IconTruckDelivery/);
+  const svg = svgFromCollection({ width: 24, height: 24, icons: { leaf: { body: "<path d='M1 1'/>" } }, aliases: { plant: { parent: "leaf" } } }, "plant", 32);
+  assert.match(svg, /viewBox="0 0 24 24"/);
+  assert.match(svg, /width="32"/);
+  assert.ok(Object.keys(RECOMMENDED_SETS).includes("ph"));
+});
+
+test("make-favicon: monogram SVG and a valid multi-size ICO", () => {
+  const svg = monogramSvg("A", { bg: "#1f4d3a" });
+  assert.match(svg, /#1f4d3a/);
+  assert.match(svg, />A</);
+  const png = (n) => Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47]), Buffer.alloc(n)]);
+  const ico = buildIco([{ size: 16, data: png(10) }, { size: 32, data: png(20) }]);
+  assert.equal(ico.readUInt16LE(2), 1);
+  assert.equal(ico.readUInt16LE(4), 2);
+  assert.equal(ico[6], 16);
+  assert.equal(ico.readUInt32LE(6 + 12), 6 + 16 * 2);
 });

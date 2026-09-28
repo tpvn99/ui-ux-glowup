@@ -21,9 +21,9 @@ ui-ux-glowup/
 ├── skills/
 │   └── ui-ux-glowup/
 │       ├── SKILL.md           # Required skill file (<500 lines)
-│       ├── references/        # Loaded on demand: sites, sections, craft, implement, audit, checklist
+│       ├── references/        # Loaded on demand: intake, sites, sections, craft, visuals, mobile, seo-readability, icons, anti-ai, implement, audit, checklist
 │       ├── assets/examples/   # Tested Tailwind v4 examples + React dashboard
-│       ├── scripts/           # audit, audit-site, locate, extract-tokens, screenshot, compare, login (+ lib/, audit.browser.js)
+│       ├── scripts/           # audit, audit-site, inventory, locate, extract-tokens, screenshot, compare, login, find-icons, make-favicon (+ lib/, audit.browser.js)
 │       └── evals/             # evals.json
 ├── tests/                     # node:test suite + fixtures
 ├── package.json               # Dev deps (playwright) and npm scripts
@@ -109,6 +109,8 @@ skills/skill-name/
 - Every pattern in `references/sections.md` should, when possible, point to a working file in `assets/examples/`.
 - Examples use Tailwind v4 (`@tailwindcss/browser`) with two tokens: `--color-accent` and `--color-line`.
 - Examples use realistic, specific content — never lorem ipsum. Unsplash URLs are placeholders.
+- Every HTML example has full SEO head tags (title 30–60 chars, description, canonical, Open Graph, favicon) and must pass the audit's mobile, SEO and `ai-*` rules.
+- Every delivery in the workflow ends with the "Directions taken" recap — keep it in `SKILL.md` when editing the workflow.
 - Never reproduce a reference site's copy, logos or illustrations: borrow mechanics only.
 
 ## Writing Style Guidelines

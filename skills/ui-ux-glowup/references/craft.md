@@ -39,6 +39,8 @@ What separates a "fine" interface from one that looks like it came from a large 
 - Let the shot bleed or crop (cut by the section edge, fading at the bottom) instead of floating it in the middle.
 - Photos: same treatment everywhere (ratio, light, framing), `object-cover`, fixed ratios (`aspect-[4/3]`, `aspect-[16/10]`).
 - Customer logos: monochrome, uniform height (20–28px), reduced opacity.
+- Illustrations, 3D, charts and KPI cards: see `references/visuals.md`. 3D only as one consistent, meaningful set — never random floating shapes (`references/anti-ai.md`).
+- Formats: photos in WebP/AVIF with `<picture>`, icons/logos/charts in SVG.
 
 ## Components
 
@@ -46,7 +48,7 @@ What separates a "fine" interface from one that looks like it came from a large 
 - "Learn more" links: arrow slides 2px on hover.
 - Inputs: 40px tall, hairline border, focus = 2–3px accent ring at low opacity + accent border.
 - Badges: small (12px, 2×8 padding), muted background, never loud.
-- Icons: Lucide/Phosphor, 16–20px, 1.5px stroke, optically aligned with text.
+- Icons: one family (Phosphor, Tabler, Solar, Lucide…), 16–20px, 1.5px stroke, optically aligned with text. Search beyond the defaults with `scripts/find-icons.mjs` (→ `references/icons.md`).
 - Keyboard shortcuts shown as styled `kbd` where relevant (apps).
 
 ## Motion
@@ -67,3 +69,15 @@ The brand palette is not changed. Only adjust:
 - The brand accent reserved for primary actions and points of attention.
 - Coherent neutrals: if missing, derive them by slightly tinting gray toward the brand color.
 - Guaranteed AA contrast; if a brand color fails as text on white, use it as a button background or darken it for text.
+
+## Modern touches (by modernity level)
+
+Chosen during intake (`references/intake.md`). Add them on top of a solid base, never instead of it.
+
+| Level | Add |
+|---|---|
+| **1 — Classic** | Tuned type (tracking, `text-wrap: balance`), hairline borders, layered shadows, tabular numbers, careful focus states. |
+| **2 — Modern** (default) | + bento sections with one micro-animation per card, semi-flat surfaces (same-hue gradient on the hero or CTA), duotone icons, sparklines/donuts for figures, dark mode following the device, `100svh` heroes, scroll-snap carousels with peek. |
+| **3 — Bold** | + oversized editorial type, one clean 3D set or interactive Spline hero (with static fallback), scroll-driven / View Transitions used on 1–2 moments, animated chart drawing, sticky storytelling section. |
+
+Whatever the level: every touch must serve the content, run at 60fps, respect `prefers-reduced-motion`, and pass the anti-AI check (`references/anti-ai.md`).

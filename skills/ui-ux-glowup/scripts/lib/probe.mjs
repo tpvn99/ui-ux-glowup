@@ -210,6 +210,11 @@ export function collectPageData() {
       naturalRatio: img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : null,
       renderedRatio: r.height ? r.width / r.height : null,
       objectFit: s.objectFit,
+      format: ((img.currentSrc || img.src || "").split("?")[0].match(/\.(avif|webp|svg|png|jpe?g|gif)$/i) || [, (img.currentSrc || img.src || "").startsWith("data:image/") ? (img.currentSrc || img.src).slice(11, 15) : "unknown"])[1].toLowerCase(),
+      naturalWidth: img.naturalWidth,
+      renderedWidth: Math.round(r.width * (window.devicePixelRatio || 1)),
+      lazy: img.loading === "lazy",
+      belowFold: r.top + window.scrollY > window.innerHeight * 1.2,
     };
   });
 
@@ -242,6 +247,201 @@ export function collectPageData() {
       };
     });
 
+  // ---------- Mobile interaction ----------
+  const vpMeta = (document.querySelector('meta[name="viewport"]') || {}).content || "";
+  const zoomBlocked = /user-scalable\s*=\s*(no|0)|maximum-scale\s*=\s*1(\.0+)?(?![\d.])/i.test(vpMeta);
+  const smallInputs = [...document.querySelectorAll("input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]), select, textarea")]
+    .filter(visible)
+    .map((el) => ({ sel: selector(el), fontSize: parseFloat(getComputedStyle(el).fontSize) }))
+    .filter((f) => f.fontSize < 16);
+
+  const targetEls = [...document.querySelectorAll(interactiveSel)].filter((el) => visible(el) && !srOnly(el));
+  const rects = targetEls.map((el) => ({ el, r: el.getBoundingClientRect() }));
+  const crowded = [];
+  for (let i = 0; i < rects.length && crowded.length < 40; i++) {
+    const a = rects[i];
+    if (a.r.width >= 44 && a.r.height >= 44) continue;
+    if (a.el.tagName === "A" && getComputedStyle(a.el).display === "inline") continue;
+    if (a.r.width >= 36 && a.r.height >= 36) continue;
+    for (let j = 0; j < rects.length; j++) {
+      if (i === j) continue;
+      const b = rects[j];
+      if (a.el.contains(b.el) || b.el.contains(a.el)) continue;
+      const dx = Math.max(0, Math.max(a.r.left, b.r.left) - Math.min(a.r.right, b.r.right));
+      const dy = Math.max(0, Math.max(a.r.top, b.r.top) - Math.min(a.r.bottom, b.r.bottom));
+      if (Math.hypot(dx, dy) < 8) {
+        if (crowded.some((c) => c.el === b.el && c.otherEl === a.el)) break;
+        crowded.push({ el: a.el, otherEl: b.el });
+        crowded[crowded.length - 1] = Object.assign(crowded[crowded.length - 1], { sel: selector(a.el), other: selector(b.el), gap: Math.round(Math.hypot(dx, dy)), text: (a.el.textContent || a.el.getAttribute("aria-label") || "").trim().slice(0, 24) });
+        break;
+      }
+    }
+  }
+
+  for (const c of crowded) { delete c.el; delete c.otherEl; }
+  const vpArea = window.innerWidth * window.innerHeight;
+  const overlays = [];
+  const touchBlockers = [];
+  for (const el of all) {
+    const s = getComputedStyle(el);
+    if ((s.position === "fixed" || s.position === "sticky") && visible(el)) {
+      const r = el.getBoundingClientRect();
+      const w = Math.max(0, Math.min(r.right, window.innerWidth) - Math.max(r.left, 0));
+      const h = Math.max(0, Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0));
+      const coverage = (w * h) / vpArea;
+      if (coverage > 0.2) overlays.push({ sel: selector(el), coverage: Math.round(coverage * 100), position: s.position });
+    }
+    if (s.touchAction === "none" && visible(el)) {
+      const r = el.getBoundingClientRect();
+      if ((r.width * r.height) / vpArea > 0.3) touchBlockers.push(selector(el));
+    }
+  }
+
+  // Carousels / sliders: native scroll containers with several items, or known libraries
+  const LIB = /swiper|slick|splide|glide|embla|flickity|keen-slider|owl-carousel|carousel|slider/i;
+  const carousels = [];
+  const seenCar = new Set();
+  for (const el of all) {
+    if (!visible(el) || seenCar.has(el)) continue;
+    const s = getComputedStyle(el);
+    const cls = typeof el.className === "string" ? el.className : "";
+    const nativeScroll = (s.overflowX === "auto" || s.overflowX === "scroll") && el.children.length >= 3 && el.scrollWidth > el.clientWidth + 20 && !el.querySelector("table") && el.tagName !== "TABLE";
+    const lib = LIB.test(cls) && el.children.length >= 2 && !LIB.test(el.parentElement && typeof el.parentElement.className === "string" ? el.parentElement.className : "");
+    if (!nativeScroll && !lib) continue;
+    [...el.querySelectorAll("*")].forEach((c) => seenCar.add(c));
+    const scope = el.parentElement || el;
+    const controls = [...scope.querySelectorAll("button, [role=button], a")].filter((b) => /prev|next|précédent|suivant|arrow|chevron|slide/i.test((b.getAttribute("aria-label") || "") + " " + (typeof b.className === "string" ? b.className : "") + " " + b.textContent));
+    carousels.push({
+      sel: selector(el),
+      kind: nativeScroll ? "native" : "library",
+      items: el.children.length,
+      snap: s.scrollSnapType && s.scrollSnapType !== "none",
+      controls: controls.length,
+      namedControls: controls.filter((b) => (b.getAttribute("aria-label") || b.textContent || "").trim().length > 0).length,
+      smallControls: controls.filter((b) => { const r = b.getBoundingClientRect(); return r.width < 32 || r.height < 32; }).length,
+      indicators: Boolean(scope.querySelector('[role=tablist], [class*="dot"], [class*="pagination"], [class*="indicator"], [class*="bullet"]')),
+      peek: nativeScroll ? el.scrollWidth > el.clientWidth : true,
+    });
+  }
+
+  // ---------- Section rhythm (space between top-level blocks) ----------
+  const mainEl = document.querySelector("main") || document.body;
+  let blocks = [...mainEl.children];
+  for (let depth = 0; depth < 3 && blocks.filter(visible).length < 2 && blocks.length === 1; depth++) blocks = [...blocks[0].children];
+  const contentBox = (block) => {
+    let top = Infinity, bottom = -Infinity;
+    const bw = block.getBoundingClientRect().width;
+    for (const c of block.querySelectorAll("*")) {
+      if (c.closest("svg") && c.tagName.toLowerCase() !== "svg") continue;
+      const own = [...c.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      const media = ["IMG", "SVG", "svg", "VIDEO", "CANVAS", "IFRAME", "INPUT", "BUTTON", "SELECT", "TEXTAREA", "PICTURE"].includes(c.tagName);
+      const s = getComputedStyle(c);
+      const painted = (s.backgroundColor && !/rgba\(0, 0, 0, 0\)|transparent/.test(s.backgroundColor)) || parseFloat(s.borderTopWidth) > 0;
+      const r = c.getBoundingClientRect();
+      // Full-width colored bands and dividers separate sections; they aren't content.
+      if (!own && !media && (!painted || r.width >= bw * 0.95)) continue;
+      if (r.width < 1 || r.height < 1) continue;
+      top = Math.min(top, r.top + window.scrollY);
+      bottom = Math.max(bottom, r.bottom + window.scrollY);
+    }
+    return top === Infinity ? null : { top, bottom };
+  };
+  const sectionGaps = [];
+  const blockList = blocks.filter((b) => visible(b) && !["SCRIPT", "STYLE", "TEMPLATE"].includes(b.tagName) && b.getBoundingClientRect().height > 40);
+  for (let i = 0; i < blockList.length - 1; i++) {
+    const a = contentBox(blockList[i]);
+    const b = contentBox(blockList[i + 1]);
+    if (!a || !b) continue;
+    sectionGaps.push({ between: [selector(blockList[i]), selector(blockList[i + 1])], gap: Math.round(b.top - a.bottom) });
+  }
+
+  // ---------- SEO ----------
+  const meta = (name) => (document.querySelector(`meta[name="${name}"], meta[property="${name}"]`) || {}).content || "";
+  const links = [...document.querySelectorAll("a[href]")];
+  const mainText = ((document.querySelector("main") || document.body).innerText || "").trim();
+  const seo = {
+    title: document.title || "",
+    description: meta("description"),
+    canonical: (document.querySelector('link[rel="canonical"]') || {}).href || "",
+    robots: meta("robots"),
+    ogTitle: meta("og:title"),
+    ogDescription: meta("og:description"),
+    ogImage: meta("og:image"),
+    twitterCard: meta("twitter:card"),
+    jsonLd: document.querySelectorAll('script[type="application/ld+json"]').length,
+    favicon: Boolean(document.querySelector('link[rel~="icon"]')),
+    appleTouchIcon: Boolean(document.querySelector('link[rel="apple-touch-icon"]')),
+    manifest: Boolean(document.querySelector('link[rel="manifest"]')),
+    words: mainText ? mainText.split(/\s+/).length : 0,
+    internalLinks: links.filter((a) => a.host === location.host).length,
+    externalLinks: links.filter((a) => a.host && a.host !== location.host).length,
+  };
+
+  // ---------- Readability ----------
+  const prose = [...document.querySelectorAll("p, li, dd, blockquote")].filter((el) => visible(el) && !el.querySelector("p, ul, ol, div"));
+  const readability = prose
+    .map((el) => {
+      const t = el.innerText.replace(/\s+/g, " ").trim();
+      const words = t ? t.split(" ").length : 0;
+      const sentences = t.split(/[.!?…]+(?:\s|$)/).filter((x) => x.trim().split(" ").length > 2);
+      const s = getComputedStyle(el);
+      return {
+        sel: selector(el),
+        words,
+        avgSentence: sentences.length ? Math.round(words / sentences.length) : words,
+        justified: s.textAlign === "justify",
+        uppercase: s.textTransform === "uppercase" && t.length > 40,
+        fontSize: parseFloat(s.fontSize),
+        text: t.slice(0, 50),
+      };
+    })
+    .filter((p) => p.words >= 12);
+
+  // ---------- "AI look" signals ----------
+  const hue = ([r, g, b]) => {
+    const R = r / 255, G = g / 255, B = b / 255;
+    const max = Math.max(R, G, B), min = Math.min(R, G, B), d = max - min;
+    if (d < 0.08) return null;
+    let h = max === R ? ((G - B) / d) % 6 : max === G ? (B - R) / d + 2 : (R - G) / d + 4;
+    return Math.round((h * 60 + 360) % 360);
+  };
+  const gradients = [];
+  let glass = 0;
+  const bigRadius = [];
+  for (const el of all) {
+    if (!visible(el)) continue;
+    const s = getComputedStyle(el);
+    if (s.backgroundImage.includes("gradient")) {
+      const r = el.getBoundingClientRect();
+      const colors = (s.backgroundImage.match(/(rgba?|hsla?|oklch|oklab|lab|lch|color)\([^()]*(\([^()]*\)[^()]*)*\)|#[0-9a-f]{3,8}\b/gi) || []).map(rgba).filter((c) => c[3] > 0.25);
+      const hues = colors.map(hue).filter((h) => h !== null);
+      const purple = hues.some((h) => h >= 255 && h <= 300);
+      const blue = hues.some((h) => h >= 190 && h < 255);
+      const pink = hues.some((h) => h > 300 && h <= 340);
+      if ((r.width * r.height) / vpArea > 0.08 && purple && (blue || pink)) gradients.push(selector(el));
+    }
+    if (/blur\(/.test(s.backdropFilter || s.webkitBackdropFilter || "") && !["HEADER", "NAV"].includes(el.tagName) && !el.closest("header, nav")) glass++;
+    const rad = parseFloat(s.borderTopLeftRadius);
+    if (rad >= 24 && rad < 999 && el.getBoundingClientRect().width > 120) bigRadius.push(selector(el));
+  }
+  const EMOJI = /\p{Extended_Pictographic}/u;
+  const emojiIn = [...document.querySelectorAll("h1, h2, h3, button, a")].filter((el) => visible(el) && EMOJI.test(el.textContent)).map((el) => `${selector(el)} "${el.textContent.trim().slice(0, 40)}"`);
+  const CLICHE = /\b(transform(ez)? (your|votre|vos)|unlock (the|your)|revolutioni[sz]e|révolutionne[zr]?|elevate your|supercharge|seamless(ly)?|game[- ]changer|next[- ]level|take .{0,15} to the next level|boostez|propulsez|all[- ]in[- ]one solution|solution tout[- ]en[- ]un|in today'?s fast[- ]paced|dans un monde en constante évolution|cutting[- ]edge|innovative solutions?|solutions? innovantes?|empower(ing)? (your|you)|harness the power|unleash)\b/i;
+  const cliches = [...document.querySelectorAll("h1, h2, h3, p")].filter((el) => visible(el) && CLICHE.test(el.textContent)).slice(0, 8).map((el) => `${selector(el)} "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 60)}"`);
+  // Rows of 3–4 identical "icon + title + text" cards
+  const identicalCards = [];
+  for (const parent of document.querySelectorAll("div, section, ul")) {
+    const kids = [...parent.children].filter(visible);
+    if (kids.length < 3 || kids.length > 4) continue;
+    const sig = (k) => [...k.children].map((c) => c.tagName).join(",") + "|" + (typeof k.className === "string" ? k.className : "");
+    const first = sig(kids[0]);
+    if (!kids.every((k) => sig(k) === first)) continue;
+    const iconTitleText = kids.every((k) => k.querySelector("svg, img, i, [class*=icon]") && k.querySelector("h3, h4, strong") && k.querySelector("p") && k.children.length <= 4);
+    if (iconTitleText) identicalCards.push(selector(parent));
+  }
+  const centered = [...document.querySelectorAll("h1, h2, h3, p")].filter(visible);
+  const centeredShare = centered.length ? centered.filter((el) => getComputedStyle(el).textAlign === "center").length / centered.length : 0;
+
   const bodyText = document.body.innerText || "";
   return {
     url: location.href,
@@ -265,5 +465,10 @@ export function collectPageData() {
     shadows,
     clipped,
     rootFontSize: parseFloat(getComputedStyle(document.documentElement).fontSize),
+    mobile: { zoomBlocked, smallInputs, crowded, overlays, touchBlockers, carousels },
+    sectionGaps,
+    seo,
+    readability,
+    aiLook: { gradients, glass, bigRadius: bigRadius.length, bigRadiusSample: bigRadius.slice(0, 5), radiusElements: radii.length, emoji: emojiIn, cliches, identicalCards, centeredShare: Math.round(centeredShare * 100) },
   };
 }

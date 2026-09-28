@@ -2,7 +2,7 @@
 import { CRITERIA } from "./analyze.mjs";
 
 const ICON = { error: "✗", warn: "!", info: "·" };
-const SHORT = { Hierarchy: "Hierarchy", Typography: "Typography", Spacing: "Spacing", Components: "Components", Visuals: "Visuals*", Content: "Content*", Responsive: "Responsive", Accessibility: "A11y" };
+const SHORT = { Hierarchy: "Hierarchy", Typography: "Typography", Spacing: "Spacing", Components: "Components", Visuals: "Visuals*", Content: "Content*", Responsive: "Responsive", Accessibility: "A11y", SEO: "SEO" };
 
 /** Format an audit result ({ target, scores, total, max, findings, tokens, note? }) like references/audit.md. */
 export function formatReport(result) {

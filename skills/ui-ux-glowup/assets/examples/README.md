@@ -12,11 +12,12 @@ Complete code, checked at desktop (1440px) and mobile (390px). Read the matching
 | `dashboard-dark.html` | Dark data-dense dashboard: header with one primary action, status strip, KPI grid, mobile-first table | Linear app, Stripe, Vercel | Dark apps, analytics, reseller/stock tools |
 | `local-business.html` | Split photo hero, numbered services, steps, contact, mobile CTA bar | Aesop, Mercury, Stripe | Trades, local services, health |
 | `product-page.html` | Gallery + sticky buy column, variants, accordions | Aesop, Allbirds | E-commerce |
+| `kpi-cards.html` | KPI & chart kit: hero KPI + area sparkline, donut with center value, goal ring, 7-day bars, compact tiles; light/dark auto + toggle | Stripe, Linear, Vercel | Dashboards, stats sections, reports |
 | `react/DashboardShell.tsx` | Same dashboard split into typed components | — | React projects |
 
 ## Audit status
 
-Every example scores ≥ 38/40 with `scripts/audit.mjs` and has no wrapping numbers, no clipped content and no off-screen table columns on mobile. Two expected findings:
+Every example scores ≥ 43/45 (all 9 criteria, including SEO) with `scripts/audit.mjs` and has no wrapping numbers, no clipped content and no off-screen table columns on mobile. Two expected findings:
 - `bento-vercel.html` and `features-stripe.html` are **sections** meant to sit below a page hero, so they start at `<h2>` and the audit reports a missing `<h1>`.
 - Unsplash placeholders are reported as broken only when the network blocks them.
 

@@ -8,18 +8,29 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 
 ## What makes it different
 
+- **Starts with a short questionnaire.** From zero or for a redesign: project type (SaaS/tech, portfolio/agency, business showcase, e-commerce, dashboard), goal, **modernity level** (Classic / Modern / Bold), assets, icons, dark mode, charts, must-keep elements, SEO phrases. Answers become a brief.
+- **Always ends with a "Directions taken" recap.** Style, references and what was borrowed, typography, components, icons, charts/KPIs, mobile fixes, SEO, every text edit before → after, product decisions to confirm.
+
 - **Named references, not vague best practices.** For every job the agent picks 2–3 reference sites from the same category and states exactly what it borrows from each.
-- **Tested example code.** 7 complete sections in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
+- **Tested example code.** 9 complete pages and sections (including a light/dark KPI & chart kit) in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
 - **Visual self-check.** A Playwright script captures the result at 1440px and 390px and flags horizontal overflow. The agent reviews, fixes and re-captures.
-- **Measured, not eyeballed.** `audit.mjs` checks contrast, touch targets, type scale, spacing grid, headings, labels and more at desktop and mobile, and scores the 8 audit criteria before and after. Nothing ships below 4/5.
-- **Catches real mobile bugs.** Amounts and button labels that wrap, table columns pushed off-screen, clipped content — and it names root causes (e.g. a 15px root font-size behind hundreds of fractional spacings).
+- **Measured, not eyeballed.** `audit.mjs` checks contrast, touch targets, type scale, spacing grid, headings, labels and more at desktop and mobile, and scores 9 criteria (/45, including SEO) before and after. Nothing ships below 4/5.
+- **Catches real phone bugs.** Amounts and button labels that wrap, table columns pushed off-screen, clipped content, crowded taps, inputs that make iOS zoom, blocked zoom, banners covering the screen, sliders without snap or with tiny/unlabeled arrows — and it names root causes (e.g. a 15px root font-size behind hundreds of fractional spacings).
+- **Spacing, readability and SEO.** Gaps between blocks and section rhythm, long paragraphs and sentences, justified text, title/description/Open Graph/favicon/canonical/JSON-LD, image format, size and lazy-loading. Copy is clarified for readers — never rewritten to stuff keywords.
+- **Nothing forgotten.** `inventory.mjs` lists every element of a page (links, CTAs, forms, images, contacts, legal, trackers, structured data) and `--compare` shows what a redesign lost.
+- **Visuals, charts and KPIs.** Guidance for clean 3D, bento with micro-animations, semi-flat, interactive SVG charts (Recharts, Chart.js, Framer Motion), donuts with the key number in the center, KPI cards with sparklines, dark mode for every chart, WebP/AVIF + SVG.
+- **Icons and favicons.** `find-icons.mjs` searches 200k+ open icons (Phosphor, Solar, Tabler…) with licenses, plus Flaticon; `make-favicon.mjs` generates every favicon size and the `<head>` snippet.
 - **Works on real products.** Audits pages behind a login, whole sites (`audit-site.mjs`), and maps every finding to `file:line` in your codebase (`locate.mjs`) so fixes land in the real components.
 - **Real reference values.** `extract-tokens.mjs` measures a reference site's type scale, heading tracking, spacing rhythm, radii and shadows — so "like Linear" means Linear's actual numbers.
-- **Anti "AI look".** Explicit list of patterns to avoid (purple gradients, blobs, three identical icon cards…).
+- **Anti "AI look".** The audit flags the measurable tells (purple gradients, glass everywhere, giant radii, three identical cards, emoji headings, cliché copy, everything centered); `anti-ai.md` gives the fix for each.
 
 ## How it works
 
 ```
+  Intake questionnaire → brief ──► references/intake.md
+  (redesign: inventory)          scripts/inventory.mjs
+          │
+          ▼
   Automated audit + visual review ──► scripts/audit.mjs
           │
           ▼
@@ -35,7 +46,10 @@ It **keeps your brand colors** and works on everything else: structure, typograp
           └─ fix ──┘
           │
           ▼
-  Re-audit (≥ 4/5, no errors) → code + before/after image ──► scripts/compare.mjs
+  Re-audit (≥ 4/5, no errors) + inventory --compare
+          │
+          ▼
+  Code + before/after image + "Directions taken" recap ──► scripts/compare.mjs
 ```
 
 ## Examples included
@@ -50,6 +64,7 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 | `dashboard-dark.html` | Linear app, Stripe, Vercel | Dark, data-dense apps |
 | `local-business.html` | Aesop, Mercury, Stripe | Trades, local services, health |
 | `product-page.html` | Aesop, Allbirds | E-commerce |
+| `kpi-cards.html` | Stripe, Linear, Vercel | KPI cards, donut, goal ring, bars, sparklines — light/dark |
 | `react/DashboardShell.tsx` | — | React projects |
 
 ## Installation
@@ -108,8 +123,12 @@ Just ask your agent. The skill triggers on requests like:
 - "Here's a screenshot of our homepage — it looks amateur, fix it"
 - "Build a homepage for a plumber in Leeds: 4.8★ from 212 reviews, 24/7 callouts"
 - "Audit the UI of https://example.com and tell me what to improve"
+- "The slider is broken on phones and people tap the wrong buttons"
+- "Improve SEO and readability of this page without changing our message"
+- "Design the KPI section of our dashboard, it must work in dark mode"
+- "Find less generic icons and make us a favicon"
 
-You get complete code plus a short recap: score before → after, references used and what was borrowed, and the key changes.
+It first asks a short questionnaire (skip any question and it uses sensible defaults). You get complete code, a before/after image and a **Directions taken** recap: brief, score before → after, references and what was borrowed, typography, components, icons, charts, mobile and SEO fixes, every text edit, and product decisions to confirm.
 
 ## Repository structure
 
@@ -117,21 +136,30 @@ You get complete code plus a short recap: score before → after, references use
 skills/ui-ux-glowup/
 ├── SKILL.md                    # Workflow
 ├── references/
+│   ├── intake.md               # Start-of-job questionnaire, modernity levels, brief
 │   ├── sites.md                # Reference sites by category + what to borrow
 │   ├── sections.md             # Patterns by section (hero, features, pricing, dashboard…)
 │   ├── craft.md                # Finishing details that make it look professional
 │   ├── implement.md            # Code mode: from findings to changes in the real codebase
-│   ├── audit.md                # 8-criteria audit grid
+│   ├── visuals.md              # 3D, bento, semi-flat, charts, KPI designs, dark mode, WebP/SVG
+│   ├── mobile.md               # Taps, forms, carousels, overlays on phones
+│   ├── seo-readability.md      # Section spacing, readability, on-page SEO, copy rules
+│   ├── icons.md                # Icon search, Flaticon, favicons
+│   ├── anti-ai.md              # Tells of AI-generated design and what to do instead
+│   ├── audit.md                # 9-criteria audit grid (/45)
 │   └── checklist.md            # Pre-delivery checklist
 ├── assets/examples/            # Tested examples (Tailwind v4 + React)
 ├── scripts/
-│   ├── audit.mjs               # Automated UI audit (desktop + mobile), scored /40
+│   ├── audit.mjs               # Automated UI audit (desktop + mobile), scored /45
 │   ├── extract-tokens.mjs      # Measure a reference site's design tokens
 │   ├── screenshot.mjs          # Desktop + mobile capture with overflow warning
 │   ├── compare.mjs             # Before/after side-by-side image (pages or screenshots)
 │   ├── audit-site.mjs          # Crawl + audit a whole site, recurring issues
 │   ├── locate.mjs              # Map findings to file:line in the codebase
 │   ├── login.mjs               # Save a logged-in session (--storage-state)
+│   ├── inventory.mjs           # Every element of a page; --compare for redesigns
+│   ├── find-icons.mjs          # Search open icon sets (Iconify) + Flaticon link
+│   ├── make-favicon.mjs        # favicon.ico/svg, apple-touch, PWA icons, <head> snippet
 │   ├── audit.browser.js        # Paste-in-DevTools audit (generated)
 │   ├── build-browser-audit.mjs # Regenerates audit.browser.js
 │   └── lib/                    # Browser loader, color math, page probe, analysis rules, locate, report
@@ -149,6 +177,10 @@ node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com
 node skills/ui-ux-glowup/scripts/extract-tokens.mjs https://stripe.com
 node skills/ui-ux-glowup/scripts/compare.mjs old.png new.html compare.png
 node skills/ui-ux-glowup/scripts/audit-site.mjs https://your-site.com --max 15
+node skills/ui-ux-glowup/scripts/inventory.mjs https://your-site.com --json before.json
+node skills/ui-ux-glowup/scripts/inventory.mjs before.json --compare new-page.html
+node skills/ui-ux-glowup/scripts/find-icons.mjs "delivery truck" --sets ph,solar,tabler --download icons/
+node skills/ui-ux-glowup/scripts/make-favicon.mjs logo.svg public/ --bg "#1f4d3a"
 
 # Behind a login
 node skills/ui-ux-glowup/scripts/login.mjs https://app.your-site.com      # log in, press Enter
@@ -161,13 +193,13 @@ Or paste `skills/ui-ux-glowup/scripts/audit.browser.js` into the DevTools consol
 Example audit output:
 
 ```
-Audit: Hierarchy 4 · Typography 3.5 · Spacing 4 · Components 4 · Visuals* 4.5 · Content* 3.5 · Responsive 1.5 · A11y 1 → 26/40
-✗ [Accessibility] Form fields without a label.
-    form > input
-✗ [Responsive] Controls under 24px (WCAG 2.2 target size minimum).
-    form > button 8×8
-! [Typography] Lines longer than ~85 characters; cap paragraphs around 65ch.
-    div > p (~218ch)
+Audit: Hierarchy 5 · Typography 4 · Spacing 3.5 · Components 4.5 · Visuals* 4 · Content* 3.5 · Responsive 1.5 · A11y 4 · SEO 4 → 34/45
+✗ [Accessibility] The viewport meta blocks pinch-zoom (user-scalable=no / maximum-scale=1); remove it.
+✗ [Responsive] Fixed/sticky elements cover a large part of the mobile screen.
+    body > div.banner covers 49% (fixed)
+! [Components] Swipe areas without scroll-snap stop between slides.
+    section > div.track (4 items)
+! [Visuals] Row of 3–4 identical icon + title + text cards — the default AI layout.
 ```
 
 ## Development

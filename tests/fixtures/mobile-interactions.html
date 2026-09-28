@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Mobile interactions fixture — carousels, forms and banners</title>
+<meta name="description" content="Fixture page with the most common phone problems: blocked zoom, tiny inputs, sliders without snap, banners covering the screen and tight sections.">
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.5; }
+  section { padding: 0 16px; }
+  h1 { font-size: 40px; margin: 0; padding-top: 16px; }
+  .track { display: flex; gap: 12px; overflow-x: auto; }
+  .slide { flex: 0 0 80%; height: 160px; background: #eee; border-radius: 28px; }
+  .arrows button { width: 24px; height: 24px; font-size: 12px; }
+  .cards { display: flex; gap: 12px; }
+  .card { border-radius: 28px; padding: 16px; border: 1px solid #ddd; }
+  .banner { position: fixed; left: 0; right: 0; bottom: 0; height: 45vh; background: #111; color: #fff; padding: 16px; }
+  p.long { text-align: justify; }
+  input { font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <section><h1>Our plumbing services in Leeds</h1></section>
+  <section>
+    <div class="track"><div class="slide"></div><div class="slide"></div><div class="slide"></div><div class="slide"></div></div>
+    <div class="arrows"><button class="prev">‹</button><button class="next">›</button></div>
+  </section>
+  <section>
+    <h2>Why choose us 🚀</h2>
+    <div class="cards">
+      <div class="card"><svg width="24" height="24"><circle cx="12" cy="12" r="10"/></svg><h3>Fast</h3><p>Same-day visits.</p></div>
+      <div class="card"><svg width="24" height="24"><circle cx="12" cy="12" r="10"/></svg><h3>Fair</h3><p>Fixed prices.</p></div>
+      <div class="card"><svg width="24" height="24"><circle cx="12" cy="12" r="10"/></svg><h3>Friendly</h3><p>Local team.</p></div>
+    </div>
+  </section>
+  <section>
+    <p class="long">We have been fixing boilers, leaks, blocked drains and bathroom installations across Leeds and the surrounding villages for more than fifteen years, and during that time we have learned that what customers value most is not only a technician who arrives on time with the right parts in the van but also someone who explains clearly what went wrong, what the options are and how much each of them will cost before any work begins, which is why every visit starts with a written fixed quote that you approve on the spot.</p>
+    <form><label>Email <input type="email"></label></form>
+  </section>
+</main>
+<div class="banner" role="dialog" aria-label="Cookies">We use cookies. <button>Accept all</button></div>
+</body>
+</html>

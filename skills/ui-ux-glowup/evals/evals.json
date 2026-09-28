@@ -121,6 +121,82 @@
         "Does not jump into a redesign"
       ],
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "I need a website for my plumbing company, we're starting from zero.",
+      "expected_output": "Should start with the intake questionnaire from references/intake.md in a single message (starting point, project type, goal, modernity level, assets, icons, dark mode, must-keep, audience/SEO phrases, likes, constraints), pre-filling what is known, then write a short brief and continue with defaults if answers are missing.",
+      "assertions": [
+        "Asks the intake questions once, in one message, multiple choice",
+        "Offers the modernity level (Classic / Modern / Bold)",
+        "Writes a brief before designing",
+        "Uses the business showcase style family",
+        "Does not block indefinitely if questions are skipped (states defaults)"
+      ],
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Redesign this landing page, make it more modern: https://example.com",
+      "expected_output": "Should run inventory.mjs on the current page, audit it, redesign with named references and modern touches for the chosen level, run inventory --compare before delivery, and finish with the full 'Directions taken' recap.",
+      "assertions": [
+        "Runs inventory.mjs before and --compare after",
+        "Adds modern touches matching a modernity level",
+        "Ends with a 'Directions taken' recap (brief, references, typography, components, mobile, SEO, text edits, inventory, product decisions)",
+        "Lists any removed element as a product decision to confirm"
+      ],
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "On phones our testimonials slider is janky and people keep tapping the wrong buttons. Can you fix it?",
+      "expected_output": "Should audit at mobile width, use the mobile rules (tap-crowded, tap-target, carousel-snap, carousel-controls, fixed-overlay, input-zoom), rebuild the slider with native scroll-snap, a peeking next slide and labeled arrows ≥ 40px, enlarge and space taps, and verify on a 390px screenshot.",
+      "assertions": [
+        "Uses the mobile audit findings",
+        "Rebuilds the carousel with scroll-snap and a visible peek",
+        "Arrows ≥ 40px with aria-labels, no autoplay",
+        "Tap targets ≥ 44px and ≥ 8px apart",
+        "Verifies with a mobile screenshot"
+      ],
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Improve the SEO and readability of our services page, we want to rank for 'emergency plumber Leeds'.",
+      "expected_output": "Should fix title, meta description, headings, images, Open Graph, favicon and JSON-LD, split long paragraphs and fix section spacing, and improve the text for clarity while keeping facts and voice — the keyword placed only where natural (title, h1 or intro), never stuffed. Every text change listed before → after.",
+      "assertions": [
+        "Fixes on-page SEO items flagged by the audit",
+        "Does not stuff or repeat the keyword",
+        "Keeps facts, numbers and tone of the original copy",
+        "Lists text edits before → after in the recap",
+        "Addresses paragraph length and section spacing"
+      ],
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "Our icons all look the same as every other AI site. Find better ones for delivery, eco-friendly and support, and make us a favicon.",
+      "expected_output": "Should use find-icons.mjs to search open sets beyond Lucide (Phosphor, Solar, Tabler…), pick one family and style, mention Flaticon with its attribution rule when relevant, then generate favicons with make-favicon.mjs and give the head snippet.",
+      "assertions": [
+        "Uses find-icons.mjs with specific queries",
+        "Keeps one icon family and weight",
+        "States license / attribution needs (Flaticon free requires credit)",
+        "Uses make-favicon.mjs and provides the <head> snippet"
+      ],
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Design the KPI section of our SaaS dashboard: MRR, active users, churn, plan split and monthly goal. It must work in dark mode.",
+      "expected_output": "Should pick a KPI design per metric from references/visuals.md (hero KPI with area sparkline for MRR, compact tiles, donut with center value for plan split, goal ring for the monthly goal, delta chips), build from assets/examples/kpi-cards.html with CSS variables for light/dark, tabular numbers, accessible chart labels, and verify both themes.",
+      "assertions": [
+        "Chooses a distinct KPI design per metric",
+        "Uses a donut with the key number in the center for the split",
+        "Charts driven by CSS variables and readable in light and dark",
+        "Numbers use tabular-nums and never wrap",
+        "Starts from kpi-cards.html"
+      ],
+      "files": []
     }
   ]
 }
