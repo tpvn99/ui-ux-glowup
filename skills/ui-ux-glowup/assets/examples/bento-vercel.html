@@ -1,0 +1,124 @@
+<!doctype html>
+<!--
+  Pattern: bento grid with shared borders (inspired by Vercel / Apple)
+  Key points: cards of varied sizes joined by a gap-px grid over a border-colored background,
+  each card has ITS OWN visual (no generic icon), subtle grid background,
+  monospace for technical details, eyebrow + heading + short text.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Features — Relay</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #0a72ef;
+    --color-line: rgb(0 0 0 / .08);
+    --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+  html { -webkit-font-smoothing: antialiased; }
+  .grid-bg {
+    background-image: linear-gradient(var(--color-line) 1px, transparent 1px), linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+  }
+</style>
+</head>
+<body class="bg-white text-zinc-950 font-sans">
+
+<section class="relative overflow-hidden py-24 md:py-32">
+  <div aria-hidden="true" class="grid-bg absolute inset-0"></div>
+
+  <div class="relative mx-auto max-w-6xl px-6">
+    <header class="max-w-2xl">
+      <p class="font-mono text-[13px] text-zinc-500">Platform</p>
+      <h2 class="mt-3 text-[clamp(2rem,3vw+1rem,3rem)] font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance]">
+        Everything you need to ship, nothing more.
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-zinc-600 [text-wrap:pretty]">
+        Deploys, monitoring and rollbacks in one tool. Your teams ship ten times a day without stress.
+      </p>
+    </header>
+
+    <!-- Bento: gap-px + bg-line = shared borders -->
+    <div class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-6">
+
+      <!-- 1. Large card: deploy log -->
+      <article class="flex flex-col bg-white p-8 md:col-span-4">
+        <h3 class="text-base font-semibold tracking-tight">Instant deploys</h3>
+        <p class="mt-2 max-w-md text-[15px] leading-relaxed text-zinc-600">Every push gets a preview URL. Live in production in under 40 seconds.</p>
+        <div class="mt-8 flex-1 rounded-lg border border-line bg-zinc-50 p-4 font-mono text-[12.5px] leading-6 text-zinc-600">
+          <p><span class="text-zinc-400">09:41:02</span> Cloning github.com/acme/storefront (main)</p>
+          <p><span class="text-zinc-400">09:41:04</span> Installing dependencies… <span class="text-zinc-400">1.8 s</span></p>
+          <p><span class="text-zinc-400">09:41:11</span> Build complete · 214 static pages</p>
+          <p><span class="text-zinc-400">09:41:19</span> Deploying to 18 regions</p>
+          <p class="mt-1 flex items-center gap-2 text-zinc-950"><span class="size-2 rounded-full bg-emerald-500"></span>Ready · acme-storefront.relay.app <span class="text-zinc-400">· 37 s</span></p>
+        </div>
+      </article>
+
+      <!-- 2. Metric -->
+      <article class="flex flex-col justify-between bg-white p-8 md:col-span-2">
+        <div>
+          <h3 class="text-base font-semibold tracking-tight">Response time</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-zinc-600">Edge caching, as close to your visitors as possible.</p>
+        </div>
+        <div class="mt-8">
+          <p class="text-5xl font-semibold tracking-[-0.04em] tabular-nums">48<span class="text-2xl text-zinc-400"> ms</span></p>
+          <p class="mt-1 text-sm text-zinc-500">p95 · Europe, last 30 days</p>
+          <svg viewBox="0 0 200 48" class="mt-4 h-12 w-full" aria-hidden="true">
+            <polyline fill="none" class="stroke-accent" stroke-width="1.5" stroke-linejoin="round" points="0,30 18,28 36,33 54,24 72,26 90,18 108,22 126,15 144,19 162,12 180,14 200,9"/>
+            <polyline fill="none" stroke="rgb(0 0 0 / .1)" stroke-dasharray="3 3" points="0,40 200,40"/>
+          </svg>
+        </div>
+      </article>
+
+      <!-- 3. Regions -->
+      <article class="bg-white p-8 md:col-span-2">
+        <h3 class="text-base font-semibold tracking-tight">18 regions</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-zinc-600">Global network, automatic failover.</p>
+        <ul class="mt-6 flex flex-wrap gap-1.5 font-mono text-[12px]">
+          <li class="rounded-md border border-line px-2 py-1">cdg1 · Paris</li>
+          <li class="rounded-md border border-line px-2 py-1">fra1 · Frankfurt</li>
+          <li class="rounded-md border border-line px-2 py-1">lhr1 · London</li>
+          <li class="rounded-md border border-line px-2 py-1">iad1 · Virginia</li>
+          <li class="rounded-md border border-line px-2 py-1">hnd1 · Tokyo</li>
+          <li class="rounded-md border border-line px-2 py-1 text-zinc-400">+13</li>
+        </ul>
+      </article>
+
+      <!-- 4. Rollback -->
+      <article class="bg-white p-8 md:col-span-2">
+        <h3 class="text-base font-semibold tracking-tight">One-click rollback</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-zinc-600">Go back to any version without a rebuild.</p>
+        <ol class="mt-6 space-y-2 text-sm">
+          <li class="flex items-center justify-between rounded-md border border-line px-3 py-2"><span class="font-mono text-[12.5px]">a3f9c1e</span><span class="rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] font-medium text-emerald-700">Production</span></li>
+          <li class="flex items-center justify-between rounded-md border border-line px-3 py-2 text-zinc-500"><span class="font-mono text-[12.5px]">7be2d04</span><span class="text-[12px]">2 h ago</span></li>
+          <li class="flex items-center justify-between rounded-md border border-line px-3 py-2 text-zinc-500"><span class="font-mono text-[12.5px]">19c0aa7</span><span class="text-[12px]">yesterday</span></li>
+        </ol>
+      </article>
+
+      <!-- 5. Team -->
+      <article class="bg-white p-8 md:col-span-2">
+        <h3 class="text-base font-semibold tracking-tight">Comments on previews</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-zinc-600">Designers and clients annotate the page directly.</p>
+        <div class="mt-6 rounded-lg border border-line p-3 text-sm">
+          <div class="flex items-center gap-2">
+            <span class="grid size-6 place-items-center rounded-full bg-zinc-900 text-[10px] font-semibold text-white">JM</span>
+            <span class="font-medium">Julie M.</span><span class="text-zinc-400">· 10:12</span>
+          </div>
+          <p class="mt-2 text-zinc-600">The “Add to cart” button wraps to a new line on iPhone SE.</p>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="mt-8 text-sm text-zinc-500">
+      <a href="#" class="group inline-flex items-center gap-1 font-medium text-zinc-950 hover:underline underline-offset-4">See all features <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span></a>
+    </p>
+  </div>
+</section>
+</body>
+</html>

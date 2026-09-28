@@ -1,0 +1,54 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate skills and manifests
+        run: ./validate-skills.sh
+
+      - name: Validate with official skills-ref
+        run: |
+          pip install "git+https://github.com/agentskills/agentskills.git#subdirectory=skills-ref"
+          for d in skills/*/; do skills-ref validate "$d"; done
+
+      - name: Check screenshot script syntax
+        run: node --check skills/ui-ux-glowup/scripts/screenshot.mjs
+
+      - name: Type-check React example
+        run: |
+          npm i --no-save typescript@5 react@18 @types/react@18 lucide-react
+          npx tsc --noEmit --jsx react-jsx --strict --esModuleInterop --moduleResolution bundler --module esnext --target es2020 --skipLibCheck skills/ui-ux-glowup/assets/examples/react/DashboardShell.tsx
+
+      - name: Render examples (desktop + mobile, fail on overflow)
+        run: |
+          npm i --no-save playwright
+          npx playwright install --with-deps chromium
+          status=0
+          for f in skills/ui-ux-glowup/assets/examples/*.html; do
+            out=$(node skills/ui-ux-glowup/scripts/screenshot.mjs "$f" shots/ 2>&1); echo "$out"
+            echo "$out" | grep -q "horizontal overflow" && status=1
+          done
+          exit $status
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: example-screenshots
+          path: shots/

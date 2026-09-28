@@ -1,0 +1,114 @@
+<!doctype html>
+<!--
+  Pattern: explanatory sections on a visible grid (inspired by Stripe)
+  Key points: vertical grid lines in the background, accent eyebrow + heading + text + link →,
+  alternating text / rebuilt mini-UI blocks, stats row separated by hairlines,
+  high information density that still breathes.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payments — Pactum</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #635bff;
+    --color-ink: #0a2540;
+    --color-body: #425466;
+    --color-line: rgb(10 37 64 / .08);
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+  .card { box-shadow: 0 1px 1px rgb(10 37 64 / .04), 0 4px 8px rgb(10 37 64 / .04), 0 16px 32px -8px rgb(10 37 64 / .12); }
+</style>
+</head>
+<body class="bg-white font-sans text-body">
+
+<div class="relative">
+  <!-- Visible grid: 4 columns -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 mx-auto grid max-w-6xl grid-cols-4 px-6 max-md:hidden">
+    <div class="border-x border-dashed border-line"></div><div class="border-r border-dashed border-line"></div><div class="border-r border-dashed border-line"></div><div class="border-r border-dashed border-line"></div>
+  </div>
+
+  <!-- Block 1: text / UI -->
+  <section class="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-24 md:grid-cols-2 md:gap-16 md:py-32">
+    <div>
+      <p class="text-[15px] font-semibold text-accent">Payments</p>
+      <h2 class="mt-3 text-[clamp(1.9rem,2.4vw+1rem,2.75rem)] font-semibold leading-[1.1] tracking-[-0.025em] text-ink [text-wrap:balance]">
+        Get paid everywhere, with a single integration.
+      </h2>
+      <p class="mt-5 max-w-lg text-[17px] leading-[1.65] [text-wrap:pretty]">
+        Cards, SEPA transfers, Apple Pay, pay in 3 installments: turn on payment methods in one click, without renegotiating with your bank. Our customers' average acceptance rate is 94.2%.
+      </p>
+      <a href="#" class="group mt-6 inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-[15px] font-medium text-white transition hover:bg-ink">
+        Explore payments <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+      </a>
+    </div>
+
+    <!-- Mini-UI: rebuilt checkout form -->
+    <div class="relative">
+      <div class="card mx-auto max-w-sm rounded-xl bg-white p-6">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-medium text-ink">Oak & Linen Studio</p>
+          <p class="text-sm tabular-nums text-body">Order #20417</p>
+        </div>
+        <p class="mt-4 text-3xl font-semibold tracking-tight text-ink tabular-nums">€189.00</p>
+        <p class="text-sm">Solid oak coffee table · 1 item</p>
+        <div class="mt-5 grid grid-cols-2 gap-2">
+          <button class="rounded-md bg-ink py-2 text-sm font-medium text-white">Apple Pay</button>
+          <button class="rounded-md border border-line py-2 text-sm font-medium text-ink">Pay in 3</button>
+        </div>
+        <div class="my-4 flex items-center gap-3 text-xs text-body/70"><span class="h-px flex-1 bg-line"></span>or pay by card<span class="h-px flex-1 bg-line"></span></div>
+        <label class="block text-[13px] font-medium text-ink">Card number
+          <span class="mt-1.5 flex h-10 items-center rounded-md border border-line px-3 font-normal tabular-nums text-body">4970 1012 3456 7890</span>
+        </label>
+        <div class="mt-3 grid grid-cols-2 gap-2 text-[13px] font-medium text-ink">
+          <label>Expiry<span class="mt-1.5 flex h-10 items-center rounded-md border border-line px-3 font-normal text-body">09 / 28</span></label>
+          <label>CVC<span class="mt-1.5 flex h-10 items-center rounded-md border border-line px-3 font-normal text-body">•••</span></label>
+        </div>
+        <button class="mt-5 h-10 w-full rounded-md bg-accent text-sm font-medium text-white">Pay €189.00</button>
+      </div>
+      <!-- Secondary floating card -->
+      <div class="card absolute -bottom-6 -left-2 hidden items-center gap-3 rounded-lg bg-white px-4 py-3 lg:flex">
+        <span class="grid size-8 place-items-center rounded-full bg-emerald-50 text-emerald-600" aria-hidden="true">✓</span>
+        <div><p class="text-sm font-medium text-ink">Payment accepted</p><p class="text-xs">2 seconds ago</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="relative mx-auto max-w-6xl px-6" aria-label="Key figures">
+    <dl class="grid grid-cols-2 border-y border-line md:grid-cols-4">
+      <div class="border-line py-8 pr-6 max-md:border-b md:border-r"><dt class="text-sm">Volume processed in 2025</dt><dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">€4.1B</dd></div>
+      <div class="border-line py-8 pl-6 max-md:border-b md:border-r md:pr-6"><dt class="text-sm">API uptime</dt><dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">99.999%</dd></div>
+      <div class="border-line py-8 pr-6 md:border-r md:pl-6"><dt class="text-sm">Countries covered</dt><dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">46</dd></div>
+      <div class="py-8 pl-6"><dt class="text-sm">Payment methods</dt><dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">38</dd></div>
+    </dl>
+  </section>
+
+  <!-- Block 2: 3 columns eyebrow/heading/text/link -->
+  <section class="relative mx-auto max-w-6xl px-6 py-24 md:py-32">
+    <p class="text-[15px] font-semibold text-accent">Why Pactum</p>
+    <h2 class="mt-3 max-w-2xl text-[clamp(1.9rem,2.4vw+1rem,2.75rem)] font-semibold leading-[1.1] tracking-[-0.025em] text-ink [text-wrap:balance]">
+      Infrastructure built to grow with you.
+    </h2>
+    <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
+      <div class="border-l-2 border-accent pl-5">
+        <h3 class="font-semibold text-ink">Compliance included</h3>
+        <p class="mt-2 text-[15px] leading-relaxed">PCI DSS Level 1, PSD2 and 3-D Secure handled automatically. No audit on your side.</p>
+      </div>
+      <div class="border-l border-line pl-5">
+        <h3 class="font-semibold text-ink">Machine-learning fraud protection</h3>
+        <p class="mt-2 text-[15px] leading-relaxed">Every transaction is scored in 100 ms using billions of network signals.</p>
+      </div>
+      <div class="border-l border-line pl-5">
+        <h3 class="font-semibold text-ink">Payouts in 2 days</h3>
+        <p class="mt-2 text-[15px] leading-relaxed">Funds in your account in 2 business days, with reconciliation exports for your accounting software.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

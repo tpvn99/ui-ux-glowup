@@ -1,0 +1,19 @@
+{
+  "name": "ui-ux-glowup",
+  "owner": {
+    "name": "Antonin",
+    "url": "https://github.com/tpvn99"
+  },
+  "metadata": {
+    "description": "UI/UX skill for AI agents — redesign interfaces using patterns from the best-designed sites on the web",
+    "version": "1.0.0",
+    "repository": "https://github.com/tpvn99/ui-ux-glowup"
+  },
+  "plugins": [
+    {
+      "name": "ui-ux-glowup",
+      "description": "Audits an interface, borrows named patterns from Linear, Stripe, Vercel, Apple and others, rebuilds it from tested example code, and verifies the result with desktop + mobile screenshots. Keeps your brand colors.",
+      "source": "./"
+    }
+  ]
+}

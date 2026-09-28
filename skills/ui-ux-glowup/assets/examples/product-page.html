@@ -1,0 +1,90 @@
+<!doctype html>
+<!--
+  Pattern: e-commerce product page (inspired by Aesop / Allbirds / Apple Store)
+  Key points: large gallery on the left, sticky buy column on the right, accessible swatch
+  variants (radios), concrete reassurance under the CTA, details in accordions, uniform photos.
+  Photos: Unsplash placeholders to replace.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elm Coffee Table — Solid Oak | Arbor House</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #1c1917;
+    --color-line: rgb(28 25 23 / .1);
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] .plus { transform: rotate(45deg); }
+</style>
+</head>
+<body class="bg-white font-sans text-stone-900">
+
+<main class="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-10">
+  <nav aria-label="Breadcrumb" class="mb-6 text-[13px] text-stone-500"><a href="#" class="hover:text-stone-900">Living room</a> / <a href="#" class="hover:text-stone-900">Coffee tables</a> / <span class="text-stone-900">Elm</span></nav>
+
+  <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+    <!-- Gallery -->
+    <section aria-label="Product photos" class="grid grid-cols-2 gap-2">
+      <img src="https://images.unsplash.com/photo-1532372320572-cda25653a26d?w=1400&q=80" alt="Elm oak coffee table, three-quarter view" width="1400" height="1400" class="col-span-2 aspect-square w-full rounded-lg bg-stone-100 object-cover">
+      <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=800&q=80" alt="Detail of the dovetail joinery" loading="lazy" width="800" height="1000" class="aspect-[4/5] w-full rounded-lg bg-stone-100 object-cover">
+      <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" alt="Elm table in a living room" loading="lazy" width="800" height="1000" class="aspect-[4/5] w-full rounded-lg bg-stone-100 object-cover">
+    </section>
+
+    <!-- Buy column -->
+    <section class="lg:sticky lg:top-8 lg:self-start" aria-labelledby="titre-produit">
+      <p class="text-[13px] text-stone-500">Handmade in Vermont</p>
+      <h1 id="titre-produit" class="mt-1 text-3xl font-semibold tracking-[-0.02em]">Elm Coffee Table</h1>
+      <p class="mt-2 flex items-center gap-2 text-sm"><span class="text-amber-500" aria-hidden="true">★★★★★</span><a href="#avis" class="text-stone-600 underline underline-offset-4">4.8 · 212 reviews</a></p>
+      <p class="mt-5 text-2xl tabular-nums">$890</p>
+      <p class="text-sm text-stone-500">or 3 interest-free payments of $296.67</p>
+
+      <fieldset class="mt-8">
+        <legend class="text-sm font-medium">Wood: <span class="font-normal text-stone-600">Natural oak</span></legend>
+        <div class="mt-3 flex gap-2">
+          <label class="cursor-pointer"><input type="radio" name="wood" class="peer sr-only" checked><span class="block size-10 rounded-full bg-[#c8a878] ring-1 ring-line ring-offset-2 peer-checked:ring-2 peer-checked:ring-stone-900 peer-focus-visible:ring-2 peer-focus-visible:ring-stone-900" title="Natural oak"></span><span class="sr-only">Natural oak</span></label>
+          <label class="cursor-pointer"><input type="radio" name="wood" class="peer sr-only"><span class="block size-10 rounded-full bg-[#5b3f2c] ring-1 ring-line ring-offset-2 peer-checked:ring-2 peer-checked:ring-stone-900 peer-focus-visible:ring-2 peer-focus-visible:ring-stone-900" title="Walnut"></span><span class="sr-only">Walnut</span></label>
+          <label class="cursor-pointer"><input type="radio" name="wood" class="peer sr-only"><span class="block size-10 rounded-full bg-[#2b2724] ring-1 ring-line ring-offset-2 peer-checked:ring-2 peer-checked:ring-stone-900 peer-focus-visible:ring-2 peer-focus-visible:ring-stone-900" title="Black-stained oak"></span><span class="sr-only">Black-stained oak</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-6">
+        <legend class="text-sm font-medium">Size</legend>
+        <div class="mt-3 grid grid-cols-2 gap-2 text-sm">
+          <label><input type="radio" name="size" class="peer sr-only" checked><span class="block cursor-pointer rounded-lg border border-line px-4 py-3 peer-checked:border-stone-900 peer-checked:ring-1 peer-checked:ring-stone-900 peer-focus-visible:ring-2"><span class="font-medium">40 × 24 in</span><span class="block text-stone-500">$890</span></span></label>
+          <label><input type="radio" name="size" class="peer sr-only"><span class="block cursor-pointer rounded-lg border border-line px-4 py-3 peer-checked:border-stone-900 peer-checked:ring-1 peer-checked:ring-stone-900 peer-focus-visible:ring-2"><span class="font-medium">48 × 28 in</span><span class="block text-stone-500">$1,040</span></span></label>
+        </div>
+      </fieldset>
+
+      <button class="mt-8 h-12 w-full rounded-full bg-accent text-[15px] font-medium text-white transition hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900">Add to cart</button>
+
+      <ul class="mt-5 space-y-2 text-sm text-stone-600">
+        <li class="flex gap-2.5"><svg class="mt-0.5 size-4 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 4.5h8v6h-8zM9.5 7h3l2 2v1.5h-5"/><circle cx="4.5" cy="11.5" r="1.2"/><circle cx="12" cy="11.5" r="1.2"/></svg>Free delivery and assembly · ships within 3 weeks</li>
+        <li class="flex gap-2.5"><svg class="mt-0.5 size-4 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 109.5-3.8M12 1.5v3h-3"/></svg>30-day returns</li>
+        <li class="flex gap-2.5"><svg class="mt-0.5 size-4 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 1.5l5 2v4c0 3.2-2.2 5.6-5 7-2.8-1.4-5-3.8-5-7v-4z"/></svg>10-year structural warranty</li>
+      </ul>
+
+      <div class="mt-8 divide-y divide-line border-y border-line">
+        <details class="py-4" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium">Description<span class="plus text-lg leading-none text-stone-400 transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-stone-600">1¼-inch solid oak top from sustainably managed New England forests. Traditional dovetail joinery, no visible screws. Natural hardwax-oil finish.</p>
+        </details>
+        <details class="py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium">Dimensions and weight<span class="plus text-lg leading-none text-stone-400 transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-stone-600">40 × 24 × 15 in · 53 lb. Clearance under the top: 12 in.</p>
+        </details>
+        <details class="py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium">Care<span class="plus text-lg leading-none text-stone-400 transition-transform" aria-hidden="true">+</span></summary>
+          <p class="mt-3 text-sm leading-relaxed text-stone-600">Wipe with a slightly damp cloth. One coat of maintenance oil per year, included with the table.</p>
+        </details>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,88 @@
+{
+  "skill_name": "ui-ux-glowup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Here's the landing page for our invoicing SaaS (index.html attached). It works but it looks amateur. Can you make it look like Linear or Stripe? Our brand color is #0E9F6E, keep it.",
+      "expected_output": "Should score the current page with the 8-criteria audit grid and list the top 3–5 problems. Should pick 2–3 references from the SaaS category (e.g. Linear, Stripe, Vercel) and state exactly what is borrowed from each. Should read the matching examples (hero-linear, features-stripe, bento-vercel) before coding. Should keep #0E9F6E as --color-accent and not introduce a new palette. Should rebuild the product UI in HTML with credible invoicing data instead of a generic mockup. Should run scripts/screenshot.mjs, review desktop and mobile, and fix issues. Should deliver complete code plus a before/after score, references used, and 3–5 key changes.",
+      "assertions": [
+        "Runs the audit grid with scores before changing anything",
+        "Names 2–3 reference sites and what is borrowed from each",
+        "Keeps #0E9F6E as the brand accent, no new palette",
+        "Uses the matching assets/examples as a starting point",
+        "Rebuilds a credible product UI with realistic invoicing data",
+        "Takes desktop and mobile screenshots and fixes what they reveal",
+        "Delivers complete code with before/after score and change summary"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I'm building a website for a plumber in Leeds. Can you design the homepage? They have 4.8 stars on Google from 212 reviews, 15 years in business, and do emergency callouts 24/7.",
+      "expected_output": "Should classify as a local business site and use the local-business example and the local business section of sites.md. Should use a split hero with real-photo placeholder and put the Google rating, years in business and 24/7 emergency service next to the CTA. Should present services as a numbered list or photo cards, not generic icons. Should include numbered process steps, a concrete contact block (phone, area covered, hours) and a fixed Call CTA bar on mobile. Should use the real facts given (4.8, 212 reviews, 15 years, 24/7) and credible Leeds-specific copy. Should not use lorem ipsum or generic 3D illustrations.",
+      "assertions": [
+        "Uses the local-business example as the base",
+        "Places rating, years and 24/7 proof next to the primary CTA",
+        "Services are not generic icon cards",
+        "Includes a fixed Call / Quote CTA bar on mobile",
+        "Uses the exact facts provided and location-specific copy",
+        "No lorem ipsum, no generic 3D illustrations"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our admin dashboard is a mess (React + Tailwind, screenshot attached). Can you clean it up? It should feel like Linear or the Stripe dashboard.",
+      "expected_output": "Should follow the project's stack (React + Tailwind) and reuse existing components/tokens if present. Should use dashboard-shell.html and react/DashboardShell.tsx as references: compact sidebar with groups, thin top bar with breadcrumb and ⌘K search, page header with actions, sober KPI cards, dense table with pill filters, right-aligned tabular-nums and subtle status badges. Should add empty/loading/error states. Should split into small typed components with data separated from rendering. Should start the dev server and capture the URL with the screenshot script.",
+      "assertions": [
+        "Stays in React + Tailwind and reuses existing project tokens/components",
+        "Applies Linear/Stripe dashboard patterns (sidebar, top bar, KPIs, dense table)",
+        "Numbers are right-aligned with tabular-nums",
+        "Adds empty, loading and error states",
+        "Splits UI into typed components with data separated from rendering",
+        "Captures the running dev server URL with the screenshot script"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Can you make our pricing page look more premium? Also can you change our colors to something more modern while you're at it?",
+      "expected_output": "Should improve the pricing page using pricing.html patterns (3 plans max, recommended plan emphasized by border + badge not enlarged, accessible billing toggle, tabular-nums prices, 2-column FAQ). Should explain that the skill keeps brand colors and only adjusts how color is used; creating a new palette is out of scope and should be handled as a brand decision. Should still deliver the redesigned pricing page with the existing colors.",
+      "assertions": [
+        "Uses the pricing example patterns",
+        "Recommended plan emphasized without being enlarged",
+        "Billing toggle is accessible",
+        "Declines to invent a new color palette and explains why",
+        "Still delivers the redesigned page with the existing brand colors"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Quick one: this product card component looks off but I can't tell why. <div class='shadow-2xl rounded-3xl p-2 bg-gradient-to-r from-purple-500 to-blue-500'><img src='shoe.jpg'><h3 class='text-xl font-bold'>Runner X</h3><p class='text-gray-300'>Best shoe ever!!</p><div onclick='buy()'>Buy</div></div>",
+      "expected_output": "Should identify the specific problems using the anti-patterns and craft rules: purple-to-blue gradient (AI look), heavy shadow + rounded-3xl, image without ratio/object-cover/alt, low-contrast gray-300 text, vague copy, clickable div instead of button. Should rewrite the card following the Airbnb/Allbirds product-card pattern (image-led 4:5, name, price, variants) with a single delimiting method, proper button, alt text and AA contrast. Should keep the answer proportionate to a single component.",
+      "assertions": [
+        "Flags the purple-blue gradient as an AI-look anti-pattern",
+        "Flags the clickable div and replaces it with a button",
+        "Flags missing alt / ratio / object-cover on the image",
+        "Flags low-contrast text",
+        "Rewrites the card using an e-commerce product-card pattern",
+        "Keeps the response proportionate to one component"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Refais la page d'accueil de mon site de coach sportif pour qu'elle fasse plus pro, je te mets l'URL : https://example-coach.fr",
+      "expected_output": "Should trigger in French and reply in French. Should open the URL (or capture it with the screenshot script) when web access is available, otherwise ask for the code or a screenshot. Should classify as local business / services, pick references accordingly, keep the existing brand colors, respect French typography (non-breaking spaces before : ; ! ?, « » quotes), and follow the full workflow including screenshots.",
+      "assertions": [
+        "Responds in French",
+        "Opens or captures the URL, or asks for code/screenshot if it cannot",
+        "Classifies as local business / services and picks matching references",
+        "Keeps existing brand colors",
+        "Respects French typography rules in the copy"
+      ],
+      "files": []
+    }
+  ]
+}

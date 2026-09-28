@@ -1,0 +1,35 @@
+name: Improvement
+description: Suggest a new example, reference site, pattern or workflow change
+title: "Improvement: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type
+      options:
+        - New example (assets/examples)
+        - New reference site (references/sites.md)
+        - New or better pattern (references/sections.md / craft.md)
+        - Workflow / SKILL.md
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What should change?
+      placeholder: "Add a settings page example inspired by Vercel's dashboard…"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why? What does the agent get wrong today?
+      description: A prompt you used and what came out is the most useful thing you can share.
+    validations:
+      required: true
+  - type: textarea
+    id: refs
+    attributes:
+      label: Reference links or screenshots

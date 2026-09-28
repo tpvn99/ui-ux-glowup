@@ -1,0 +1,54 @@
+name: Release on version bump
+
+# Creates a git tag + GitHub Release when the version in .claude-plugin/plugin.json
+# changes on main. Notes come from the matching `### x.y.z (date)` block in VERSIONS.md.
+# Idempotent: does nothing if the tag already exists.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".claude-plugin/plugin.json"
+      - "VERSIONS.md"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: ver
+        run: |
+          VERSION=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract release notes
+        if: steps.ver.outputs.exists == 'false'
+        run: |
+          python3 - "${{ steps.ver.outputs.version }}" <<'PY'
+          import re, sys
+          v = sys.argv[1]
+          text = open("VERSIONS.md").read()
+          parts = re.split(r"\n### (\d+\.\d+\.\d+) \([^)]*\)\n", text)
+          blocks = {parts[i]: parts[i + 1].split("\n### ")[0].strip() for i in range(1, len(parts), 2)}
+          open("release-notes.md", "w").write(blocks.get(v, f"Release {v}") + "\n")
+          PY
+
+      - name: Create tag + release
+        if: steps.ver.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          gh release create "v$VERSION" --target "${{ github.sha }}" --title "v$VERSION" --notes-file release-notes.md

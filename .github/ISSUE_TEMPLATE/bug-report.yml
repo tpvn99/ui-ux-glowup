@@ -1,0 +1,36 @@
+name: Bug report
+description: The skill, an example or the screenshot script doesn't work as expected
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Skill doesn't trigger / wrong trigger
+        - Output quality
+        - Example renders incorrectly
+        - screenshot.mjs
+        - Installation
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+      placeholder: "Claude Code 2.x, Cursor, Codex…"
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Prompt / command and what happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true

@@ -1,0 +1,122 @@
+<!doctype html>
+<!--
+  Pattern: pricing + FAQ (inspired by Linear / Vercel / Stripe)
+  Key points: 3 plans, recommended one emphasized with border + badge (not enlarged),
+  accessible monthly/annual toggle, prices in tabular-nums, thin checkmarks,
+  2-column FAQ with native <details>.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing — Orbit</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #4f46e5;
+    --color-line: rgb(9 9 11 / .09);
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] .plus { transform: rotate(45deg); }
+</style>
+</head>
+<body class="bg-zinc-50 font-sans text-zinc-950">
+
+<main class="mx-auto max-w-6xl px-6 py-24 md:py-32">
+  <header class="mx-auto max-w-2xl text-center">
+    <h1 class="text-[clamp(2.25rem,3.5vw+1rem,3.5rem)] font-semibold leading-[1.05] tracking-[-0.035em] [text-wrap:balance]">Simple pricing that scales with your team.</h1>
+    <p class="mt-4 text-lg text-zinc-600">Free for up to 5 members. No commitment, cancel in one click.</p>
+
+    <div class="mt-8 inline-flex rounded-full border border-line bg-white p-1 text-sm" role="radiogroup" aria-label="Billing period">
+      <button type="button" role="radio" aria-checked="true" data-period="month" class="period rounded-full px-4 py-1.5 font-medium text-zinc-600 transition aria-checked:bg-zinc-950 aria-checked:text-white">Monthly</button>
+      <button type="button" role="radio" aria-checked="false" data-period="year" class="period rounded-full px-4 py-1.5 font-medium text-zinc-600 transition aria-checked:bg-zinc-950 aria-checked:text-white">Annual <span class="ml-1 text-xs opacity-70">−20%</span></button>
+    </div>
+  </header>
+
+  <div class="mt-14 grid gap-4 lg:grid-cols-3">
+    <!-- Free -->
+    <article class="flex flex-col rounded-2xl border border-line bg-white p-8">
+      <h2 class="font-semibold">Starter</h2>
+      <p class="mt-1 text-sm text-zinc-600">To try it out with a small team.</p>
+      <p class="mt-6 flex items-baseline gap-1"><span class="text-4xl font-semibold tracking-tight tabular-nums">$0</span></p>
+      <p class="text-sm text-zinc-500">Up to 5 members</p>
+      <a href="#" class="mt-6 rounded-md border border-line py-2.5 text-center text-sm font-medium transition hover:bg-zinc-50">Start for free</a>
+      <ul class="mt-8 space-y-3 text-sm text-zinc-700">
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>250 active issues</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Cycles and roadmap</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>GitHub and Slack integrations</li>
+      </ul>
+    </article>
+
+    <!-- Recommended -->
+    <article class="relative flex flex-col rounded-2xl border-2 border-accent bg-white p-8 shadow-[0_12px_32px_-12px_rgb(79_70_229/.25)]">
+      <span class="absolute -top-3 left-8 rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-white">Most popular</span>
+      <h2 class="font-semibold">Team</h2>
+      <p class="mt-1 text-sm text-zinc-600">For product teams that ship every week.</p>
+      <p class="mt-6 flex items-baseline gap-1"><span class="price text-4xl font-semibold tracking-tight tabular-nums" data-month="$10" data-year="$8">$10</span><span class="text-sm text-zinc-500">/ member / month</span></p>
+      <p class="billing text-sm text-zinc-500" data-month="Billed monthly" data-year="Billed $96 per member per year">Billed monthly</p>
+      <a href="#" class="mt-6 rounded-md bg-accent py-2.5 text-center text-sm font-medium text-white transition hover:brightness-110">Start 14-day trial</a>
+      <p class="mt-8 text-xs font-medium uppercase tracking-wider text-zinc-500">Everything in Starter, plus:</p>
+      <ul class="mt-3 space-y-3 text-sm text-zinc-700">
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-accent" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Unlimited issues and members</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-accent" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Velocity reports</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-accent" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Automations and SLAs</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-accent" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Unlimited guests</li>
+      </ul>
+    </article>
+
+    <!-- Enterprise -->
+    <article class="flex flex-col rounded-2xl border border-line bg-white p-8">
+      <h2 class="font-semibold">Enterprise</h2>
+      <p class="mt-1 text-sm text-zinc-600">Security, control and dedicated support.</p>
+      <p class="mt-6 text-4xl font-semibold tracking-tight">Custom</p>
+      <p class="text-sm text-zinc-500">From 50 members</p>
+      <a href="#" class="mt-6 rounded-md border border-line py-2.5 text-center text-sm font-medium transition hover:bg-zinc-50">Talk to sales</a>
+      <p class="mt-8 text-xs font-medium uppercase tracking-wider text-zinc-500">Everything in Team, plus:</p>
+      <ul class="mt-3 space-y-3 text-sm text-zinc-700">
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>SAML SSO and SCIM</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>EU data residency</li>
+        <li class="flex gap-3"><svg class="mt-0.5 size-4 shrink-0 text-zinc-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Dedicated account manager</li>
+      </ul>
+    </article>
+  </div>
+
+  <!-- FAQ -->
+  <section class="mt-28 grid gap-10 border-t border-line pt-16 md:grid-cols-[1fr_2fr]">
+    <div>
+      <h2 class="text-2xl font-semibold tracking-tight">Frequently asked questions</h2>
+      <p class="mt-3 text-zinc-600">Another question? <a href="#" class="font-medium text-zinc-950 underline underline-offset-4">Write to us</a> — we reply within 4 business hours.</p>
+    </div>
+    <div class="divide-y divide-line border-y border-line">
+      <details class="group py-5">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-medium">How are members counted?<span class="plus text-xl leading-none text-zinc-400 transition-transform" aria-hidden="true">+</span></summary>
+        <p class="mt-3 max-w-prose text-zinc-600">Only members active during the month are billed. Guests (clients, freelancers) are free and unlimited on the Team plan.</p>
+      </details>
+      <details class="py-5">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-medium">Can I switch plans mid-month?<span class="plus text-xl leading-none text-zinc-400 transition-transform" aria-hidden="true">+</span></summary>
+        <p class="mt-3 max-w-prose text-zinc-600">Yes. Upgrades are prorated to the day; downgrades take effect on the next invoice.</p>
+      </details>
+      <details class="py-5">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-medium">Where is our data hosted?<span class="plus text-xl leading-none text-zinc-400 transition-transform" aria-hidden="true">+</span></summary>
+        <p class="mt-3 max-w-prose text-zinc-600">In Europe (Frankfurt) by default. The Enterprise plan lets you choose the region and get a signed DPA.</p>
+      </details>
+      <details class="py-5">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-medium">Do you offer nonprofit and education pricing?<span class="plus text-xl leading-none text-zinc-400 transition-transform" aria-hidden="true">+</span></summary>
+        <p class="mt-3 max-w-prose text-zinc-600">Yes, 50% off the Team plan for nonprofits, schools and open-source projects.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.querySelectorAll(".period").forEach(btn => btn.addEventListener("click", () => {
+    const p = btn.dataset.period;
+    document.querySelectorAll(".period").forEach(b => b.setAttribute("aria-checked", String(b === btn)));
+    document.querySelectorAll("[data-month]").forEach(el => el.textContent = el.dataset[p]);
+  }));
+</script>
+</body>
+</html>

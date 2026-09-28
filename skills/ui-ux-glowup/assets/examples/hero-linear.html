@@ -1,0 +1,130 @@
+<!doctype html>
+<!--
+  Pattern: editorial hero + rebuilt product shot (inspired by Linear / Attio)
+  Key points: left-aligned heading, tight tracking, bleeding shot with fade,
+  product UI rebuilt in HTML with credible data, hairline borders, inner highlight.
+  Brand color: replace --color-accent.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — Project tracking for product teams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #6e6af0;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+  .hairline { border-color: rgb(255 255 255 / .08); }
+  .raised { box-shadow: inset 0 1px 0 rgb(255 255 255 / .06), 0 24px 64px -16px rgb(0 0 0 / .6); }
+  .fade-bottom { mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: reveal .7s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(12px); } }
+  }
+</style>
+</head>
+<body class="bg-[#08090a] text-zinc-100 font-sans">
+
+<!-- Nav -->
+<header class="sticky top-0 z-50 border-b hairline bg-[#08090a]/70 backdrop-blur-md">
+  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6" aria-label="Main">
+    <a href="#" class="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
+      <span class="grid size-6 place-items-center rounded-md bg-accent text-[11px] font-bold text-white">O</span>
+      Orbit
+    </a>
+    <ul class="hidden items-center gap-8 text-sm text-zinc-400 md:flex">
+      <li><a href="#" class="transition-colors hover:text-white">Product</a></li>
+      <li><a href="#" class="transition-colors hover:text-white">Method</a></li>
+      <li><a href="#" class="transition-colors hover:text-white">Customers</a></li>
+      <li><a href="#" class="transition-colors hover:text-white">Pricing</a></li>
+    </ul>
+    <div class="flex items-center gap-2">
+      <a href="#" class="hidden rounded-md px-3 py-1.5 text-sm text-zinc-300 hover:text-white sm:block">Log in</a>
+      <a href="#" class="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Try it</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_60%_50%_at_30%_0%,rgb(255_255_255/.07),transparent)]"></div>
+
+    <div class="relative mx-auto max-w-6xl px-6 pt-24 md:pt-32">
+      <a href="#" class="reveal inline-flex items-center gap-2 rounded-full border hairline bg-white/[.03] py-1 pl-1 pr-3 text-[13px] text-zinc-400 transition hover:text-zinc-200">
+        <span class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-zinc-200">New</span>
+        Automatic cycles and team reports
+        <span aria-hidden="true">→</span>
+      </a>
+
+      <h1 class="reveal mt-6 max-w-3xl text-[clamp(2.5rem,5vw+1rem,4.5rem)] font-medium leading-[1.04] tracking-[-0.035em] [text-wrap:balance]" style="animation-delay:.05s">
+        Project tracking built for teams that ship.
+      </h1>
+      <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-zinc-400 [text-wrap:pretty]" style="animation-delay:.1s">
+        Issues, cycles and roadmap in one place. Orbit keeps the team aligned without status meetings.
+      </p>
+      <div class="reveal mt-8 flex flex-wrap items-center gap-3" style="animation-delay:.15s">
+        <a href="#" class="rounded-md bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-200">Start for free</a>
+        <a href="#" class="group inline-flex items-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:text-white">
+          Watch the demo <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Capture produit reconstruite -->
+    <div class="relative mx-auto mt-16 max-w-6xl px-6 md:mt-20 [perspective:2000px]">
+      <div class="fade-bottom reveal origin-top [transform:rotateX(8deg)]" style="animation-delay:.25s">
+        <div class="raised overflow-hidden rounded-xl border hairline bg-[#0f1011]">
+          <div class="flex h-10 items-center gap-2 border-b hairline px-4">
+            <span class="size-2.5 rounded-full bg-white/10"></span><span class="size-2.5 rounded-full bg-white/10"></span><span class="size-2.5 rounded-full bg-white/10"></span>
+            <span class="ml-4 text-xs text-zinc-500">Orbit · Product Team</span>
+          </div>
+          <div class="grid grid-cols-[200px_1fr] max-md:grid-cols-1">
+            <aside class="border-r hairline p-3 text-[13px] text-zinc-400 max-md:hidden">
+              <p class="px-2 pb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-600">Workspace</p>
+              <ul class="space-y-0.5">
+                <li class="rounded-md bg-white/[.06] px-2 py-1.5 text-zinc-100">My issues</li>
+                <li class="px-2 py-1.5">Inbox <span class="float-right text-zinc-600">4</span></li>
+                <li class="px-2 py-1.5">Cycles</li>
+                <li class="px-2 py-1.5">Roadmap</li>
+              </ul>
+              <p class="mt-5 px-2 pb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-600">Teams</p>
+              <ul class="space-y-0.5">
+                <li class="px-2 py-1.5">Web</li><li class="px-2 py-1.5">Mobile</li><li class="px-2 py-1.5">Data</li>
+              </ul>
+            </aside>
+            <div class="text-[13px]">
+              <div class="flex items-center justify-between border-b hairline px-5 py-3">
+                <span class="font-medium text-zinc-200">Cycle 42 · In progress</span>
+                <span class="text-zinc-500">14 / 23 done</span>
+              </div>
+              <ul class="divide-y divide-white/[.05]">
+                <li class="flex items-center gap-3 px-5 py-2.5"><span class="w-16 shrink-0 whitespace-nowrap tabular-nums text-zinc-600 max-sm:hidden">WEB-318</span><span class="size-3 rounded-full border-2 border-amber-400/80"></span><span class="flex-1 truncate text-zinc-200">Redesign the mobile checkout flow</span><span class="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-zinc-400 max-sm:hidden">Checkout</span><span class="grid size-5 place-items-center rounded-full bg-sky-500/80 text-[9px] font-semibold">CM</span></li>
+                <li class="flex items-center gap-3 px-5 py-2.5"><span class="w-16 shrink-0 whitespace-nowrap tabular-nums text-zinc-600 max-sm:hidden">WEB-315</span><span class="size-3 rounded-full bg-accent"></span><span class="flex-1 truncate text-zinc-200">Orders API latency &gt; 800 ms at peak</span><span class="rounded bg-rose-500/10 px-1.5 py-0.5 text-[11px] text-rose-300 max-sm:hidden">Urgent</span><span class="grid size-5 place-items-center rounded-full bg-emerald-500/80 text-[9px] font-semibold">LB</span></li>
+                <li class="flex items-center gap-3 px-5 py-2.5"><span class="w-16 shrink-0 whitespace-nowrap tabular-nums text-zinc-600 max-sm:hidden">MOB-091</span><span class="size-3 rounded-full border-2 border-zinc-600"></span><span class="flex-1 truncate text-zinc-200">Push notifications: group by project</span><span class="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-zinc-400 max-sm:hidden">iOS</span><span class="grid size-5 place-items-center rounded-full bg-violet-500/80 text-[9px] font-semibold">AR</span></li>
+                <li class="flex items-center gap-3 px-5 py-2.5"><span class="w-16 shrink-0 whitespace-nowrap tabular-nums text-zinc-600 max-sm:hidden">DAT-044</span><span class="size-3 rounded-full bg-accent"></span><span class="flex-1 truncate text-zinc-200">Weekly export of retention metrics</span><span class="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-zinc-400 max-sm:hidden">Data</span><span class="grid size-5 place-items-center rounded-full bg-amber-500/80 text-[9px] font-semibold">TG</span></li>
+                <li class="flex items-center gap-3 px-5 py-2.5"><span class="w-16 shrink-0 whitespace-nowrap tabular-nums text-zinc-600 max-sm:hidden">WEB-309</span><span class="size-3 rounded-full border-2 border-amber-400/80"></span><span class="flex-1 truncate text-zinc-200">Pricing page: annual vs monthly comparison</span><span class="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-zinc-400 max-sm:hidden">Marketing</span><span class="grid size-5 place-items-center rounded-full bg-sky-500/80 text-[9px] font-semibold">CM</span></li>
+                <li class="flex items-center gap-3 px-5 py-2.5"><span class="w-16 shrink-0 whitespace-nowrap tabular-nums text-zinc-600 max-sm:hidden">WEB-301</span><span class="size-3 rounded-full border-2 border-zinc-600"></span><span class="flex-1 truncate text-zinc-200">Accessibility: visible focus on the menu</span><span class="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-zinc-400 max-sm:hidden">A11y</span><span class="grid size-5 place-items-center rounded-full bg-emerald-500/80 text-[9px] font-semibold">LB</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logos -->
+  <section class="mx-auto max-w-6xl px-6 pb-24" aria-label="Customers">
+    <p class="text-center text-sm text-zinc-500">Used by more than 3,800 product teams</p>
+    <ul class="mt-8 grid grid-cols-3 items-center gap-y-8 text-center text-lg font-semibold tracking-tight text-zinc-500 md:grid-cols-6">
+      <li>Northwind</li><li>Lumen</li><li>Arcadia</li><li>Hexa</li><li>Kovo</li><li>Parallel</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

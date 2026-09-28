@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Skill install artifacts (npx skills add)
+.agents/
+.claude/
+skills-lock.json
+
+# Screenshots produced by scripts/screenshot.mjs
+screenshots/
+shots/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
