@@ -19,6 +19,7 @@
     --color-accent: #1f4d3a;
     --color-paper: #f7f5f0;
     --color-line: rgb(28 25 23 / .1);
+    --color-muted: #6b655e; /* secondary text, AA on paper */
     --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-serif: "Fraunces", ui-serif, Georgia, serif;
   }
@@ -67,9 +68,9 @@
         <a href="#projects" class="group inline-flex items-center gap-1.5 px-2 py-3 text-[15px] font-medium">See our work <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span></a>
       </div>
       <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-line pt-6 text-sm">
-        <div><dt class="text-stone-500">Google reviews</dt><dd class="mt-0.5 font-semibold"><span class="text-amber-500" aria-hidden="true">★★★★★</span> 4.9 <span class="font-normal text-stone-500">(127 reviews)</span></dd></div>
-        <div><dt class="text-stone-500">Since</dt><dd class="mt-0.5 font-semibold">1998</dd></div>
-        <div><dt class="text-stone-500">Quotes</dt><dd class="mt-0.5 font-semibold">within 48 h</dd></div>
+        <div><dt class="text-muted">Google reviews</dt><dd class="mt-0.5 font-semibold"><span class="text-amber-500" aria-hidden="true">★★★★★</span> 4.9 <span class="font-normal text-muted">(127 reviews)</span></dd></div>
+        <div><dt class="text-muted">Since</dt><dd class="mt-0.5 font-semibold">1998</dd></div>
+        <div><dt class="text-muted">Quotes</dt><dd class="mt-0.5 font-semibold">within 48 h</dd></div>
       </dl>
     </div>
     <figure class="relative">
@@ -84,24 +85,24 @@
       <h2 class="font-serif text-4xl tracking-tight">What we build</h2>
       <ol class="divide-y divide-line border-y border-line">
         <li class="grid grid-cols-[3rem_1fr] gap-4 py-7 md:grid-cols-[3rem_1fr_auto]">
-          <span class="font-serif text-stone-400 tabular-nums">01</span>
+          <span class="font-serif text-muted tabular-nums">01</span>
           <div><h3 class="text-lg font-medium">Custom kitchens</h3><p class="mt-1.5 text-stone-600">3D plans, workshop build, installation and hookups. 6 to 8 weeks.</p></div>
-          <span class="col-start-2 text-sm text-stone-500 md:col-start-auto">from $12,000</span>
+          <span class="col-start-2 text-sm text-muted md:col-start-auto">from $12,000</span>
         </li>
         <li class="grid grid-cols-[3rem_1fr] gap-4 py-7 md:grid-cols-[3rem_1fr_auto]">
-          <span class="font-serif text-stone-400 tabular-nums">02</span>
+          <span class="font-serif text-muted tabular-nums">02</span>
           <div><h3 class="text-lg font-medium">Staircases</h3><p class="mt-1.5 text-stone-600">Straight, quarter-turn, center stringer. Oak or ash, oil finish.</p></div>
-          <span class="col-start-2 text-sm text-stone-500 md:col-start-auto">from $8,500</span>
+          <span class="col-start-2 text-sm text-muted md:col-start-auto">from $8,500</span>
         </li>
         <li class="grid grid-cols-[3rem_1fr] gap-4 py-7 md:grid-cols-[3rem_1fr_auto]">
-          <span class="font-serif text-stone-400 tabular-nums">03</span>
+          <span class="font-serif text-muted tabular-nums">03</span>
           <div><h3 class="text-lg font-medium">Closets and built-ins</h3><p class="mt-1.5 text-stone-600">Under the eaves, alcoves, sliding doors. Every inch put to use.</p></div>
-          <span class="col-start-2 text-sm text-stone-500 md:col-start-auto">from $3,200</span>
+          <span class="col-start-2 text-sm text-muted md:col-start-auto">from $3,200</span>
         </li>
         <li class="grid grid-cols-[3rem_1fr] gap-4 py-7 md:grid-cols-[3rem_1fr_auto]">
-          <span class="font-serif text-stone-400 tabular-nums">04</span>
+          <span class="font-serif text-muted tabular-nums">04</span>
           <div><h3 class="text-lg font-medium">Shop and restaurant fit-outs</h3><p class="mt-1.5 text-stone-600">Counters, shelving, retail and restaurant furniture.</p></div>
-          <span class="col-start-2 text-sm text-stone-500 md:col-start-auto">on quote</span>
+          <span class="col-start-2 text-sm text-muted md:col-start-auto">on quote</span>
         </li>
       </ol>
     </div>
@@ -112,11 +113,11 @@
     <div class="mx-auto max-w-6xl px-6 py-24">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <h2 class="font-serif text-4xl tracking-tight">Recent projects</h2>
-        <a href="#" class="text-[15px] font-medium underline underline-offset-4">All projects</a>
+        <a href="#" class="inline-block py-2 text-[15px] font-medium underline underline-offset-4">All projects</a>
       </div>
       <div class="mt-10 grid gap-4 md:grid-cols-3">
-        <figure class="md:col-span-2"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1400&q=80" alt="Quarter-turn oak staircase" loading="lazy" width="1400" height="900" class="aspect-[16/10] w-full rounded-xl bg-stone-200 object-cover"><figcaption class="mt-3 text-sm"><span class="font-medium">Quarter-turn staircase</span> <span class="text-stone-500">· Oiled oak · Burlington</span></figcaption></figure>
-        <figure><img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=800&q=80" alt="Ash closet under the eaves" loading="lazy" width="800" height="1000" class="aspect-[4/5] w-full rounded-xl bg-stone-200 object-cover md:aspect-auto md:h-[calc(100%-2rem)]"><figcaption class="mt-3 text-sm"><span class="font-medium">Closet under the eaves</span> <span class="text-stone-500">· Ash · Essex</span></figcaption></figure>
+        <figure class="md:col-span-2"><img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1400&q=80" alt="Quarter-turn oak staircase" loading="lazy" width="1400" height="900" class="aspect-[16/10] w-full rounded-xl bg-stone-200 object-cover"><figcaption class="mt-3 text-sm"><span class="font-medium">Quarter-turn staircase</span> <span class="text-muted">· Oiled oak · Burlington</span></figcaption></figure>
+        <figure><img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=800&q=80" alt="Ash closet under the eaves" loading="lazy" width="800" height="1000" class="aspect-[4/5] w-full rounded-xl bg-stone-200 object-cover md:aspect-auto md:h-[calc(100%-2rem)]"><figcaption class="mt-3 text-sm"><span class="font-medium">Closet under the eaves</span> <span class="text-muted">· Ash · Essex</span></figcaption></figure>
       </div>
     </div>
   </section>
@@ -126,9 +127,9 @@
     <h2 class="font-serif text-4xl tracking-tight">How your project works</h2>
     <ol class="mt-12 grid gap-10 md:grid-cols-4 md:gap-6">
       <li class="border-t-2 border-accent pt-5"><p class="text-sm font-medium text-accent">Step 1</p><h3 class="mt-2 font-medium">Visit and measurements</h3><p class="mt-1.5 text-[15px] text-stone-600">At your place, free, within 7 days.</p></li>
-      <li class="border-t-2 border-line pt-5"><p class="text-sm font-medium text-stone-500">Step 2</p><h3 class="mt-2 font-medium">Plans and quote</h3><p class="mt-1.5 text-[15px] text-stone-600">3D plans and a detailed quote within 48 h.</p></li>
-      <li class="border-t-2 border-line pt-5"><p class="text-sm font-medium text-stone-500">Step 3</p><h3 class="mt-2 font-medium">Build</h3><p class="mt-1.5 text-[15px] text-stone-600">In our workshop, with progress photos sent to you.</p></li>
-      <li class="border-t-2 border-line pt-5"><p class="text-sm font-medium text-stone-500">Step 4</p><h3 class="mt-2 font-medium">Install and finish</h3><p class="mt-1.5 text-[15px] text-stone-600">Clean job site, 10-year warranty.</p></li>
+      <li class="border-t-2 border-line pt-5"><p class="text-sm font-medium text-muted">Step 2</p><h3 class="mt-2 font-medium">Plans and quote</h3><p class="mt-1.5 text-[15px] text-stone-600">3D plans and a detailed quote within 48 h.</p></li>
+      <li class="border-t-2 border-line pt-5"><p class="text-sm font-medium text-muted">Step 3</p><h3 class="mt-2 font-medium">Build</h3><p class="mt-1.5 text-[15px] text-stone-600">In our workshop, with progress photos sent to you.</p></li>
+      <li class="border-t-2 border-line pt-5"><p class="text-sm font-medium text-muted">Step 4</p><h3 class="mt-2 font-medium">Install and finish</h3><p class="mt-1.5 text-[15px] text-stone-600">Clean job site, 10-year warranty.</p></li>
     </ol>
   </section>
 
@@ -138,7 +139,7 @@
       <blockquote class="font-serif text-[clamp(1.5rem,2vw+1rem,2.25rem)] leading-snug tracking-tight [text-wrap:balance]">
         “Our staircase has become the centerpiece of the house. Delivered on the exact day promised, by a team that takes the time to explain.”
       </blockquote>
-      <figcaption class="mt-6 text-sm"><span class="font-medium">Emily & Mark F.</span> <span class="text-stone-500">· Oak staircase, South Burlington</span></figcaption>
+      <figcaption class="mt-6 text-sm"><span class="font-medium">Emily & Mark F.</span> <span class="text-muted">· Oak staircase, South Burlington</span></figcaption>
     </figure>
   </section>
 
@@ -148,9 +149,9 @@
       <h2 class="font-serif text-4xl tracking-tight">Tell us about your project</h2>
       <p class="mt-4 max-w-md text-stone-600">Reply within one business day. We work in Burlington, Winooski, Shelburne, Essex, Stowe and within 40 miles.</p>
       <dl class="mt-8 space-y-4 text-[15px]">
-        <div><dt class="text-stone-500">Phone</dt><dd><a href="tel:+18025550142" class="font-medium">(802) 555-0142</a></dd></div>
-        <div><dt class="text-stone-500">Workshop</dt><dd class="font-medium">12 Mill Street, Winooski, VT 05404</dd></div>
-        <div><dt class="text-stone-500">Hours</dt><dd class="font-medium">Mon–Fri 8am–6pm · Sat by appointment</dd></div>
+        <div><dt class="text-muted">Phone</dt><dd><a href="tel:+18025550142" class="inline-block py-1 font-medium">(802) 555-0142</a></dd></div>
+        <div><dt class="text-muted">Workshop</dt><dd class="font-medium">12 Mill Street, Winooski, VT 05404</dd></div>
+        <div><dt class="text-muted">Hours</dt><dd class="font-medium">Mon–Fri 8am–6pm · Sat by appointment</dd></div>
       </dl>
     </div>
     <form class="space-y-4 rounded-2xl border border-line bg-white p-6 md:p-8">
@@ -161,16 +162,16 @@
       <label class="block text-sm font-medium">Project type
         <select class="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 font-normal outline-none focus:border-accent focus:ring-3 focus:ring-accent/15"><option>Kitchen</option><option>Staircase</option><option>Closet / built-in</option><option>Shop fit-out</option><option>Other</option></select>
       </label>
-      <label class="block text-sm font-medium">Your project <span class="font-normal text-stone-500">(optional)</span><textarea rows="4" class="mt-1.5 w-full rounded-lg border border-line px-3 py-2.5 font-normal outline-none focus:border-accent focus:ring-3 focus:ring-accent/15" placeholder="Dimensions, preferred wood, timeline…"></textarea></label>
+      <label class="block text-sm font-medium">Your project <span class="font-normal text-muted">(optional)</span><textarea rows="4" class="mt-1.5 w-full rounded-lg border border-line px-3 py-2.5 font-normal outline-none focus:border-accent focus:ring-3 focus:ring-accent/15" placeholder="Dimensions, preferred wood, timeline…"></textarea></label>
       <button class="h-11 w-full rounded-full bg-accent text-[15px] font-medium text-white transition hover:brightness-110">Send my request</button>
     </form>
   </section>
 </main>
 
 <footer class="border-t border-line">
-  <div class="mx-auto flex max-w-6xl flex-wrap justify-between gap-4 px-6 py-8 pb-24 text-sm text-stone-500 sm:pb-8">
+  <div class="mx-auto flex max-w-6xl flex-wrap justify-between gap-4 px-6 py-8 pb-24 text-sm text-muted sm:pb-8">
     <p>© 2026 Ashford Woodworks · Licensed & insured</p>
-    <p class="flex gap-6"><a href="#" class="hover:text-stone-900">Terms</a><a href="#" class="hover:text-stone-900">Privacy</a></p>
+    <p class="flex gap-6"><a href="#" class="py-1 hover:text-stone-900">Terms</a><a href="#" class="py-1 hover:text-stone-900">Privacy</a></p>
   </div>
 </footer>
 

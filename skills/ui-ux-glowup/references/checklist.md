@@ -39,4 +39,4 @@
 ## Technical
 - [ ] Complete code that runs as-is, no unnecessary dependencies
 - [ ] Images sized, `loading="lazy"` below the fold
-- [ ] Audit re-run: every criterion ≥ 4/5
+- [ ] Audit re-run: every criterion ≥ 4/5, `scripts/audit.mjs` reports no errors

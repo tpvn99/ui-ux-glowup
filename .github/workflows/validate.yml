@@ -28,24 +28,41 @@ jobs:
           pip install "git+https://github.com/agentskills/agentskills.git#subdirectory=skills-ref"
           for d in skills/*/; do skills-ref validate "$d"; done
 
-      - name: Check screenshot script syntax
-        run: node --check skills/ui-ux-glowup/scripts/screenshot.mjs
+      - name: Install dependencies
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Unit + integration tests (audits every example)
+        run: npm test
+        env:
+          CI: true
 
       - name: Type-check React example
         run: |
           npm i --no-save typescript@5 react@18 @types/react@18 lucide-react
           npx tsc --noEmit --jsx react-jsx --strict --esModuleInterop --moduleResolution bundler --module esnext --target es2020 --skipLibCheck skills/ui-ux-glowup/assets/examples/react/DashboardShell.tsx
 
-      - name: Render examples (desktop + mobile, fail on overflow)
+      - name: Screenshot examples (fail on overflow)
         run: |
-          npm i --no-save playwright
-          npx playwright install --with-deps chromium
           status=0
           for f in skills/ui-ux-glowup/assets/examples/*.html; do
             out=$(node skills/ui-ux-glowup/scripts/screenshot.mjs "$f" shots/ 2>&1); echo "$out"
             echo "$out" | grep -q "horizontal overflow" && status=1
           done
           exit $status
+
+      - name: Audit report for each example
+        if: always()
+        run: |
+          {
+            echo "## Example audits"
+            echo '```'
+            for f in skills/ui-ux-glowup/assets/examples/*.html; do
+              node skills/ui-ux-glowup/scripts/audit.mjs "$f" | head -2
+            done
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()

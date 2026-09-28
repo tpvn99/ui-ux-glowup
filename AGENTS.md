@@ -23,8 +23,10 @@ ui-ux-glowup/
 │       ├── SKILL.md           # Required skill file (<500 lines)
 │       ├── references/        # Loaded on demand: sites, sections, craft, audit, checklist
 │       ├── assets/examples/   # Tested Tailwind v4 examples + React dashboard
-│       ├── scripts/           # screenshot.mjs (Playwright)
+│       ├── scripts/           # audit, extract-tokens, screenshot, compare (+ lib/)
 │       └── evals/             # evals.json
+├── tests/                     # node:test suite + fixtures
+├── package.json               # Dev deps (playwright) and npm scripts
 ├── AGENTS.md                  # This file (CLAUDE.md symlinks here)
 ├── CONTRIBUTING.md
 ├── VERSIONS.md
@@ -38,9 +40,13 @@ ui-ux-glowup/
 **Skills** are content-only (no build step). Validate with:
 
 ```bash
-./validate-skills.sh                              # Frontmatter, naming, length checks
-node --check skills/ui-ux-glowup/scripts/screenshot.mjs  # Script syntax
+./validate-skills.sh     # Frontmatter, naming, referenced files, manifests
+npm install && npx playwright install chromium
+npm test                 # Unit tests (color math, analysis rules) + browser integration tests
+CI=true npm test         # Also audits every example (needs network)
 ```
+
+**Scripts** are zero-dependency ES modules except Playwright, resolved from the user's project. Keep in-page code in `scripts/lib/probe.mjs` self-contained (it is serialized into the browser) and all judgement in `scripts/lib/analyze.mjs` (pure, unit-tested). Add a test for every new audit rule.
 
 **Examples** must be checked visually after any change:
 
@@ -49,7 +55,7 @@ npm i -D playwright && npx playwright install chromium
 node skills/ui-ux-glowup/scripts/screenshot.mjs skills/ui-ux-glowup/assets/examples/<file>.html shots/
 ```
 
-Review both `-desktop.png` and `-mobile.png`. No horizontal overflow warning is allowed.
+Review both `-desktop.png` and `-mobile.png`. No horizontal overflow warning is allowed, and `node skills/ui-ux-glowup/scripts/audit.mjs <file>` must report no errors.
 
 **React example** must type-check:
 
@@ -120,7 +126,7 @@ skills/skill-name/
 
 ### Pull Request Checklist
 
-- [ ] `./validate-skills.sh` passes
+- [ ] `./validate-skills.sh` and `npm test` pass
 - [ ] `SKILL.md` is under 500 lines
 - [ ] Changed examples re-captured at desktop + mobile, no overflow
 - [ ] Versions bumped (`SKILL.md` metadata, `VERSIONS.md`, `plugin.json`, `marketplace.json`)

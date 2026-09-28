@@ -35,6 +35,7 @@ What separates a "fine" interface from one that looks like it came from a large 
 ## Product visuals and images
 
 - Rebuild app screenshots in HTML/CSS: window chrome, sidebar, credible fake data (names, amounts, dates). This is what Linear, Stripe and Attio do.
+- Mark decorative mockups as one image for assistive tech: `role="img"` + `aria-label` on the wrapper, `aria-hidden="true"` (and `inert` if it contains fake controls) on the fake UI inside.
 - Let the shot bleed or crop (cut by the section edge, fading at the bottom) instead of floating it in the middle.
 - Photos: same treatment everywhere (ratio, light, framing), `object-cover`, fixed ratios (`aspect-[4/3]`, `aspect-[16/10]`).
 - Customer logos: monochrome, uniform height (20–28px), reduced opacity.

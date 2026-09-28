@@ -47,9 +47,9 @@
       </a>
     </div>
 
-    <!-- Mini-UI: rebuilt checkout form -->
-    <div class="relative">
-      <div class="card mx-auto max-w-sm rounded-xl bg-white p-6">
+    <!-- Mini-UI: rebuilt checkout form (decorative: role=img + aria-hidden content) -->
+    <div class="relative" role="img" aria-label="Checkout form accepting a €189 card payment">
+      <div class="card mx-auto max-w-sm rounded-xl bg-white p-6" aria-hidden="true" inert>
         <div class="flex items-center justify-between">
           <p class="text-sm font-medium text-ink">Oak & Linen Studio</p>
           <p class="text-sm tabular-nums text-body">Order #20417</p>
@@ -71,7 +71,7 @@
         <button class="mt-5 h-10 w-full rounded-md bg-accent text-sm font-medium text-white">Pay €189.00</button>
       </div>
       <!-- Secondary floating card -->
-      <div class="card absolute -bottom-6 -left-2 hidden items-center gap-3 rounded-lg bg-white px-4 py-3 lg:flex">
+      <div aria-hidden="true" class="card absolute -bottom-6 -left-2 hidden items-center gap-3 rounded-lg bg-white px-4 py-3 lg:flex">
         <span class="grid size-8 place-items-center rounded-full bg-emerald-50 text-emerald-600" aria-hidden="true">✓</span>
         <div><p class="text-sm font-medium text-ink">Payment accepted</p><p class="text-xs">2 seconds ago</p></div>
       </div>

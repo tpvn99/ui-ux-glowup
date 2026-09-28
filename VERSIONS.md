@@ -4,9 +4,19 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.0.0 | 2026-09-28 |
+| ui-ux-glowup | 1.1.0 | 2026-09-28 |
 
 ## Recent Changes
+
+### 1.1.0 (2026-09-28)
+
+- **ui-ux-glowup** (1.0.0 → 1.1.0): measurable audits and real reference tokens.
+  - New `scripts/audit.mjs`: automated audit at desktop and mobile — WCAG contrast (handles oklch/Tailwind v4 colors and translucent layers), touch targets (WCAG 2.2), type scale, line length/height, 4px spacing grid, radius/shadow/color sprawl, heading order, alt text, form labels, clickable divs, broken/stretched images, lorem ipsum, overflow. Scores the 8 audit criteria with offending selectors; `--json` and `--fail-under` for CI.
+  - New `scripts/extract-tokens.mjs`: measures a reference site's fonts, type scale, heading tracking and line-height ratios, spacing rhythm, radii and shadows, so borrowed values are real.
+  - New `scripts/compare.mjs`: before/after side-by-side image for the deliverable.
+  - `scripts/screenshot.mjs` refactored on a shared `scripts/lib/` (browser loader, color math, page probe, pure analysis).
+  - Examples fixed from their own audit: contrast on muted text, decorative mockups exposed as `role="img"`, larger mobile touch targets, accordion hit areas. All examples now pass with no errors.
+  - Repo: `package.json`, `node:test` suite (unit tests for color math and analysis rules + browser integration tests), CI runs the tests and posts example audits to the job summary.
 
 ### 1.0.0 (2026-09-28)
 

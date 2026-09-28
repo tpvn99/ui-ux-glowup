@@ -12,7 +12,7 @@
 
 ## Checklist
 
-- [ ] `./validate-skills.sh` passes
+- [ ] `./validate-skills.sh` and `npm test` pass
 - [ ] `SKILL.md` is still under 500 lines
 - [ ] Changed examples re-captured with `scripts/screenshot.mjs` (desktop + mobile attached below), no overflow
 - [ ] Versions bumped: `SKILL.md` metadata, `VERSIONS.md`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`

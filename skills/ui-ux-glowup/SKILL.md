@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "When the user wants to improve, redesign, or build a web interface so it looks professionally designed — landing pages, marketing sites, local business sites, SaaS dashboards, admin panels, pricing pages, product pages, or single components. Also use when the user mentions 'make it look more professional,' 'make it look like Linear/Stripe/Vercel/Apple,' 'redesign this page,' 'improve the UI,' 'polish the design,' 'glow up my UI,' 'it looks amateur,' 'it looks AI-generated,' 'modern UI,' 'better UX,' 'UI audit,' 'design review,' or shares a screenshot or URL of an interface to upgrade. Borrows concrete patterns from best-in-class product sites, keeps the user's brand colors, and verifies the result visually with screenshots. Not for creating logos, brand identities, or color palettes."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # UI/UX Glowup
@@ -27,7 +27,15 @@ Gather only what is missing (ask in one short message, only if truly blocking):
 
 ### 1. Audit
 
-Score the current interface with `references/audit.md` (8 criteria, 1–5 each). List the 3–5 problems that cost the most visually. No more — fix what matters.
+When you can run code, start with the automated audit — it measures what eyes miss:
+
+```bash
+node <skill-dir>/scripts/audit.mjs page.html      # or a URL, or http://localhost:5173
+```
+
+It checks both desktop and mobile: WCAG contrast, touch targets, type scale, line length and height, 4px spacing grid, radius/shadow/color sprawl, headings, alt text, form labels, clickable divs, broken or stretched images, lorem ipsum and horizontal overflow. It prints a score per criterion of `references/audit.md` with the offending selectors.
+
+Then look at the page yourself (`scripts/screenshot.mjs`) and complete the score with `references/audit.md` — hierarchy, visuals and content quality need your judgement. List the 3–5 problems that cost the most visually. No more — fix what matters.
 
 ### 2. Pick 2–3 references
 
@@ -38,7 +46,14 @@ From `references/sites.md`, pick 2–3 sites from the same category (or a neighb
 > - Stripe → alternating sections on a visible 4-column grid with explanatory mini-UIs
 > - Vercel → hairline borders and a subtle grid background
 
-With web access, look at these sites live to confirm their current design (they change), e.g. `node scripts/screenshot.mjs https://linear.app shots/ --fold`. Without it, rely on the documented patterns.
+With web access, measure the references instead of guessing:
+
+```bash
+node <skill-dir>/scripts/extract-tokens.mjs https://linear.app          # fonts, type scale, heading tracking, spacing, radii, shadows
+node <skill-dir>/scripts/screenshot.mjs https://linear.app shots/ --fold   # see the current design
+```
+
+Use the measured type scale, heading tracking / line-height ratios, spacing rhythm and radii as targets. **Ignore their colors** — the extracted palette is context only; the user's brand stays. Without web access, rely on the documented patterns.
 
 Never copy a site verbatim (copy, logos, illustrations). Borrow **design mechanics**.
 
@@ -63,21 +78,33 @@ node <skill-dir>/scripts/screenshot.mjs page.html shots/
 
 The script writes `page-desktop.png` (1440px) and `page-mobile.png` (390px) and warns about horizontal overflow. If Playwright is missing: `npm i -D playwright && npx playwright install chromium`. For a React project, start the dev server and pass the URL (`http://localhost:5173`).
 
-Open both images and actively hunt for defects: bad line breaks, misalignment, irregular spacing, weak contrast, overlapping elements, empty or broken visuals, a mobile layout that merely stacks. Fix, re-capture, repeat until nothing is left to fix (usually 2–3 rounds).
+Open both images and actively hunt for defects: bad line breaks, misalignment, irregular spacing, weak contrast, overlapping elements, empty or broken visuals, a mobile layout that merely stacks. Re-run `scripts/audit.mjs` on the new version. Fix, re-capture, repeat until nothing is left to fix (usually 2–3 rounds).
 
 Without code execution: re-read the code section by section, mentally simulating 390px and 1440px.
 
 ### 5. Self-review
 
-Run `references/checklist.md`. Re-score with the audit grid: every criterion must gain at least 1 point and none may be below 4/5. Fix before delivering.
+Run `references/checklist.md`. Re-score with the audit grid: every criterion must gain at least 1 point and none may be below 4/5, and the automated audit must report no errors. Fix before delivering.
 
 ### 6. Deliver
 
 1. The complete code
-2. A short recap:
-   - Score before → after
+2. A before/after image when you have both versions: `node <skill-dir>/scripts/compare.mjs before.html after.html compare.png`
+3. A short recap:
+   - Score before → after (automated + your review)
    - References used and what was borrowed from each
    - The 3–5 major changes, one line each
+
+## Scripts
+
+All scripts take a local file or a URL and need Playwright in the project where you work (`npm i -D playwright && npx playwright install chromium`, once).
+
+| Script | Use it to |
+|---|---|
+| `scripts/audit.mjs <page> [--json r.json]` | Measure contrast, targets, type, spacing, a11y — before and after |
+| `scripts/extract-tokens.mjs <url>` | Get the real type scale, tracking, spacing, radii of a reference site |
+| `scripts/screenshot.mjs <page> [dir] [--fold]` | See the page at 1440px and 390px, detect overflow |
+| `scripts/compare.mjs <before> <after> [out.png]` | Show the user a side-by-side before/after |
 
 ## Anti-patterns (the "AI look")
 

@@ -22,7 +22,10 @@ Examples are the highest-leverage contribution: the agent copies their level of 
    npm i -D playwright && npx playwright install chromium
    node skills/ui-ux-glowup/scripts/screenshot.mjs skills/ui-ux-glowup/assets/examples/<pattern-name>.html shots/
    ```
-   No horizontal overflow warning is allowed.
+   No horizontal overflow warning is allowed. Then audit it — no errors allowed:
+   ```bash
+   node skills/ui-ux-glowup/scripts/audit.mjs skills/ui-ux-glowup/assets/examples/<pattern-name>.html
+   ```
 4. Add a row to `assets/examples/README.md` and point to it from `references/sections.md`.
 5. Attach the two screenshots to your PR.
 
@@ -40,11 +43,15 @@ Add it to the right category in `references/sites.md` with **specific mechanics 
 
 See [AGENTS.md](AGENTS.md#versioning). In short: bump `SKILL.md` `metadata.version`, the `VERSIONS.md` table and changelog, and the version in both `.claude-plugin/*.json` files in the same PR.
 
+## Adding an audit rule
+
+Rules live in `skills/ui-ux-glowup/scripts/lib/analyze.mjs` (pure functions over data collected by `lib/probe.mjs`). Add the measurement to the probe if needed, the rule to `analyze()`, and a test in `tests/analyze.test.mjs`.
+
 ## Before opening a PR
 
 ```bash
 ./validate-skills.sh
-node --check skills/ui-ux-glowup/scripts/screenshot.mjs
+npm test
 ```
 
 Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`).

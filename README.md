@@ -11,16 +11,18 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Named references, not vague best practices.** For every job the agent picks 2–3 reference sites from the same category and states exactly what it borrows from each.
 - **Tested example code.** 7 complete sections in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
 - **Visual self-check.** A Playwright script captures the result at 1440px and 390px and flags horizontal overflow. The agent reviews, fixes and re-captures.
-- **Measurable.** An 8-criteria audit scored before and after; nothing ships below 4/5.
+- **Measured, not eyeballed.** `audit.mjs` checks contrast, touch targets, type scale, spacing grid, headings, labels and more at desktop and mobile, and scores the 8 audit criteria before and after. Nothing ships below 4/5.
+- **Real reference values.** `extract-tokens.mjs` measures a reference site's type scale, heading tracking, spacing rhythm, radii and shadows — so "like Linear" means Linear's actual numbers.
 - **Anti "AI look".** Explicit list of patterns to avoid (purple gradients, blobs, three identical icon cards…).
 
 ## How it works
 
 ```
-  Audit (8 criteria / 40)
+  Automated audit + visual review ──► scripts/audit.mjs
           │
           ▼
   Pick 2–3 reference sites ──► references/sites.md
+          │                            scripts/extract-tokens.mjs
           │
           ▼
   Rebuild section by section ──► references/sections.md + craft.md
@@ -31,7 +33,7 @@ It **keeps your brand colors** and works on everything else: structure, typograp
           └─ fix ──┘
           │
           ▼
-  Re-audit (≥ 4/5 everywhere) → deliver code + before/after score
+  Re-audit (≥ 4/5, no errors) → code + before/after image ──► scripts/compare.mjs
 ```
 
 ## Examples included
@@ -118,8 +120,45 @@ skills/ui-ux-glowup/
 │   ├── audit.md                # 8-criteria audit grid
 │   └── checklist.md            # Pre-delivery checklist
 ├── assets/examples/            # Tested examples (Tailwind v4 + React)
-├── scripts/screenshot.mjs      # Desktop + mobile capture with overflow warning
+├── scripts/
+│   ├── audit.mjs               # Automated UI audit (desktop + mobile), scored /40
+│   ├── extract-tokens.mjs      # Measure a reference site's design tokens
+│   ├── screenshot.mjs          # Desktop + mobile capture with overflow warning
+│   ├── compare.mjs             # Before/after side-by-side image
+│   └── lib/                    # Browser loader, color math, page probe, analysis rules
 └── evals/evals.json            # Test prompts with assertions
+```
+
+## Using the scripts directly
+
+They're useful on their own, with or without an agent:
+
+```bash
+npm i -D playwright && npx playwright install chromium
+
+node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com
+node skills/ui-ux-glowup/scripts/extract-tokens.mjs https://stripe.com
+node skills/ui-ux-glowup/scripts/compare.mjs old.html new.html compare.png
+```
+
+Example audit output:
+
+```
+Audit: Hierarchy 4 · Typography 3.5 · Spacing 4 · Components 4 · Visuals* 4.5 · Content* 3.5 · Responsive 1.5 · A11y 1 → 26/40
+✗ [Accessibility] Form fields without a label.
+    form > input
+✗ [Responsive] Controls under 24px (WCAG 2.2 target size minimum).
+    form > button 8×8
+! [Typography] Lines longer than ~85 characters; cap paragraphs around 65ch.
+    div > p (~218ch)
+```
+
+## Development
+
+```bash
+npm install && npx playwright install chromium
+npm test              # unit tests + browser integration tests
+./validate-skills.sh  # skill spec + manifests
 ```
 
 ## Contributing

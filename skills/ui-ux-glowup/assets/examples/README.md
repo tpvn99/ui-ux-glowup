@@ -13,9 +13,16 @@ Complete code, checked at desktop (1440px) and mobile (390px). Read the matching
 | `product-page.html` | Gallery + sticky buy column, variants, accordions | Aesop, Allbirds | E-commerce |
 | `react/DashboardShell.tsx` | Same dashboard split into typed components | — | React projects |
 
+## Audit status
+
+Every example scores ≥ 39/40 with `scripts/audit.mjs`. Two expected findings:
+- `bento-vercel.html` and `features-stripe.html` are **sections** meant to sit below a page hero, so they start at `<h2>` and the audit reports a missing `<h1>`.
+- Unsplash placeholders are reported as broken only when the network blocks them.
+
 ## Shared conventions
 
 - Tailwind v4 via `@tailwindcss/browser`; tokens in `@theme`: `--color-accent` (the client's brand color) and `--color-line` (hairline borders).
 - Replace `--color-accent` with the brand color; leave the neutrals alone unless there is a reason.
 - Unsplash photos are placeholders: replace them with the client's real visuals.
+- Decorative product mockups use `role="img"` + `aria-label` on the wrapper and `aria-hidden="true"` (plus `inert` if they contain controls) on the fake UI, so screen readers and the contrast audit skip them.
 - In React: one component per block, data separated from rendering, variants via a mapping object, formatting via `Intl`.

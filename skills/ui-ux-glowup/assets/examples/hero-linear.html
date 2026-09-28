@@ -34,7 +34,7 @@
 <header class="sticky top-0 z-50 border-b hairline bg-[#08090a]/70 backdrop-blur-md">
   <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6" aria-label="Main">
     <a href="#" class="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-      <span class="grid size-6 place-items-center rounded-md bg-accent text-[11px] font-bold text-white">O</span>
+      <span aria-hidden="true" class="grid size-6 place-items-center rounded-md bg-accent text-[11px] font-bold text-white">O</span>
       Orbit
     </a>
     <ul class="hidden items-center gap-8 text-sm text-zinc-400 md:flex">
@@ -45,7 +45,7 @@
     </ul>
     <div class="flex items-center gap-2">
       <a href="#" class="hidden rounded-md px-3 py-1.5 text-sm text-zinc-300 hover:text-white sm:block">Log in</a>
-      <a href="#" class="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Try it</a>
+      <a href="#" class="inline-flex min-h-9 items-center rounded-md bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Try it</a>
     </div>
   </nav>
 </header>
@@ -56,7 +56,7 @@
     <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_60%_50%_at_30%_0%,rgb(255_255_255/.07),transparent)]"></div>
 
     <div class="relative mx-auto max-w-6xl px-6 pt-24 md:pt-32">
-      <a href="#" class="reveal inline-flex items-center gap-2 rounded-full border hairline bg-white/[.03] py-1 pl-1 pr-3 text-[13px] text-zinc-400 transition hover:text-zinc-200">
+      <a href="#" class="reveal inline-flex min-h-9 items-center gap-2 rounded-full border hairline bg-white/[.03] py-1 pl-1 pr-3 text-[13px] text-zinc-400 transition hover:text-zinc-200">
         <span class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-zinc-200">New</span>
         Automatic cycles and team reports
         <span aria-hidden="true">→</span>
@@ -78,8 +78,8 @@
 
     <!-- Capture produit reconstruite -->
     <div class="relative mx-auto mt-16 max-w-6xl px-6 md:mt-20 [perspective:2000px]">
-      <div class="fade-bottom reveal origin-top [transform:rotateX(8deg)]" style="animation-delay:.25s">
-        <div class="raised overflow-hidden rounded-xl border hairline bg-[#0f1011]">
+      <div class="fade-bottom reveal origin-top [transform:rotateX(8deg)]" style="animation-delay:.25s" role="img" aria-label="Orbit app showing the Cycle 42 issue list">
+        <div class="raised overflow-hidden rounded-xl border hairline bg-[#0f1011]" aria-hidden="true">
           <div class="flex h-10 items-center gap-2 border-b hairline px-4">
             <span class="size-2.5 rounded-full bg-white/10"></span><span class="size-2.5 rounded-full bg-white/10"></span><span class="size-2.5 rounded-full bg-white/10"></span>
             <span class="ml-4 text-xs text-zinc-500">Orbit · Product Team</span>
@@ -120,8 +120,8 @@
 
   <!-- Logos -->
   <section class="mx-auto max-w-6xl px-6 pb-24" aria-label="Customers">
-    <p class="text-center text-sm text-zinc-500">Used by more than 3,800 product teams</p>
-    <ul class="mt-8 grid grid-cols-3 items-center gap-y-8 text-center text-lg font-semibold tracking-tight text-zinc-500 md:grid-cols-6">
+    <p class="text-center text-sm text-zinc-400">Used by more than 3,800 product teams</p>
+    <ul class="mt-8 grid grid-cols-3 items-center gap-y-8 text-center text-lg font-semibold tracking-tight text-zinc-400 md:grid-cols-6">
       <li>Northwind</li><li>Lumen</li><li>Arcadia</li><li>Hexa</li><li>Kovo</li><li>Parallel</li>
     </ul>
   </section>
