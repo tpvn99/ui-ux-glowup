@@ -4,9 +4,19 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.4.1 | 2026-09-30 |
+| ui-ux-glowup | 1.5.0 | 2026-09-30 |
 
 ## Recent Changes
+
+### 1.5.0 (2026-09-30)
+
+- **ui-ux-glowup** (1.4.1 → 1.5.0): professional PDFs.
+  - `scripts/pdf.mjs`: HTML → PDF with Chromium (tagged, bookmarks, CSS page size and margin boxes, safe break defaults), then checks the real file: Type 3 fonts (variable fonts or faked bold/italic), fonts not embedded, system fallback fonts with the suspect characters, blank and near-empty pages, content past the margins, text under 7pt, thin weights, low-resolution images, long tables without `<thead>`, file weight, title, lang, page numbers — and the content each type needs (`--type invoice|quote|report|proposal|onepager`, French invoice mentions incl. the 2026 reform). One PNG with all pages (`--pages` for one per page; needs poppler). `--check file.pdf` for existing PDFs.
+  - `scripts/lib/pdfcheck.mjs`: dependency-free PDF reader (objects, Flate streams, object streams, fonts, pages, title, tags).
+  - `scripts/site-fonts.mjs`: reuses the website's fonts — finds the families and weights actually used, downloads their files, writes `fonts.css` with `--font-heading`/`--font-body`, license hint per source, `--static` turns variable fonts into static weights (fontTools), warns about faked bold.
+  - `references/pdf.md`: workflow, font licensing, page CSS, checklists (every document, invoice/quote, report, proposal, one-pager).
+  - Templates in `assets/pdf/`: `facture-devis.html`, `report.html`, `proposal.html`, `one-pager.html` — all print clean on the first page count.
+  - Tests: 51.
 
 ### 1.4.1 (2026-09-30)
 

@@ -19,6 +19,7 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Spacing, readability and SEO.** Gaps between blocks and section rhythm, long paragraphs and sentences, justified text, title/description/Open Graph/favicon/canonical/JSON-LD, image format, size and lazy-loading. Copy is clarified for readers — never rewritten to stuff keywords.
 - **Nothing forgotten.** `inventory.mjs` lists every element of a page (links, CTAs, forms, images, contacts, legal, trackers, structured data) and `--compare` shows what a redesign lost.
 - **Visuals, charts and KPIs.** Guidance for clean 3D, bento with micro-animations, semi-flat, interactive SVG charts (Recharts, Chart.js, Framer Motion), donuts with the key number in the center, KPI cards with sparklines, dark mode for every chart, WebP/AVIF + SVG.
+- **Clean PDFs.** Invoices and quotes (French legal mentions incl. the 2026 reform), reports, proposals and one-pagers from print-ready templates. `pdf.mjs` prints, then checks fonts (embedded, no blurry Type 3, no fallback glyphs), blank or near-empty pages, overflow, tiny text, title, page numbers and the mentions each document type needs — and shows every page in one image. `site-fonts.mjs` reuses the website's own fonts, with license hints.
 - **Icons and favicons.** `find-icons.mjs` searches 200k+ open icons (Phosphor, Solar, Tabler…) with licenses, plus Flaticon; `make-favicon.mjs` generates every favicon size and the `<head>` snippet.
 - **Works on real products.** Audits pages behind a login, whole sites (`audit-site.mjs`), and maps every finding to `file:line` in your codebase (`locate.mjs`) so fixes land in the real components.
 - **Real reference values.** `extract-tokens.mjs` measures a reference site's type scale, heading tracking, spacing rhythm, radii and shadows — so "like Linear" means Linear's actual numbers.
@@ -72,6 +73,8 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 | `local-business.html` | Aesop, Mercury, Stripe | Trades, local services, health |
 | `product-page.html` | Aesop, Allbirds | E-commerce |
 | `kpi-cards.html` | Stripe, Linear, Vercel | KPI cards, donut, goal ring, bars, sparklines — light/dark |
+
+PDF templates (`assets/pdf/`): `facture-devis.html` (French invoice/quote), `report.html`, `proposal.html`, `one-pager.html`.
 | `react/DashboardShell.tsx` | — | React projects |
 
 ## Installation
@@ -152,10 +155,12 @@ skills/ui-ux-glowup/
 │   ├── mobile.md               # Taps, forms, carousels, overlays on phones
 │   ├── seo-readability.md      # Section spacing, readability, on-page SEO, copy rules
 │   ├── icons.md                # Icon search, Flaticon, favicons
+│   ├── pdf.md                  # PDF workflow, fonts and licenses, checklists per document type
 │   ├── anti-ai.md              # Tells of AI-generated design and what to do instead
 │   ├── audit.md                # 9-criteria audit grid (/45)
 │   └── checklist.md            # Pre-delivery checklist
 ├── assets/examples/            # Tested examples (Tailwind v4 + React)
+├── assets/pdf/                 # Print-ready PDF templates (invoice/quote, report, proposal, one-pager)
 ├── scripts/
 │   ├── audit.mjs               # Automated UI audit (desktop + mobile), scored /45
 │   ├── extract-tokens.mjs      # Measure a reference site's design tokens
@@ -166,6 +171,8 @@ skills/ui-ux-glowup/
 │   ├── login.mjs               # Save a logged-in session (--storage-state)
 │   ├── inventory.mjs           # Every element of a page; --compare for redesigns
 │   ├── find-icons.mjs          # Search open icon sets (Iconify) + Flaticon link
+│   ├── pdf.mjs                 # HTML → PDF + checks + page sheet
+│   ├── site-fonts.mjs          # Reuse a website's fonts (static files + fonts.css)
 │   ├── make-favicon.mjs        # favicon.ico/svg, apple-touch, PWA icons, <head> snippet
 │   ├── audit.browser.js        # Paste-in-DevTools audit (generated)
 │   ├── build-browser-audit.mjs # Regenerates audit.browser.js
@@ -188,6 +195,8 @@ node skills/ui-ux-glowup/scripts/inventory.mjs https://your-site.com --json befo
 node skills/ui-ux-glowup/scripts/inventory.mjs before.json --compare new-page.html
 node skills/ui-ux-glowup/scripts/find-icons.mjs "delivery truck" --sets ph,solar,tabler --download icons/
 node skills/ui-ux-glowup/scripts/make-favicon.mjs logo.svg public/ --bg "#1f4d3a"
+node skills/ui-ux-glowup/scripts/site-fonts.mjs https://your-site.com docs/ --static
+node skills/ui-ux-glowup/scripts/pdf.mjs docs/invoice.html --type invoice      # needs poppler for the page sheet
 
 # Behind a login
 node skills/ui-ux-glowup/scripts/login.mjs https://app.your-site.com      # log in, press Enter

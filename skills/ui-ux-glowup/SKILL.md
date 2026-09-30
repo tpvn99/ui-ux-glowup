@@ -1,9 +1,9 @@
 ---
 name: ui-ux-glowup
-description: "Improve, redesign or build a web interface so it looks professionally designed — landing pages, showcase sites, portfolios, SaaS, dashboards, KPI cards, pricing or product pages, components. Use for 'make it look professional / like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'improve SEO or readability', 'UI audit', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos, brand identities or palettes."
+description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.4.1
+  version: 1.5.0
 ---
 
 # UI/UX Glowup
@@ -48,6 +48,7 @@ Match the work — and the tokens you spend — to the request. Say which level 
 | Looks AI-generated | `references/anti-ai.md` |
 | Changing a real codebase / handing off to a coding agent | `references/implement.md` |
 | Score grid, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
+| PDF: invoice, quote, report, proposal, one-pager | `references/pdf.md` + one template from `assets/pdf/` |
 | Working code | `assets/examples/README.md` → one example |
 
 ## Workflow
@@ -115,6 +116,8 @@ Need Playwright in the working project (`npm i -D playwright && npx playwright i
 | `locate.mjs <audit.json> [src]` | Findings → `file:line` |
 | `extract-tokens.mjs <url>` | A reference site's real scale, tracking, spacing, radii |
 | `compare.mjs <before> <after> [out.png]` | Side-by-side image (pages, URLs or screenshots) |
+| `pdf.mjs <doc.html> [--type invoice\|quote\|report\|proposal\|onepager]` | Print to PDF, check fonts/pages/mentions, one image of all pages |
+| `site-fonts.mjs <url> <dir> [--static]` | The site's fonts as local files + `fonts.css`, with license hints |
 | `find-icons.mjs "<query>" [--sets ph,tabler] [--download dir]` | Open icon sets with licenses + Flaticon link |
 | `make-favicon.mjs <logo.svg \| --letter A> <dir> [--bg #hex]` | All favicon sizes + `<head>` snippet |
 | `login.mjs <url>` · `audit.browser.js` | Logged-in pages |

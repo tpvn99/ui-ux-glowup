@@ -210,6 +210,20 @@
         "Keeps the recap short"
       ],
       "files": []
+    },
+    {
+      "id": 17,
+      "prompt": "Fais-moi une facture propre en PDF pour mon client Boulangerie Vautrin, même style que notre site https://example.com : comptoir en chêne 3 850 € HT, pose 624 € HT, TVA 20 %.",
+      "expected_output": "Should load references/pdf.md and the facture-devis template only, reuse the site's fonts with site-fonts.mjs (--static, license noted), set the brand accent, fill every French legal mention (seller and client SIREN, number, dates, due date, HT/TVA/TTC, penalties, €40 fee, nature of the operation), print with pdf.mjs --type invoice, look at the page sheet, fix until ✓, and mention the e-invoicing reform (the PDF is the readable copy).",
+      "assertions": [
+        "Uses the site's fonts via site-fonts.mjs and states their license",
+        "Starts from assets/pdf/facture-devis.html",
+        "Includes all mandatory invoice mentions including 2026 ones",
+        "Runs pdf.mjs --type invoice and fixes findings until clean",
+        "Checks the page preview image before delivering",
+        "Mentions that official B2B e-invoicing goes through an approved platform"
+      ],
+      "files": []
     }
   ]
 }

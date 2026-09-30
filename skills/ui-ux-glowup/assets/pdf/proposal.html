@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Proposal: new website for Hollis Plumbing — Northwind Studio</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Fraunces;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/files/fraunces-latin-500-normal.woff2) format("woff2")}
+
+:root{--accent:#c2410c;--accent-soft:#fdf0e8;--ink:#1c1917;--muted:#57534e;--line:#e7e5e4;--soft:#f7f5f3;--font-heading:Fraunces,Georgia,serif;--font-body:Inter,sans-serif}
+
+@page{size:A4;margin:18mm 18mm 18mm;
+  @bottom-left{content:"Northwind Studio · Proposal for Hollis Plumbing";font:500 7.5pt var(--font-body);color:#78716c}
+  @bottom-right{content:counter(page) " / " counter(pages);font:500 7.5pt var(--font-body);color:#78716c}}
+@page cover{margin:0;@bottom-left{content:none}@bottom-right{content:none}}
+
+*{box-sizing:border-box}
+html{font:400 10pt/1.6 var(--font-body);color:var(--ink)}
+body{margin:0}
+h1,h2,h3,p,ol,ul,blockquote{margin:0}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.muted{color:var(--muted)}
+.eyebrow{font-size:7.5pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h2{font:500 21pt/1.15 var(--font-heading);letter-spacing:-.015em;margin:4px 0 10px;max-width:24ch}
+section+section{margin-top:26px}
+.page{break-before:page}
+
+.cover{page:cover;height:297mm;padding:24mm 22mm;display:grid;grid-template-rows:auto 1fr auto;background:var(--soft)}
+.cover .brand{display:flex;justify-content:space-between;font-size:9pt;color:var(--muted)}
+.cover .brand b{color:var(--ink);font-weight:600}
+.cover .mid{align-self:center}
+.cover h1{font:500 40pt/1.04 var(--font-heading);letter-spacing:-.025em;max-width:13ch}
+.cover h1 em{font-style:normal;color:var(--accent)}
+.cover .sub{margin-top:16px;font-size:12pt;color:var(--muted);max-width:44ch}
+.cover .foot{display:flex;gap:40px;font-size:9pt;border-top:1px solid var(--line);padding-top:14px}
+.cover .foot span{display:block;color:var(--muted);font-size:8pt}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.problem li{margin-bottom:6px}
+.problem ul{padding-left:16px}
+.callout{background:var(--accent-soft);border-radius:10px;padding:16px 18px}
+.callout .big{font:500 26pt/1 var(--font-heading);color:var(--accent)}
+.callout p{font-size:9pt;margin-top:6px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;counter-reset:s}
+.step{border-top:2px solid var(--ink);padding-top:10px;break-inside:avoid}
+.step::before{counter-increment:s;content:"0" counter(s);font-size:8pt;font-weight:600;color:var(--accent)}
+.step b{display:block;margin-top:2px;font-weight:600}
+.step p{font-size:9pt;color:var(--muted);margin-top:4px}
+.step .when{margin-top:8px;font-size:8pt;font-weight:500;color:var(--ink)}
+
+.proof{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.stat{padding:12px 0;border-bottom:1px solid var(--line)}
+.stat b{display:block;font:500 22pt/1.1 var(--font-heading)}
+.stat span{font-size:8.5pt;color:var(--muted)}
+blockquote{margin-top:16px;padding:14px 18px;border-left:3px solid var(--accent);background:var(--soft);font:500 12pt/1.45 var(--font-heading);break-inside:avoid}
+blockquote footer{margin-top:8px;font:400 8.5pt var(--font-body);color:var(--muted)}
+
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.person{display:flex;gap:10px;align-items:center}
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:10pt;font-weight:600;flex:none}
+.person b{display:block;font-size:9.5pt;font-weight:600}
+.person div span{font-size:8.5pt;color:var(--muted)}
+
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.plan{border:1px solid var(--line);border-radius:10px;padding:14px;break-inside:avoid}
+.plan.pick{border:1.5px solid var(--ink)}
+.plan .tag{font-size:7.5pt;font-weight:600;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;min-height:12px}
+.plan h3{font-size:11pt;font-weight:600;margin-top:4px}
+.plan .price{font:500 20pt/1.1 var(--font-heading);margin-top:8px}
+.plan .price small{font:400 8pt var(--font-body);color:var(--muted)}
+.plan ul{list-style:none;padding:0;margin-top:10px;font-size:8.5pt}
+.plan li{padding:4px 0;border-top:1px solid var(--line)}
+
+.next{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;margin-top:14px;padding:18px;border-radius:10px;background:var(--ink);color:#fff;break-inside:avoid}
+.next b{display:block;font:500 15pt/1.25 var(--font-heading)}
+.next p{font-size:9pt;color:#d6d3d1;margin-top:6px}
+.next .contact{font-size:9pt;text-align:right;line-height:1.7}
+.next a{color:#fff}
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="brand"><b>Northwind Studio</b><span>Proposal · 30 September 2026</span></div>
+  <div class="mid">
+    <p class="eyebrow">For Hollis Plumbing Ltd</p>
+    <h1>A website that makes the phone <em>ring</em></h1>
+    <p class="sub">A faster, mobile-first site built around one action — calling you — delivered in six weeks.</p>
+  </div>
+  <div class="foot"><p><span>Prepared for</span>Tom Hollis, Director</p><p><span>Prepared by</span>Maya Chen, Northwind Studio</p><p><span>Valid until</span>31 October 2026</p></div>
+</section>
+
+<section class="page">
+  <p class="eyebrow">Where you are</p>
+  <h2>Good work, but the website hides it</h2>
+  <div class="two">
+    <div class="problem">
+      <ul>
+        <li>78% of your visitors are on a phone, and the call button is at the very bottom.</li>
+        <li>Pages take 5.8 seconds to load; half of mobile visitors leave after 3.</li>
+        <li>Google still lists you in Bradford, so Leeds searches go to competitors.</li>
+        <li>Your 4.9-star reviews are nowhere on the site.</li>
+      </ul>
+    </div>
+    <div class="callout"><p class="big num">130+</p><p>Calls a quarter (up from 96) we expect from the same traffic once the phone number, speed and local search are fixed.</p></div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">How we work</p>
+  <h2>Six weeks, three steps</h2>
+  <div class="steps">
+    <div class="step"><b>Plan</b><p>Interview, analytics review, site map and the words for each page, written with you.</p><p class="when">Weeks 1–2</p></div>
+    <div class="step"><b>Design &amp; build</b><p>Mobile-first pages, real photos of your jobs, reviews and prices where people decide.</p><p class="when">Weeks 3–5</p></div>
+    <div class="step"><b>Launch &amp; measure</b><p>Redirects, Google profile update, call tracking and a first report after 30 days.</p><p class="when">Week 6</p></div>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow">Why us</p>
+  <h2>Trades are what we do</h2>
+  <div class="proof">
+    <div class="stat"><b class="num">32</b><span>websites for trades and local services since 2021</span></div>
+    <div class="stat"><b class="num">+41%</b><span>average increase in calls in the first 90 days</span></div>
+    <div class="stat"><b class="num">1.6 s</b><span>median mobile load time of our sites</span></div>
+  </div>
+  <blockquote>"We used to get two or three calls a week from the website. Now it's the first place new customers find us."<footer>Sarah Doyle, Doyle Electrical, Wakefield</footer></blockquote>
+  <div class="team">
+    <div class="person"><span class="avatar">MC</span><div><b>Maya Chen</b><span>Project lead &amp; strategy</span></div></div>
+    <div class="person"><span class="avatar">JO</span><div><b>Jonah Okafor</b><span>Design &amp; development</span></div></div>
+    <div class="person"><span class="avatar">LR</span><div><b>Lea Roux</b><span>Copy &amp; local SEO</span></div></div>
+  </div>
+</section>
+
+<section class="page">
+  <p class="eyebrow">Investment</p>
+  <h2>Three options, one goal</h2>
+  <div class="plans">
+    <div class="plan"><p class="tag"></p><h3>Essential</h3><p class="price num">£3,900 <small>one-off</small></p><ul><li>5 pages, mobile-first</li><li>Speed and image optimisation</li><li>Google profile update</li><li>1 round of changes</li></ul></div>
+    <div class="plan pick"><p class="tag">Recommended</p><h3>Growth</h3><p class="price num">£6,400 <small>one-off</small></p><ul><li>Everything in Essential</li><li>1 page per service (6)</li><li>Call tracking and monthly report</li><li>Review collection set-up</li></ul></div>
+    <div class="plan"><p class="tag"></p><h3>Care plan</h3><p class="price num">£240 <small>per month</small></p><ul><li>Hosting, backups, updates</li><li>2 hours of changes a month</li><li>Quarterly SEO check</li><li>Cancel any time after 6 months</li></ul></div>
+  </div>
+  <p class="muted" style="font-size:8.5pt;margin-top:8px">Prices exclude VAT. 40% on signature, 60% at launch.</p>
+</section>
+
+<section>
+  <div class="next">
+    <div><b>Next step: a 30-minute call to agree the plan</b><p>Reply to this proposal or book a slot, and we can start on 13 October.</p></div>
+    <div class="contact">maya@northwind.studio<br>+44 113 496 0000<br>northwind.studio/book</div>
+  </div>
+</section>
+
+</body>
+</html>

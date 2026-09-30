@@ -21,9 +21,10 @@ ui-ux-glowup/
 ├── skills/
 │   └── ui-ux-glowup/
 │       ├── SKILL.md           # Required skill file (<500 lines)
-│       ├── references/        # Loaded on demand: intake, sites, sections, craft, visuals, mobile, seo-readability, icons, anti-ai, implement, audit, checklist
+│       ├── references/        # Loaded on demand: intake, sites, sections, craft, visuals, mobile, seo-readability, icons, anti-ai, pdf, implement, audit, checklist
 │       ├── assets/examples/   # Tested Tailwind v4 examples + React dashboard
-│       ├── scripts/           # audit, audit-site, inventory, locate, extract-tokens, screenshot, compare, login, find-icons, make-favicon (+ lib/, audit.browser.js)
+│       ├── assets/pdf/        # Print-ready PDF templates (plain CSS)
+│       ├── scripts/           # audit, audit-site, inventory, locate, extract-tokens, screenshot, compare, login, find-icons, make-favicon, pdf, site-fonts (+ lib/, audit.browser.js)
 │       └── evals/             # evals.json
 ├── tests/                     # node:test suite + fixtures
 ├── package.json               # Dev deps (playwright) and npm scripts
@@ -112,6 +113,7 @@ skills/skill-name/
 - Every HTML example has full SEO head tags (title 30–60 chars, description, canonical, Open Graph, favicon) and must pass the audit's mobile, SEO and `ai-*` rules.
 - Every delivery in the workflow ends with the "Directions taken" recap — keep it in `SKILL.md` when editing the workflow.
 - **Token budget**: `SKILL.md` stays under ~10 KB and the description under ~500 characters (it is loaded in every session). New detail goes in a reference file listed in the "Load on demand" table, never in `SKILL.md`. Script output must stay compact (cap listed items, offer `--brief`/`--baseline`-style modes).
+- PDF templates must print with `scripts/pdf.mjs` and report ✓: static fonts only, every character covered, no blank or near-empty page. All IDs (SIREN, VAT, IBAN) are fictional placeholders.
 - Never reproduce a reference site's copy, logos or illustrations: borrow mechanics only.
 
 ## Writing Style Guidelines

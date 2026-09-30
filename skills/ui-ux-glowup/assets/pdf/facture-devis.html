@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Facture F-2026-042 — Atelier Morel</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:700;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-700-normal.woff2) format("woff2")}
+
+:root{--accent:#1f4d3a;--ink:#18181b;--muted:#5b5b66;--line:#e4e4e7;--soft:#f6f6f7;--font-heading:Inter,sans-serif;--font-body:Inter,sans-serif}
+
+@page{size:A4;margin:14mm 15mm 18mm;
+  @bottom-left{content:"Atelier Morel SAS au capital de 10 000 € · RCS Épinal 123 456 789 · SIRET 123 456 789 00012 · TVA FR00 123456789";font:400 7pt/1.4 var(--font-body);color:#6b6b76}
+  @bottom-right{content:counter(page) " / " counter(pages);font:500 7.5pt var(--font-body);color:#6b6b76}}
+
+*{box-sizing:border-box}
+html{font:400 9.5pt/1.5 var(--font-body);color:var(--ink);font-feature-settings:"tnum" 1,"cv11" 1}
+body{margin:0}
+h1,h2,h3,p{margin:0}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.muted{color:var(--muted)}
+.label{font-size:7.5pt;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+body:not([data-kind="devis"]) .only-devis,body[data-kind="devis"] .only-facture{display:none}
+
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;padding-bottom:14px;border-bottom:1.5px solid var(--ink)}
+.brand{display:flex;gap:10px;align-items:center}
+.brand svg{width:34px;height:34px}
+.brand b{display:block;font:600 12pt/1.1 var(--font-heading);letter-spacing:-.01em}
+.brand span{font-size:8pt;color:var(--muted)}
+.doc{text-align:right}
+.doc h1{font:600 22pt/1 var(--font-heading);letter-spacing:-.02em}
+.doc .ref{margin-top:6px;font-weight:500}
+.dates{margin-top:10px;display:grid;grid-template-columns:auto auto;gap:2px 14px;justify-content:end;font-size:8.5pt}
+.dates dt{color:var(--muted)}
+.dates dd{margin:0;font-weight:500;text-align:right}
+
+.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.party{padding:10px 12px;border:1px solid var(--line);border-radius:6px}
+.party .label{margin-bottom:6px}
+.party b{font-weight:600}
+.party p{font-size:8.5pt}
+
+.meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 18px;font-size:8.5pt;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:500}
+.object{margin-top:14px;font-size:10.5pt;font-weight:600}
+
+table.lines{width:100%;border-collapse:collapse;margin-top:10px}
+.lines th{font-size:7.5pt;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 8px;border-bottom:1px solid var(--ink)}
+.lines th.num{text-align:right}
+.lines td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.lines td:first-child,.lines th:first-child{padding-left:0}
+.lines td:last-child,.lines th:last-child{padding-right:0}
+.lines .desc{font-size:8pt;color:var(--muted);margin-top:1px}
+.lines .group td{padding-top:10px;font-weight:600;border-bottom:none}
+
+.bottom{display:grid;grid-template-columns:1fr 260px;gap:28px;margin-top:14px;break-inside:avoid}
+.totals{width:100%;border-collapse:collapse}
+.totals td{padding:4px 0;white-space:nowrap}
+.totals .sub td{border-top:1px solid var(--line)}
+.totals .grand td{padding:8px 0;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);font-weight:600;font-size:11pt;color:var(--accent)}
+.totals .due td{padding-top:8px;font-weight:600}
+
+.pay{font-size:8.5pt}
+.pay .label{margin-bottom:6px}
+.iban{margin-top:6px;display:grid;grid-template-columns:auto 1fr;gap:1px 10px}
+.iban dt{color:var(--muted)}
+.iban dd{margin:0;font-weight:500;font-variant-numeric:tabular-nums}
+
+.terms{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:7.5pt;line-height:1.45;color:var(--muted)}
+.terms p{margin-bottom:3px}
+
+.right{align-self:start}
+.sign{margin-top:12px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;min-height:96px}
+.sign p:last-child{font-size:8pt;color:var(--muted);margin-top:3px}
+</style>
+</head>
+<body data-kind="facture">
+
+<header class="head">
+  <div>
+    <div class="brand">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="7" fill="#1f4d3a"/><path d="M9 24V10l8 9 8-9v14" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg>
+      <div><b>Atelier Morel</b><span>Menuiserie &amp; agencement sur mesure</span></div>
+    </div>
+    <p class="muted" style="margin-top:12px;font-size:8.5pt">12 rue des Forges, 88000 Épinal<br>03 29 00 00 00 · contact@atelier-morel.fr</p>
+  </div>
+  <div class="doc">
+    <h1><span class="only-facture">Facture</span><span class="only-devis">Devis</span></h1>
+    <p class="ref"><span class="only-facture">N° F-2026-042</span><span class="only-devis">N° D-2026-017</span></p>
+    <dl class="dates">
+      <dt>Date d'émission</dt><dd>30/09/2026</dd>
+      <dt class="only-facture">Date de prestation</dt><dd class="only-facture">15/09 – 26/09/2026</dd>
+      <dt class="only-facture">Échéance</dt><dd class="only-facture">30/10/2026</dd>
+      <dt class="only-devis">Valable jusqu'au</dt><dd class="only-devis">30/10/2026</dd>
+    </dl>
+  </div>
+</header>
+
+<section class="parties">
+  <div class="party">
+    <p class="label">Émetteur</p>
+    <p><b>Atelier Morel SAS</b><br>12 rue des Forges, 88000 Épinal<br>SIREN 123 456 789 · TVA FR00 123456789</p>
+  </div>
+  <div class="party">
+    <p class="label">Client</p>
+    <p><b>Boulangerie Vautrin SARL</b><br>4 place des Vosges, 88000 Épinal<br>SIREN 987 654 321 · TVA FR00 987654321</p>
+    <p class="muted" style="margin-top:4px">Livraison : 18 rue Saint-Michel, 88000 Épinal</p>
+  </div>
+</section>
+
+<p class="meta"><span>Nature de l'opération : <b>prestation de services</b></span><span>TVA : <b>sur les encaissements</b></span><span>Réf. client : <b>BV-0926</b></span></p>
+
+<p class="object">Agencement du comptoir et des étagères de la boutique</p>
+
+<table class="lines">
+  <thead>
+    <tr><th>Désignation</th><th class="num">Qté</th><th class="num">PU HT</th><th class="num">TVA</th><th class="num">Total HT</th></tr>
+  </thead>
+  <tbody>
+    <tr class="group"><td colspan="5">Comptoir de vente</td></tr>
+    <tr><td>Comptoir chêne massif 3,20 m<div class="desc">Plateau 40 mm huilé, façade à lames, 2 tiroirs caisse</div></td><td class="num">1</td><td class="num">3 850,00 €</td><td class="num">20 %</td><td class="num">3 850,00 €</td></tr>
+    <tr><td>Vitrine réfrigérée intégrée<div class="desc">Caisson et habillage, hors groupe froid fourni par le client</div></td><td class="num">1</td><td class="num">1 240,00 €</td><td class="num">20 %</td><td class="num">1 240,00 €</td></tr>
+    <tr class="group"><td colspan="5">Étagères murales</td></tr>
+    <tr><td>Étagères chêne 180 × 35 cm<div class="desc">Fixations invisibles, charge 40 kg par étagère</div></td><td class="num">6</td><td class="num">185,00 €</td><td class="num">20 %</td><td class="num">1 110,00 €</td></tr>
+    <tr><td>Pose et réglages<div class="desc">2 menuisiers, 1,5 jour</div></td><td class="num">12 h</td><td class="num">52,00 €</td><td class="num">20 %</td><td class="num">624,00 €</td></tr>
+    <tr><td>Déplacement et évacuation des chutes</td><td class="num">1</td><td class="num">90,00 €</td><td class="num">20 %</td><td class="num">90,00 €</td></tr>
+  </tbody>
+</table>
+
+<section class="bottom">
+  <div class="pay">
+    <p class="label">Règlement</p>
+    <p class="only-facture">Virement à 30 jours, avant le <b>30/10/2026</b>.</p>
+    <p class="only-devis">30 % d'acompte à la commande, solde à la livraison, par virement.</p>
+    <dl class="iban">
+      <dt>Titulaire</dt><dd>Atelier Morel SAS</dd>
+      <dt>IBAN</dt><dd>FR76 0000 0000 0000 0000 0000 000</dd>
+      <dt>BIC</dt><dd>XXXXFRPPXXX</dd>
+      <dt>Référence</dt><dd><span class="only-facture">F-2026-042</span><span class="only-devis">D-2026-017</span></dd>
+    </dl>
+    <div class="terms">
+      <p class="only-devis">Devis valable 30 jours. Délai de réalisation : 3 semaines après réception de l'acompte. Toute modification fera l'objet d'un avenant.</p>
+  <p>En cas de retard de paiement, des pénalités égales à trois fois le taux d'intérêt légal sont exigibles dès le lendemain de l'échéance, ainsi qu'une indemnité forfaitaire pour frais de recouvrement de 40 € (art. L441-10 du Code de commerce).</p>
+  <p>Pas d'escompte pour paiement anticipé.</p>
+  <p>Les ouvrages restent la propriété d'Atelier Morel jusqu'au paiement intégral du prix.</p>
+  <p>Assurance décennale : exemple, contrat n° 0000000, couverture France métropolitaine.</p>
+</div>
+  </div>
+  <div class="right">
+  <table class="totals">
+    <tr><td class="muted">Total HT</td><td class="num">6 914,00 €</td></tr>
+    <tr><td class="muted">Remise fidélité 5 %</td><td class="num">− 345,70 €</td></tr>
+    <tr class="sub"><td class="muted">Net HT</td><td class="num">6 568,30 €</td></tr>
+    <tr><td class="muted">TVA 20 %</td><td class="num">1 313,66 €</td></tr>
+    <tr class="grand"><td>Total TTC</td><td class="num">7 881,96 €</td></tr>
+    <tr class="only-facture"><td class="muted">Acompte du 02/09/2026</td><td class="num">− 2 364,59 €</td></tr>
+    <tr class="due only-facture"><td>Net à payer</td><td class="num">5 517,37 €</td></tr>
+  </table>
+  <div class="sign only-devis"><p class="label">Bon pour accord</p><p>Date, nom, signature et cachet, précédés de la mention « Bon pour accord ».</p></div>
+  </div>
+</section>
+
+
+
+
+
+</body>
+</html>

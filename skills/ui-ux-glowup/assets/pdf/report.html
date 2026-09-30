@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Website audit Q3 2026 — Hollis Plumbing</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Fraunces;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/files/fraunces-latin-500-normal.woff2) format("woff2")}
+
+:root{--accent:#1d4ed8;--accent-soft:#e8eefc;--ink:#18181b;--muted:#5b5b66;--line:#e4e4e7;--soft:#f6f6f7;--good:#15803d;--bad:#b91c1c;--font-heading:Fraunces,Georgia,serif;--font-body:Inter,sans-serif}
+
+@page{size:A4;margin:20mm 18mm 20mm;
+  @top-left{content:"Website audit · Hollis Plumbing";font:500 7.5pt var(--font-body);color:#6b6b76}
+  @top-right{content:"Q3 2026";font:500 7.5pt var(--font-body);color:#6b6b76}
+  @bottom-right{content:counter(page) " / " counter(pages);font:500 7.5pt var(--font-body);color:#6b6b76}}
+@page cover{margin:0;@top-left{content:none}@top-right{content:none}@bottom-right{content:none}}
+
+*{box-sizing:border-box}
+html{font:400 10pt/1.6 var(--font-body);color:var(--ink);font-feature-settings:"cv11" 1}
+body{margin:0}
+h1,h2,h3,p,figure{margin:0}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.muted{color:var(--muted)}
+.eyebrow{font-size:7.5pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+
+.cover{page:cover;height:297mm;display:flex;flex-direction:column;justify-content:space-between;padding:22mm 20mm;background:var(--ink);color:#fff}
+.cover .top{display:flex;justify-content:space-between;font-size:9pt;color:#a1a1aa}
+.cover h1{font:500 38pt/1.05 var(--font-heading);letter-spacing:-.02em;max-width:14ch}
+.cover .sub{margin-top:14px;font-size:12pt;color:#d4d4d8;max-width:46ch}
+.cover dl{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:4px 48px;font-size:9pt}
+.cover dt{color:#a1a1aa}
+.cover dd{margin:0;font-weight:500}
+.cover .band{height:6px;background:var(--accent);margin:0 -20mm -22mm}
+
+.page{break-before:page}
+.chapter{margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+#mobile{break-before:page;margin-top:0;padding-top:0;border-top:0}
+h2{font:500 20pt/1.15 var(--font-heading);letter-spacing:-.015em;margin:4px 0 12px}
+h3{font-size:11pt;font-weight:600;margin:18px 0 6px}
+p+p{margin-top:8px}
+.lead{font-size:11.5pt;line-height:1.55;color:#3f3f46;max-width:62ch}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi .label{font-size:8pt;color:var(--muted)}
+.kpi .value{font:600 18pt/1.2 var(--font-body);letter-spacing:-.02em;margin-top:4px}
+.kpi .delta{font-size:8pt;font-weight:500;margin-top:2px}
+.up{color:var(--good)}.down{color:var(--bad)}
+
+.findings{counter-reset:f;display:grid;gap:10px;margin-top:6px}
+.finding{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:12px;border-radius:8px;background:var(--soft);break-inside:avoid}
+.finding::before{counter-increment:f;content:counter(f);display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:9pt;font-weight:600}
+.finding b{display:block;font-weight:600}
+.finding p{font-size:9pt;color:var(--muted)}
+
+.toc{list-style:none;padding:0;margin:14px 0 0;counter-reset:t}
+.toc li{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.toc li::before{counter-increment:t;content:counter(t,decimal-leading-zero);font-size:8.5pt;color:var(--muted);width:22px}
+.toc a{color:inherit;text-decoration:none;flex:1}
+
+figure{margin:14px 0;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;font-family:var(--font-body)}
+figcaption{font-size:8.5pt;color:var(--muted);margin-top:6px}
+figcaption b{color:var(--ink);font-weight:600}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:9pt}
+th{text-align:left;font-size:7.5pt;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--ink)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th:first-child,td:first-child{padding-left:0}
+th:last-child,td:last-child{padding-right:0}
+.r{text-align:right}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:7.5pt;font-weight:600}
+.p1{background:#fde8e8;color:#991b1b}.p2{background:#fef3c7;color:#92400e}.p3{background:var(--accent-soft);color:#1e40af}
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="top"><span>Northwind Studio</span><span>Confidential</span></div>
+  <div>
+    <p class="eyebrow" style="color:#93b4ff">Website audit</p>
+    <h1>More calls from the same traffic</h1>
+    <p class="sub">What holds back hollisplumbing.co.uk on phones and in search, and the seven fixes that matter most.</p>
+  </div>
+  <div>
+    <dl><dt>Client</dt><dt>Date</dt><dt>Prepared by</dt><dd>Hollis Plumbing Ltd</dd><dd>30 September 2026</dd><dd>Maya Chen, Northwind Studio</dd></dl>
+    <div class="band" style="margin-top:22mm"></div>
+  </div>
+</section>
+
+<section class="page">
+  <p class="eyebrow">Executive summary</p>
+  <h2>Most visitors can't find the phone number</h2>
+  <p class="lead">78% of visits come from phones, but the call button sits below two screens of text and the site loads in 5.8 seconds. Fixing the mobile header, speed and the Google Business profile should lift calls by an estimated 25–40% within three months.</p>
+  <div class="kpis">
+    <div class="kpi"><p class="label">Mobile visits</p><p class="value num">78%</p><p class="delta muted">of 4,120 / month</p></div>
+    <div class="kpi"><p class="label">Load time (mobile)</p><p class="value num">5.8 s</p><p class="delta down">target &lt; 2.5 s</p></div>
+    <div class="kpi"><p class="label">Calls from site</p><p class="value num">96</p><p class="delta down">↓ 12% vs Q2</p></div>
+    <div class="kpi"><p class="label">Audit score</p><p class="value num">26/45</p><p class="delta muted">41 after fixes</p></div>
+  </div>
+  <h3>Key findings</h3>
+  <div class="findings">
+    <div class="finding"><div><b>The call button is hidden on phones</b><p>It appears after 1,900 px of scrolling; 64% of mobile visitors leave before reaching it.</p></div></div>
+    <div class="finding"><div><b>Photos weigh 9.4 MB</b><p>Eleven uncompressed JPGs make the home page take 5.8 s on 4G. WebP at the right size cuts this to under 900 KB.</p></div></div>
+    <div class="finding"><div><b>Search shows the wrong area</b><p>No page targets "emergency plumber Leeds"; the title and Google profile still mention Bradford.</p></div></div>
+  </div>
+  <h3>Contents</h3>
+  <ol class="toc">
+    <li><a href="#mobile">Mobile experience</a></li>
+    <li><a href="#speed">Speed and images</a></li>
+    <li><a href="#seo">Local search</a></li>
+    <li><a href="#plan">Action plan</a></li>
+  </ol>
+</section>
+
+<section class="chapter" id="mobile">
+  <p class="eyebrow">01</p>
+  <h2>Mobile experience</h2>
+  <p>On a phone, the first screen shows a stock photo and a 60-word welcome paragraph. The phone number is in the footer only, and the menu button is 28 px wide — below the 44 px people can tap reliably.</p>
+  <p>Visitors who do reach the contact form meet eight required fields, including "company name" and "how did you hear about us". Half of the started forms are abandoned at those two fields.</p>
+  <figure>
+    <svg viewBox="0 0 560 180" role="img" aria-label="Share of mobile visitors still on the page by scroll depth: 100% at the top, 58% at 1,000 px, 36% at 1,900 px where the call button is.">
+      <line x1="40" y1="150" x2="550" y2="150" stroke="#e4e4e7"/>
+      <line x1="40" y1="90" x2="550" y2="90" stroke="#e4e4e7" stroke-dasharray="3 3"/>
+      <line x1="40" y1="30" x2="550" y2="30" stroke="#e4e4e7" stroke-dasharray="3 3"/>
+      <text x="32" y="153" font-size="11" text-anchor="end" fill="#6b6b76">0%</text>
+      <text x="32" y="93" font-size="11" text-anchor="end" fill="#6b6b76">50%</text>
+      <text x="32" y="33" font-size="11" text-anchor="end" fill="#6b6b76">100%</text>
+      <path d="M40 30 L140 52 L240 69 L340 90 L420 107 L480 115 L550 122 V150 H40Z" fill="#1d4ed8" fill-opacity=".1"/>
+      <path d="M40 30 L140 52 L240 69 L340 90 L420 107 L480 115 L550 122" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+      <line x1="420" y1="20" x2="420" y2="150" stroke="#b91c1c" stroke-dasharray="4 3"/>
+      <circle cx="420" cy="107" r="4" fill="#b91c1c"/>
+      <text x="412" y="62" text-anchor="end" font-size="11.5" fill="#b91c1c" font-weight="600">Call button · 36% left</text>
+      <text x="40" y="170" font-size="11" fill="#6b6b76">0 px</text>
+      <text x="240" y="170" font-size="11" fill="#6b6b76" text-anchor="middle">1,000 px</text>
+      <text x="550" y="170" font-size="11" fill="#6b6b76" text-anchor="end">2,600 px</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Mobile visitors still on the home page by scroll depth, August–September 2026 (Google Analytics, 3,210 sessions).</figcaption>
+  </figure>
+  <h3>What to change</h3>
+  <p>Put a sticky "Call now" bar at the bottom of the screen on phones, move the three services and the reviews above the fold, and cut the form to name, phone and a short message.</p>
+</section>
+
+<section class="chapter" id="speed">
+  <p class="eyebrow">02</p>
+  <h2>Speed and images</h2>
+  <p>The home page loads 11.8 MB. Photos account for 80% of it, and a slider script loads three libraries for one carousel.</p>
+  <table>
+    <thead><tr><th>Asset</th><th class="r">Now</th><th class="r">After</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Hero photo</td><td class="r num">2.4 MB</td><td class="r num">180 KB</td><td>WebP, 1600 px wide</td></tr>
+      <tr><td>Project gallery (10 photos)</td><td class="r num">7.0 MB</td><td class="r num">620 KB</td><td>WebP, lazy-loaded</td></tr>
+      <tr><td>Slider scripts</td><td class="r num">410 KB</td><td class="r num">0 KB</td><td>CSS scroll-snap</td></tr>
+      <tr><td>Fonts (4 files)</td><td class="r num">380 KB</td><td class="r num">90 KB</td><td>2 static weights, latin subset</td></tr>
+      <tr><td><b>Total page</b></td><td class="r num"><b>11.8 MB</b></td><td class="r num"><b>1.4 MB</b></td><td>Load time 5.8 s to ~1.9 s</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size:9pt">Measured with Lighthouse, Moto G Power profile, 4G, 29 September 2026.</p>
+</section>
+
+<section class="chapter" id="seo">
+  <p class="eyebrow">03</p>
+  <h2>Local search</h2>
+  <p>The site ranks on page 3 for "emergency plumber Leeds" (412 searches a month). The title tag, the Google Business profile and two service pages still name Bradford, where the company was based until 2024.</p>
+  <p>There is no page per service: boiler repair, leak repair and bathroom installation share one long page, so Google can't match any of them to a specific search.</p>
+  <h3>What to change</h3>
+  <p>Update the title to "Emergency plumber in Leeds, 24/7 — Hollis Plumbing", create one page per service with its own photos and prices, add LocalBusiness structured data, and ask the last 30 customers for a Google review.</p>
+</section>
+
+<section class="chapter" id="plan">
+  <p class="eyebrow">04</p>
+  <h2>Action plan</h2>
+  <table>
+    <thead><tr><th>Action</th><th>Priority</th><th>Effort</th><th>Owner</th><th class="r">By</th></tr></thead>
+    <tbody>
+      <tr><td>Sticky call bar on phones</td><td><span class="pill p1">High</span></td><td>½ day</td><td>Northwind</td><td class="r num">10 Oct</td></tr>
+      <tr><td>Compress and resize photos</td><td><span class="pill p1">High</span></td><td>1 day</td><td>Northwind</td><td class="r num">10 Oct</td></tr>
+      <tr><td>Short contact form (3 fields)</td><td><span class="pill p1">High</span></td><td>½ day</td><td>Northwind</td><td class="r num">14 Oct</td></tr>
+      <tr><td>Update title and Google profile to Leeds</td><td><span class="pill p1">High</span></td><td>1 hour</td><td>Hollis</td><td class="r num">7 Oct</td></tr>
+      <tr><td>One page per service</td><td><span class="pill p2">Medium</span></td><td>3 days</td><td>Northwind</td><td class="r num">31 Oct</td></tr>
+      <tr><td>Replace slider with scroll-snap</td><td><span class="pill p2">Medium</span></td><td>½ day</td><td>Northwind</td><td class="r num">31 Oct</td></tr>
+      <tr><td>Review requests to recent customers</td><td><span class="pill p3">Low</span></td><td>2 hours</td><td>Hollis</td><td class="r num">15 Nov</td></tr>
+    </tbody>
+  </table>
+  <p>We will measure calls, form submissions and mobile load time every two weeks and report back on 15 December 2026.</p>
+</section>
+
+</body>
+</html>

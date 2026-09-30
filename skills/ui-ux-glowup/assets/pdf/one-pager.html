@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oak Kitchen Series — product sheet, Atelier Morel</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-600-normal.woff2) format("woff2")}
+
+:root{--accent:#1f4d3a;--accent-soft:#e9f1ec;--ink:#18181b;--muted:#5b5b66;--line:#e4e4e7;--soft:#f6f6f4;--font-heading:Inter,sans-serif;--font-body:Inter,sans-serif}
+@page{size:A4;margin:14mm 15mm}
+
+*{box-sizing:border-box}
+html{font:400 9.5pt/1.55 var(--font-body);color:var(--ink)}
+body{margin:0}
+h1,h2,h3,p,ul{margin:0}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.eyebrow{font-size:7.5pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line);font-size:8.5pt;color:var(--muted)}
+.top b{color:var(--ink);font-weight:600;font-size:10pt}
+
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:24px;margin-top:22px;align-items:center}
+h1{font:600 28pt/1.05 var(--font-heading);letter-spacing:-.03em;margin-top:6px}
+.value{margin-top:10px;font-size:11pt;color:var(--muted);max-width:40ch}
+.price{margin-top:14px;display:flex;align-items:baseline;gap:8px}
+.price b{font-size:20pt;font-weight:600;letter-spacing:-.02em}
+.price span{color:var(--muted);font-size:8.5pt}
+.visual{aspect-ratio:4/3;border-radius:10px;background:var(--soft);overflow:hidden}
+.visual svg{display:block;width:100%;height:100%}
+
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.benefit{padding:12px;border-radius:8px;background:var(--accent-soft)}
+.benefit svg{width:20px;height:20px;color:var(--accent)}
+.benefit b{display:block;margin-top:6px;font-weight:600}
+.benefit p{font-size:8.5pt;color:var(--muted);margin-top:2px}
+
+.cols{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-top:20px}
+h2{font-size:10.5pt;font-weight:600;margin-bottom:8px}
+table{width:100%;border-collapse:collapse;font-size:9pt}
+td{padding:6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{color:var(--muted);width:40%}
+.options li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);font-size:9pt}
+.options{list-style:none;padding:0}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;counter-reset:s}
+.steps div{border-top:2px solid var(--ink);padding-top:8px;font-size:8.5pt;color:var(--muted)}
+.steps div::before{counter-increment:s;content:"0" counter(s);display:block;font-size:8pt;font-weight:600;color:var(--accent)}
+.steps b{display:block;color:var(--ink);font-weight:600;font-size:9.5pt}
+blockquote{margin:20px 0 0;padding:12px 16px;border-left:3px solid var(--accent);background:var(--soft);font-size:11pt;line-height:1.5}
+blockquote footer{margin-top:6px;font-size:8.5pt;color:var(--muted)}
+.cta{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-top:20px;padding:16px 18px;border-radius:10px;background:var(--ink);color:#fff}
+.cta b{display:block;font-size:12pt;font-weight:600}
+.cta p{font-size:8.5pt;color:#d4d4d8;margin-top:3px}
+.cta .contact{text-align:right;font-size:9pt;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header class="top"><b>Atelier Morel</b><span>Product sheet · Autumn 2026</span></header>
+
+<section class="hero">
+  <div>
+    <p class="eyebrow">Made to measure in Épinal</p>
+    <h1>Oak Kitchen Series</h1>
+    <p class="value">Solid oak fronts and worktops, built to your room to the millimetre and installed by the people who made them.</p>
+    <div class="price"><b class="num">€12,900</b><span>from, for a 3.6 m kitchen, fitted, incl. VAT</span></div>
+  </div>
+  <div class="visual">
+    <svg viewBox="0 0 400 300" role="img" aria-label="Illustration of an oak kitchen run with wall shelves and an island">
+      <rect width="400" height="300" fill="#efeee9"/>
+      <rect x="0" y="236" width="400" height="64" fill="#e2dfd6"/>
+      <rect x="40" y="70" width="140" height="10" rx="2" fill="#b98b5a"/>
+      <rect x="40" y="108" width="140" height="10" rx="2" fill="#b98b5a"/>
+      <rect x="58" y="44" width="16" height="26" rx="3" fill="#1f4d3a"/><rect x="84" y="52" width="22" height="18" rx="3" fill="#d6cfc2"/><rect x="128" y="86" width="30" height="22" rx="3" fill="#1f4d3a" opacity=".7"/>
+      <rect x="30" y="150" width="340" height="12" rx="2" fill="#a57848"/>
+      <rect x="30" y="162" width="340" height="74" fill="#c99d6b"/>
+      <g stroke="#a57848" stroke-width="2"><line x1="115" y1="162" x2="115" y2="236"/><line x1="200" y1="162" x2="200" y2="236"/><line x1="285" y1="162" x2="285" y2="236"/></g>
+      <g fill="#7a5530"><rect x="66" y="176" width="14" height="3" rx="1.5"/><rect x="151" y="176" width="14" height="3" rx="1.5"/><rect x="236" y="176" width="14" height="3" rx="1.5"/><rect x="321" y="176" width="14" height="3" rx="1.5"/></g>
+      <rect x="236" y="120" width="70" height="30" rx="4" fill="#d9d6ce"/><rect x="262" y="104" width="4" height="18" fill="#9d9a92"/>
+    </svg>
+  </div>
+</section>
+
+<section class="benefits">
+  <div class="benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c9 0 16-7 16-16C11 4 4 11 4 20Z"/><path d="M4 20 14 10"/></svg><b>French oak, PEFC</b><p>From forests within 300 km, oiled not varnished, easy to repair.</p></div>
+  <div class="benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><b>Fitted in 5 days</b><p>Measured, made in our workshop, installed in one week on site.</p></div>
+  <div class="benefit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg><b>10-year guarantee</b><p>On carcasses and fronts, with a free re-oiling after the first year.</p></div>
+</section>
+
+<section class="cols">
+  <div>
+    <h2>Specifications</h2>
+    <table>
+      <tr><td>Fronts</td><td>Solid oak 22 mm, flat or shaker, natural oil</td></tr>
+      <tr><td>Worktop</td><td>Oak 40 mm, or quartz 20 mm (option)</td></tr>
+      <tr><td>Carcasses</td><td>Oak-veneered birch plywood 19 mm</td></tr>
+      <tr><td>Hardware</td><td>Blum soft-close hinges and runners</td></tr>
+      <tr><td>Lead time</td><td>6 weeks from approval of the drawings</td></tr>
+    </table>
+  </div>
+  <div>
+    <h2>Popular options</h2>
+    <ul class="options">
+      <li><span>Island 2.0 × 0.9 m</span><span class="num">+ €3,400</span></li>
+      <li><span>Open oak shelving (2)</span><span class="num">+ €480</span></li>
+      <li><span>Quartz worktop</span><span class="num">+ €1,150</span></li>
+      <li><span>Integrated LED lighting</span><span class="num">+ €390</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="steps">
+  <div><b>Visit</b>We measure and listen, free of charge.</div>
+  <div><b>Drawings</b>3D plans and a fixed quote in 10 days.</div>
+  <div><b>Workshop</b>Made in Épinal in 4 to 6 weeks.</div>
+  <div><b>Fitting</b>Installed and cleaned up in 5 days.</div>
+</section>
+
+<blockquote>"The kitchen fits our old farmhouse walls perfectly, and they were gone in five days as promised."<footer>Claire and Hugo B., Remiremont, June 2026</footer></blockquote>
+
+<section class="cta">
+  <div><b>Book a free visit and measure</b><p>We come to you, measure the room and send drawings and a fixed quote within 10 days.</p></div>
+  <div class="contact">03 29 00 00 00<br>contact@atelier-morel.fr<br>atelier-morel.fr/visit</div>
+</section>
+
+</body>
+</html>
