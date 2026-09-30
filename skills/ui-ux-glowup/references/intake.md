@@ -1,6 +1,6 @@
 # Intake Questionnaire
 
-Use it at the start of every job — a new site from zero or a redesign. Ask **once, in a single message**, with multiple-choice answers the user can reply to in a few words ("1b, 2a, 3: keep the booking form"). Pre-fill what you already know (from the files, the URL, earlier messages) and only ask the rest. If the user skips a question, use the default and say so in the brief.
+Use it in **Standard** and **Full** mode (skip it in Quick mode). Standard: ask only the 3–5 questions whose answers you can't infer — usually 2, 3, 4 and 7. Full: all of them. Ask **once, in a single message**, with multiple-choice answers the user can reply to in a few words ("1b, 2a, 3: keep the booking form"). Pre-fill what you already know (from the files, the URL, earlier messages) and only ask the rest. If the user skips a question, use the default and say so in the brief.
 
 If the environment has a structured question tool (multiple-choice UI), use it for questions 1–6 and ask the rest as text.
 

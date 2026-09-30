@@ -197,6 +197,19 @@
         "Starts from kpi-cards.html"
       ],
       "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "The 'Book now' button wraps onto two lines on mobile in my header, can you fix it?",
+      "expected_output": "Should pick Quick level: no intake questionnaire, no reference sites, no inventory. Reads only the relevant code (or audits once), fixes the wrap (whitespace-nowrap, shorter label or room in the header), re-checks with a targeted screenshot (--selector header --only mobile) and ends with a one- or two-line Directions taken recap.",
+      "assertions": [
+        "States Quick level",
+        "Does not ask the intake questionnaire",
+        "Does not load unrelated reference files or whole examples",
+        "Re-checks with a targeted screenshot or --baseline audit",
+        "Keeps the recap short"
+      ],
+      "files": []
     }
   ]
 }

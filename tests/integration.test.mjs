@@ -100,3 +100,12 @@ test("inventory lists every element and --compare reports what a redesign lost",
   const diff = diffInventories(inv, stripped);
   assert.ok(diff.missing.some((m) => m.category === "navigation link"));
 });
+
+test("screenshot can capture one element at one width (cheap re-checks)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const dir = mkdtempSync(join(tmpdir(), "glowup-sel-"));
+  const shots = await capture(BUGS, dir, { selector: "div.kpis", only: "mobile" });
+  assert.equal(shots.length, 1);
+  assert.equal(shots[0].label, "mobile");
+  assert.match(shots[0].file, /div-kpis-mobile\.png$/);
+  assert.ok(existsSync(shots[0].file));
+});

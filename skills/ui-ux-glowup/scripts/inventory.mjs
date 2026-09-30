@@ -32,7 +32,7 @@ export async function inventory(target, { route, ...options } = {}) {
 if (isMain(import.meta.url)) {
   const { _: [target], flags } = parseArgs(process.argv.slice(2));
   if (!target) {
-    console.error("Usage: node inventory.mjs <page | url | inv.json> [--json inv.json] [--compare <redesign>]");
+    console.error("Usage: node inventory.mjs <page | url | inv.json> [--json inv.json [--print]] [--compare <redesign>]");
     process.exit(1);
   }
   try {
@@ -41,6 +41,10 @@ if (isMain(import.meta.url)) {
     if (typeof flags.compare === "string") {
       const after = await inventory(flags.compare, opts);
       console.log(formatDiff(diffInventories(before, after)));
+    } else if (flags.json && !flags.print) {
+      // Saved for --compare later: print a one-line summary instead of the full list (saves tokens).
+      const n = (x) => (Array.isArray(x) ? x.length : x || 0);
+      console.log(`Inventory saved: ${n(before.navigation)} nav links · ${n(before.ctas)} CTAs · ${n(before.headings)} headings · ${n(before.forms)} forms · ${n(before.media.images)} images · ${n(before.legal)} legal links · ${n(before.tracking)} trackers (--print for the full list)`);
     } else {
       console.log(formatInventory(before));
     }

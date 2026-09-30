@@ -111,6 +111,7 @@ skills/skill-name/
 - Examples use realistic, specific content — never lorem ipsum. Unsplash URLs are placeholders.
 - Every HTML example has full SEO head tags (title 30–60 chars, description, canonical, Open Graph, favicon) and must pass the audit's mobile, SEO and `ai-*` rules.
 - Every delivery in the workflow ends with the "Directions taken" recap — keep it in `SKILL.md` when editing the workflow.
+- **Token budget**: `SKILL.md` stays under ~10 KB and the description under ~500 characters (it is loaded in every session). New detail goes in a reference file listed in the "Load on demand" table, never in `SKILL.md`. Script output must stay compact (cap listed items, offer `--brief`/`--baseline`-style modes).
 - Never reproduce a reference site's copy, logos or illustrations: borrow mechanics only.
 
 ## Writing Style Guidelines

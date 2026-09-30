@@ -24,6 +24,13 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Real reference values.** `extract-tokens.mjs` measures a reference site's type scale, heading tracking, spacing rhythm, radii and shadows — so "like Linear" means Linear's actual numbers.
 - **Anti "AI look".** The audit flags the measurable tells (purple gradients, glass everywhere, giant radii, three identical cards, emoji headings, cliché copy, everything centered); `anti-ai.md` gives the fix for each.
 
+## Light on tokens
+
+- **Three effort levels** — Quick (one fix), Standard (one page), Full (whole site): small requests skip the questionnaire, references and inventory.
+- **Loads only what the task needs**: a routing table in `SKILL.md` points to one reference file per need, and examples are read section by section.
+- **Compact re-checks**: `audit.mjs --baseline before.json` prints only score changes and open issues (~70% shorter than a full report); `screenshot.mjs --selector ".pricing" --only mobile` captures just the part you changed.
+- A typical one-page job loads about half the instructions of v1.3.
+
 ## How it works
 
 ```

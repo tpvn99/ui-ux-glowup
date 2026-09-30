@@ -4,9 +4,20 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.3.0 | 2026-09-28 |
+| ui-ux-glowup | 1.4.0 | 2026-09-30 |
 
 ## Recent Changes
+
+### 1.4.0 (2026-09-30)
+
+- **ui-ux-glowup** (1.3.0 → 1.4.0): same results, far fewer tokens.
+  - **Effort levels** Quick / Standard / Full: small requests skip intake, references, inventory and token extraction; Standard asks only the intake questions it can't infer.
+  - **Load on demand** routing table in `SKILL.md` (one reference per need, only the relevant sections); examples read section by section via their `<!-- -->` markers. `SKILL.md` 14.5 KB → 9 KB, description 938 → 485 characters.
+  - `audit.mjs --baseline before.json`: compact delta (scores before → after, fixed rules, open and NEW issues) for every re-check; `--brief` one-line findings; `--max-items`; items capped at 4 in full reports. Header docs updated to /45.
+  - `screenshot.mjs --selector <css>`, `--only desktop|mobile`, `--max-height`: re-check just the changed section.
+  - `inventory.mjs --json` prints a one-line summary (`--print` for the full list).
+  - Token discipline rules (edit instead of rewrite, look at an image once, stop when clean).
+  - Tests: 42.
 
 ### 1.3.0 (2026-09-28)
 

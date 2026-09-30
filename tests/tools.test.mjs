@@ -82,3 +82,24 @@ test("make-favicon: monogram SVG and a valid multi-size ICO", () => {
   assert.equal(ico[6], 16);
   assert.equal(ico.readUInt32LE(6 + 12), 6 + 16 * 2);
 });
+
+test("brief and delta reports stay short and keep what matters", async () => {
+  const { formatReport, formatDelta } = await import("../skills/ui-ux-glowup/scripts/lib/report.mjs");
+  const { CRITERIA } = await import("../skills/ui-ux-glowup/scripts/lib/analyze.mjs");
+  const scores = Object.fromEntries(CRITERIA.map((c) => [c, 5]));
+  const f = (rule, severity, items = []) => ({ criterion: "Responsive", severity, rule, message: "A long explanation of the rule that brief mode should drop.", items: items.slice(0, 8), count: items.length || undefined });
+  const before = { target: "x", scores: { ...scores, Responsive: 2 }, total: 42, max: 45, findings: [f("overflow", "error", ["body 120px"]), f("tap-target", "warn", ["a 1", "a 2", "a 3", "a 4", "a 5"]), f("seo-canonical", "info")] };
+  const full = formatReport(before);
+  const brief = formatReport(before, { brief: true });
+  assert.ok(brief.length < full.length / 2, "brief is much shorter");
+  assert.match(brief, /! tap-target: a 1 \| a 2 \(\+3 more\)/);
+  assert.match(brief, /· info: seo-canonical/);
+  assert.doesNotMatch(brief, /long explanation/);
+  const after = { target: "x", scores: { ...scores, Responsive: 4 }, total: 44, max: 45, findings: [f("tap-target", "warn", ["a 1"]), f("contrast", "warn", ["p 3.1:1"])] };
+  const delta = formatDelta(before, after);
+  assert.match(delta, /Responsive 2→4/);
+  assert.match(delta, /42→44\/45/);
+  assert.match(delta, /✓ fixed: overflow, seo-canonical/);
+  assert.match(delta, /! NEW contrast/);
+  assert.match(delta, /! tap-target: a 1$/m);
+});
