@@ -2,7 +2,7 @@
 
 Complete code, checked at desktop (1440px) and mobile (390px). Read the matching file **before** coding a section: reuse its structure, classes and finishing details, then adapt the content and the brand.
 
-**Read only what you need**: every section is marked with an HTML comment. `grep -n "<!--" <file>` lists them with line numbers; read just that range instead of the whole file (examples are 8–23 KB each).
+**Read only what you need**: every section is marked with an HTML comment. `grep -n "<!--" <file>` lists them with line numbers; read just that range instead of the whole file (examples are 8–23 KB each). These comments are for navigation only: don't copy them into your code.
 
 | File | Pattern | Inspired by | Use for |
 |---|---|---|---|

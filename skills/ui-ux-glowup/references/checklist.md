@@ -57,6 +57,7 @@
 
 ## Technical
 - [ ] Complete code that runs as-is, no unnecessary dependencies
+- [ ] No comments left in the code (section markers, notes, commented-out code)
 - [ ] Images sized, `loading="lazy"` below the fold
 - [ ] Audit re-run: every criterion ≥ 4/5, `scripts/audit.mjs` reports no errors
 

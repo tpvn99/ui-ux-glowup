@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build a web interface so it looks professionally designed — landing pages, showcase sites, portfolios, SaaS, dashboards, KPI cards, pricing or product pages, components. Use for 'make it look professional / like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'improve SEO or readability', 'UI audit', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos, brand identities or palettes."
 license: MIT
 metadata:
-  version: 1.4.0
+  version: 1.4.1
 ---
 
 # UI/UX Glowup
@@ -29,6 +29,7 @@ Match the work — and the tokens you spend — to the request. Say which level 
 - **Audits**: first run in full with `--json before.json`; every re-check with `--baseline before.json` (only score deltas and open issues).
 - **Screenshots**: after the first full capture, re-check only what changed: `--selector ".pricing" --only mobile`. Look at an image once, then act.
 - **Edit, don't rewrite**: patch the parts that change instead of re-emitting whole files.
+- **No comments in the code you write**: no section markers (`<!-- Hero -->`), no explanations, no "changed/new" notes, no commented-out code. Don't copy the examples' comments. Only exception: a one-line *why* for something non-obvious (a workaround), or the project's own convention.
 - **Stop iterating** when the audit has no errors, every criterion is ≥ 4/5 and the screenshot shows nothing to fix (usually 1–2 rounds).
 - **Answers stay short**: no restating the plan, no long explanations — the recap covers it.
 

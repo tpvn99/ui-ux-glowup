@@ -1,7 +1,7 @@
 {
   "name": "ui-ux-glowup",
   "description": "Upgrade any web interface to the level of best-in-class product sites (Linear, Stripe, Vercel, Apple) — with tested example code and a visual screenshot check",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "author": {
     "name": "Antonin"
   },

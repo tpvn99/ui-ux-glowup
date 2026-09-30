@@ -4,9 +4,13 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.4.0 | 2026-09-30 |
+| ui-ux-glowup | 1.4.1 | 2026-09-30 |
 
 ## Recent Changes
+
+### 1.4.1 (2026-09-30)
+
+- **ui-ux-glowup** (1.4.0 → 1.4.1): no comments in generated code (section markers, notes, commented-out code) — they cost tokens and get removed anyway; examples' navigation comments are not to be copied. Checklist item added.
 
 ### 1.4.0 (2026-09-30)
 

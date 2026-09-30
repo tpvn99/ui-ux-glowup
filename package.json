@@ -1,6 +1,6 @@
 {
   "name": "ui-ux-glowup",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "private": true,
   "description": "Agent skill that upgrades web interfaces to the level of best-in-class product sites",
   "type": "module",
