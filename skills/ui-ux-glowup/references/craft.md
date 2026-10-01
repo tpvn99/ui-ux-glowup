@@ -9,7 +9,7 @@ What separates a "fine" interface from one that looks like it came from a large 
 - Fluid hero size: `clamp(2.5rem, 4vw + 1rem, 4.5rem)`.
 - Body: 16–18px, `line-height: 1.6`, max width `65ch`.
 - Secondary text: same family, muted color (≈ 60% perceived opacity), never too light for AA contrast.
-- Eyebrow / micro-label above headings: 12–13px, uppercase or not, tracking `+0.04em`, muted or accent color.
+- Micro-label above a heading only when it carries information (category, date, step number); 12–13px, tracking `+0.04em`, muted. Never above the hero H1, never on every section.
 - `font-feature-settings: "ss01", "cv11"` (Inter) and `tabular-nums` for aligned numbers.
 - `text-wrap: balance` on headings, `text-wrap: pretty` on paragraphs.
 - Respect the locale's typography (e.g. French: non-breaking space before `: ; ! ?`, « » quotes).
@@ -47,7 +47,7 @@ What separates a "fine" interface from one that looks like it came from a large 
 - Buttons: 36–44px tall, generous horizontal padding, consistent radius, weight 500. Primary filled, secondary hairline border, tertiary text + arrow `→`.
 - "Learn more" links: arrow slides 2px on hover.
 - Inputs: 40px tall, hairline border, focus = 2–3px accent ring at low opacity + accent border.
-- Badges: small (12px, 2×8 padding), muted background, never loud.
+- Badges: small (12px, 2×8 padding), muted background, never loud; none above the hero H1 and no status dots as decoration.
 - Icons: one family (Phosphor, Tabler, Solar, Lucide…), 16–20px, 1.5px stroke, optically aligned with text. Search beyond the defaults with `scripts/find-icons.mjs` (→ `references/icons.md`).
 - Keyboard shortcuts shown as styled `kbd` where relevant (apps).
 

@@ -88,6 +88,23 @@ test("audit catches phone bugs, tight sections, readability, SEO and AI tells on
   }
 });
 
+const AI_TELLS = new URL("./fixtures/ai-tells.html", import.meta.url).pathname;
+
+test("audit flags the AI-template tells that make a site look generated (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const r = await audit(AI_TELLS);
+  const rules = new Set(r.findings.map((f) => f.rule));
+  for (const rule of ["ai-hero-pill", "ai-accent-border", "ai-icon-tile", "ai-gradient-text", "ai-glow"]) assert.ok(rules.has(rule), `expected ${rule}`);
+  const pill = r.findings.find((f) => f.rule === "ai-hero-pill");
+  assert.match(pill.items[0], /with dot/);
+});
+
+test("audit finds removed focus rings and animations without a reduced-motion rule (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const r = await audit(new URL("./fixtures/a11y-bugs.html", import.meta.url).pathname);
+  const rules = new Set(r.findings.map((f) => f.rule));
+  assert.ok(rules.has("focus-invisible"), "focus-invisible");
+  assert.ok(rules.has("reduced-motion"), "reduced-motion");
+});
+
 test("inventory lists every element and --compare reports what a redesign lost", { skip: !hasPlaywright && "playwright not installed" }, async () => {
   const { inventory, diffInventories } = await import("../skills/ui-ux-glowup/scripts/inventory.mjs");
   const inv = await inventory(SITE);

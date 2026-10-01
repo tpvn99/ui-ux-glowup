@@ -1,0 +1,84 @@
+<!doctype html>
+<!--
+  Pattern: sign-in / sign-up screen (mechanics from Linear, Vercel, Clerk)
+  Key points: one task per screen, form column on the left, a quiet proof panel on the right (hidden on mobile),
+  SSO above the email form, visible labels, inline error with role="alert", 16px inputs so iOS does not zoom,
+  autocomplete tokens, password reveal as a real button.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in to Relay — deploys, logs and previews in one place</title>
+<meta name="description" content="Sign in to Relay to manage deployments, preview branches and read build logs. New to Relay? Create a free account in under a minute, no card required.">
+<link rel="canonical" href="https://example.com/login">
+<meta property="og:title" content="Sign in to Relay">
+<meta property="og:description" content="Manage deployments, preview branches and read build logs. Create a free account in under a minute.">
+<meta property="og:image" content="https://example.com/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%234f46e5%27/%3E%3Cpath%20d%3D%27M9%2022V10h8a4%204%200%200%201%200%208h-8m6%200%204%204%27%20stroke%3D%27white%27%20stroke-width%3D%273%27%20fill%3D%27none%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #4f46e5;
+    --color-line: rgb(24 24 27 / .12);
+    --color-muted: #63636b;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-white font-sans text-zinc-900">
+
+<main class="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+  <!-- Form -->
+  <section class="flex flex-col px-6 py-8 sm:px-12">
+    <a href="#" class="text-lg font-semibold tracking-tight">Relay</a>
+
+    <div class="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-12">
+      <h1 class="text-4xl font-semibold tracking-tight">Sign in</h1>
+      <p class="mt-2 text-[15px] text-muted">New here? <a href="#" class="font-medium text-accent underline underline-offset-4">Create an account</a></p>
+
+      <button type="button" class="mt-8 flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-line text-[15px] font-medium hover:bg-zinc-50">
+        <svg class="size-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="5.5" cy="4.5" r="1.8"/><circle cx="5.5" cy="15.5" r="1.8"/><circle cx="14.5" cy="8" r="1.8"/><path d="M5.5 6.3v7.4M14.5 9.8c0 3-4 2.2-9 3.400"/></svg>
+        Continue with SSO
+      </button>
+
+      <p class="my-6 flex items-center gap-4 text-sm text-muted" role="separator"><span class="h-px flex-1 bg-line"></span>or with email<span class="h-px flex-1 bg-line"></span></p>
+
+      <form class="space-y-5" novalidate>
+        <div>
+          <label for="email" class="block text-sm font-medium">Work email</label>
+          <input id="email" type="email" autocomplete="email" value="maya@acme-store" aria-invalid="true" aria-describedby="email-error" class="mt-1.5 h-11 w-full rounded-lg border border-red-600 px-3 text-base">
+          <p id="email-error" role="alert" class="mt-1.5 text-sm text-red-700">Enter a full address, for example maya@acme-store.com.</p>
+        </div>
+        <div>
+          <div class="mb-2 flex items-center justify-between">
+            <label for="password" class="text-sm font-medium">Password</label>
+            <a href="#" class="inline-block py-1 text-sm text-accent underline underline-offset-4">Forgot password?</a>
+          </div>
+          <div class="relative">
+            <input id="password" type="password" autocomplete="current-password" class="h-11 w-full rounded-lg border border-line px-3 pr-12 text-base">
+            <button type="button" aria-label="Show password" class="absolute right-1 top-1 grid size-9 place-items-center rounded-md text-muted hover:text-zinc-900">
+              <svg class="size-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 10S4.500 4 10 4s8.500 6 8.500 6-3 6-8.500 6S1.500 10 1.500 10Z"/><circle cx="10" cy="10" r="2.500"/></svg>
+            </button>
+          </div>
+        </div>
+        <button class="h-11 w-full rounded-lg bg-accent text-[15px] font-medium text-white hover:brightness-110">Sign in</button>
+      </form>
+    </div>
+
+    <p class="text-sm text-muted">By continuing you accept the <a href="#" class="underline underline-offset-4">Terms</a> and <a href="#" class="underline underline-offset-4">Privacy policy</a>.</p>
+  </section>
+
+  <!-- Proof panel -->
+  <aside class="hidden bg-zinc-950 p-12 text-zinc-100 lg:flex lg:flex-col lg:justify-end" aria-label="Customer story">
+    <figure class="max-w-lg">
+      <blockquote class="text-2xl font-medium leading-snug tracking-tight [text-wrap:balance]">“Preview URLs cut our review time from two days to an afternoon. Nobody asks for a staging server any more.”</blockquote>
+      <figcaption class="mt-6 text-sm text-zinc-400">Maya Okafor, head of engineering at Acme Store · 140 deploys a week</figcaption>
+    </figure>
+  </aside>
+</main>
+</body>
+</html>

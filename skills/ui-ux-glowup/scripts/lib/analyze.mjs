@@ -216,6 +216,12 @@ export function analyze(desktop, mobile) {
     if (ai.identicalCards.length) add("Visuals", "warn", "ai-identical-cards", "Row of 3–4 identical icon + title + text cards — the default AI layout. Vary sizes (bento), use real visuals, or a numbered list.", ai.identicalCards);
     if (ai.emoji.length) add("Content", "warn", "ai-emoji", "Emojis in headings or buttons read as generated; use proper icons or none.", ai.emoji);
     if (ai.cliches.length) add("Content", "warn", "ai-cliche", "Generic marketing phrases (\"Transform your…\", \"Unlock…\", \"seamless\", \"innovative solutions\"); say what the product concretely does.", ai.cliches);
+    if (ai.heroPills?.length) add("Visuals", "warn", "ai-hero-pill", "A pill / badge / announcement above the main heading (\"New\", \"Now live\", dot + label) — the most copied AI-template opener. Start with the headline; say it in the headline or the first paragraph.", ai.heroPills);
+    if (ai.statusDots?.length) add("Visuals", "warn", "ai-status-dot", "Small green or pulsing status dots next to a label (\"Available\", \"Live\", \"Now open\") read as decoration. Keep them only for a real, live status in a product UI.", ai.statusDots);
+    if (ai.accentBorders?.length) add("Visuals", "warn", "ai-accent-border", "Colored thick border on one side of a block (left or top accent bar) — a strong AI-template signature. Use a hairline all around, a background tint, or nothing.", ai.accentBorders);
+    if (ai.iconTiles?.length >= 3) add("Visuals", "warn", "ai-icon-tile", `${ai.iconTiles.length} icons inside small tinted rounded squares — the default AI feature card. Show the icon bare, larger, or replace it with a real visual.`, ai.iconTiles.slice(0, 4));
+    if (ai.gradientText?.length) add("Visuals", "warn", "ai-gradient-text", "Gradient-filled text. Use a solid ink color; emphasis through weight, size or a serif italic.", ai.gradientText);
+    if (ai.glows?.length) add("Visuals", "warn", "ai-glow", "Large colored glow shadows behind elements. Use one neutral elevation system (border + soft layered shadow).", ai.glows);
     if (ai.centeredShare > 75) add("Visuals", "info", "ai-centered", `${ai.centeredShare}% of headings and paragraphs are centered; left-aligned editorial layouts read as more intentional.`);
   }
 
@@ -248,6 +254,12 @@ export function analyze(desktop, mobile) {
   const levels = d.headings.map((h) => h.level);
   const skips = levels.filter((l, i) => i > 0 && l - levels[i - 1] > 1);
   if (skips.length) add("Accessibility", "warn", "heading-order", "Heading levels skip (e.g. h2 → h4).");
+
+  const ax = d.a11y;
+  if (ax) {
+    if (ax.focusInvisible.length) add("Accessibility", ax.focusInvisible.length > 2 ? "error" : "warn", "focus-invisible", `Keyboard focus is not visible on ${ax.focusInvisible.length} of ${ax.focusChecked} controls checked (outline removed, nothing replaces it). Add a 2px ring with \`:focus-visible\`.`, ax.focusInvisible);
+    if (ax.animated > 0 && !ax.reducedMotion) add("Accessibility", "warn", "reduced-motion", `${ax.animated} animated element(s) and no \`prefers-reduced-motion\` rule; turn animations off for people who ask for it.`);
+  }
 
   return findings;
 }

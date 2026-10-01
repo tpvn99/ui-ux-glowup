@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Camille Duret — Product designer, résumé</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-600-normal.woff2) format("woff2")}
+
+:root{--accent:#1f4d3a;--ink:#18181b;--muted:#5b5b66;--line:#e4e4e7;--font-heading:Inter,sans-serif;--font-body:Inter,sans-serif}
+@page{size:A4;margin:16mm 17mm}
+
+*{box-sizing:border-box}
+html{font:400 9.5pt/1.5 var(--font-body);color:var(--ink)}
+body{margin:0}
+h1,h2,h3,p,ul{margin:0}
+ul{padding:0;list-style:none}
+
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:14px;border-bottom:1px solid var(--ink)}
+h1{font:600 26pt/1 var(--font-heading);letter-spacing:-.03em}
+.role{margin-top:6px;font-size:11pt;color:var(--muted)}
+.contact{text-align:right;font-size:8.5pt;line-height:1.7;color:var(--muted)}
+
+section{display:grid;grid-template-columns:30mm 1fr;gap:16px;margin-top:18px}
+h2{font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);padding-top:2px}
+.summary{font-size:10pt;line-height:1.6;max-width:70ch}
+
+.job{break-inside:avoid}
+.job + .job{margin-top:12px}
+.job-head{display:flex;justify-content:space-between;gap:12px}
+.job-head b{font-weight:600}
+.dates{font-size:8.5pt;color:var(--muted);white-space:nowrap}
+.org{color:var(--muted);font-size:9pt}
+.job ul{margin-top:4px}
+.job li{position:relative;padding-left:12px;margin-top:2px}
+.job li::before{content:"–";position:absolute;left:0;color:var(--muted)}
+
+.skills{display:grid;grid-template-columns:auto 1fr;gap:3px 14px}
+.skills dt{font-weight:600}
+.skills dd{margin:0;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Camille Duret</h1>
+    <p class="role">Product designer · B2B SaaS and dashboards</p>
+  </div>
+  <div class="contact">
+    camille.duret@example.com<br>+33 6 12 34 56 78<br>Lyon, France · camille-duret.example
+  </div>
+</header>
+
+<section>
+  <h2>Profile</h2>
+  <p class="summary">Seven years designing data-heavy products for logistics and finance teams. I run discovery, prototype in code and work with engineers until the design ships. Last project: a dispatcher dashboard that cut average routing time by 28%.</p>
+</section>
+
+<section>
+  <h2>Experience</h2>
+  <div>
+    <div class="job">
+      <div class="job-head"><p><b>Senior product designer</b> · <span class="org">Tallow, Lyon</span></p><p class="dates">2023 – present</p></div>
+      <ul>
+        <li>Redesigned the dispatcher dashboard for 2,400 daily users; routing time down 28%, support tickets down 19%.</li>
+        <li>Built and documented a 60-component design system used by 4 squads.</li>
+        <li>Mentor two junior designers; run the monthly design critique.</li>
+      </ul>
+    </div>
+    <div class="job">
+      <div class="job-head"><p><b>Product designer</b> · <span class="org">Finwise, Paris</span></p><p class="dates">2020 – 2023</p></div>
+      <ul>
+        <li>Led onboarding for a business account product; activation rose from 41% to 63%.</li>
+        <li>Introduced usability tests every two weeks with 5 customers per round.</li>
+      </ul>
+    </div>
+    <div class="job">
+      <div class="job-head"><p><b>UI designer</b> · <span class="org">Studio Sept, Lyon</span></p><p class="dates">2018 – 2020</p></div>
+      <ul>
+        <li>Designed websites and mobile apps for 15 clients in retail, health and culture.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Education</h2>
+  <div>
+    <div class="job"><div class="job-head"><p><b>Master's in interaction design</b> · <span class="org">Université Lumière Lyon 2</span></p><p class="dates">2016 – 2018</p></div></div>
+    <div class="job"><div class="job-head"><p><b>Bachelor in graphic design</b> · <span class="org">École Émile Cohl, Lyon</span></p><p class="dates">2013 – 2016</p></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Skills</h2>
+  <dl class="skills" style="margin:0">
+    <dt>Design</dt><dd>Figma, prototyping, design systems, research, accessibility (WCAG 2.2)</dd>
+    <dt>Code</dt><dd>HTML, CSS, Tailwind, React basics</dd>
+    <dt>Languages</dt><dd>French (native), English (fluent), Italian (conversational)</dd>
+  </dl>
+</section>
+
+</body>
+</html>

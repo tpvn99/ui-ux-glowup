@@ -224,6 +224,58 @@
         "Mentions that official B2B e-invoicing goes through an approved platform"
       ],
       "files": []
+    },
+    {
+      "id": 18,
+      "prompt": "My site looks like every other AI-made site: a pill with a green dot above the title, cards with a colored line on the left, icons in little colored squares. Can you fix it? (index.html attached)",
+      "expected_output": "Should run the audit, see ai-hero-pill, ai-status-dot, ai-accent-border and ai-icon-tile, load anti-ai.md only, remove the pill and the dot, replace accent bars with hairlines or nothing, show icons bare or replace them with real visuals, keep brand colors, and finish with a Quick or Standard recap.",
+      "assertions": [
+        "Runs the audit and names the ai-* rules found",
+        "Loads anti-ai.md and no unrelated references",
+        "Removes the pill and status dot above the H1",
+        "Replaces the single-side colored borders",
+        "Does not change brand colors",
+        "Re-checks with --baseline and ends with the Directions taken recap"
+      ],
+      "files": []
+    },
+    {
+      "id": 19,
+      "prompt": "I'm not a developer. I have a one-page site for my yoga studio built on a website builder export. Can you just make the contact section nicer?",
+      "expected_output": "Should choose Quick effort, work only on the contact section, ask nothing technical, explain choices in plain words, keep all other content, and verify the section on mobile.",
+      "assertions": [
+        "States the Quick level in one line",
+        "Touches only the contact section",
+        "Explains choices without jargon",
+        "Checks the section at 390px with a targeted screenshot",
+        "Lists text or structure changes in the recap"
+      ],
+      "files": []
+    },
+    {
+      "id": 20,
+      "prompt": "Write me a blog article template for my engineering team's site. First article: why we dropped story points.",
+      "expected_output": "Should start from article.html, keep a 65–70 character measure, no badge above the H1, no left-bar pull quote, a clear table of contents, and pass the audit with SEO tags.",
+      "assertions": [
+        "Starts from assets/examples/article.html",
+        "No pill or eyebrow above the H1",
+        "Pull quote has no colored side border",
+        "Body measure around 65–70 characters",
+        "Audit shows no errors"
+      ],
+      "files": []
+    },
+    {
+      "id": 21,
+      "prompt": "Make me a one-page CV as a PDF. I'm a product designer with 7 years of experience.",
+      "expected_output": "Should use assets/pdf/cv.html, ask only for the missing facts, print with pdf.mjs, check that it reports no problems, fit one page, and show the page image.",
+      "assertions": [
+        "Uses the cv.html template",
+        "Runs pdf.mjs and reports ✓",
+        "Fits on one page",
+        "Uses specific numbers in the bullets"
+      ],
+      "files": []
     }
   ]
 }

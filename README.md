@@ -74,7 +74,7 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 | `product-page.html` | Aesop, Allbirds | E-commerce |
 | `kpi-cards.html` | Stripe, Linear, Vercel | KPI cards, donut, goal ring, bars, sparklines — light/dark |
 
-PDF templates (`assets/pdf/`): `facture-devis.html` (French invoice/quote), `report.html`, `proposal.html`, `one-pager.html`.
+PDF templates (`assets/pdf/`): `facture-devis.html` (French invoice/quote), `report.html`, `proposal.html`, `one-pager.html`, `cv.html`, `letter.html`.
 | `react/DashboardShell.tsx` | — | React projects |
 
 ## Installation
@@ -160,7 +160,7 @@ skills/ui-ux-glowup/
 │   ├── audit.md                # 9-criteria audit grid (/45)
 │   └── checklist.md            # Pre-delivery checklist
 ├── assets/examples/            # Tested examples (Tailwind v4 + React)
-├── assets/pdf/                 # Print-ready PDF templates (invoice/quote, report, proposal, one-pager)
+├── assets/pdf/                 # Print-ready PDF templates (invoice/quote, report, proposal, one-pager, CV, letter)
 ├── scripts/
 │   ├── audit.mjs               # Automated UI audit (desktop + mobile), scored /45
 │   ├── extract-tokens.mjs      # Measure a reference site's design tokens

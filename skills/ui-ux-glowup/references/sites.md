@@ -14,7 +14,7 @@ The sites below are widely recognized for the quality of their design. For each:
 **Stripe** (stripe.com)
 - Visible 4-column grid with thin vertical lines, content aligned to it
 - Visual explanations: mini-diagrams, code snippets, animated fake UIs instead of icons
-- Very clear hierarchy: eyebrow → heading → paragraph → "Learn more →" link
+- Very clear hierarchy: heading → paragraph → "Learn more →" link
 - High information density that stays readable; many sections that vary in shape
 
 **Vercel** (vercel.com)

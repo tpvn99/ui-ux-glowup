@@ -281,6 +281,12 @@ function analyze(desktop, mobile) {
     if (ai.identicalCards.length) add("Visuals", "warn", "ai-identical-cards", "Row of 3–4 identical icon + title + text cards — the default AI layout. Vary sizes (bento), use real visuals, or a numbered list.", ai.identicalCards);
     if (ai.emoji.length) add("Content", "warn", "ai-emoji", "Emojis in headings or buttons read as generated; use proper icons or none.", ai.emoji);
     if (ai.cliches.length) add("Content", "warn", "ai-cliche", "Generic marketing phrases (\"Transform your…\", \"Unlock…\", \"seamless\", \"innovative solutions\"); say what the product concretely does.", ai.cliches);
+    if (ai.heroPills?.length) add("Visuals", "warn", "ai-hero-pill", "A pill / badge / announcement above the main heading (\"New\", \"Now live\", dot + label) — the most copied AI-template opener. Start with the headline; say it in the headline or the first paragraph.", ai.heroPills);
+    if (ai.statusDots?.length) add("Visuals", "warn", "ai-status-dot", "Small green or pulsing status dots next to a label (\"Available\", \"Live\", \"Now open\") read as decoration. Keep them only for a real, live status in a product UI.", ai.statusDots);
+    if (ai.accentBorders?.length) add("Visuals", "warn", "ai-accent-border", "Colored thick border on one side of a block (left or top accent bar) — a strong AI-template signature. Use a hairline all around, a background tint, or nothing.", ai.accentBorders);
+    if (ai.iconTiles?.length >= 3) add("Visuals", "warn", "ai-icon-tile", `${ai.iconTiles.length} icons inside small tinted rounded squares — the default AI feature card. Show the icon bare, larger, or replace it with a real visual.`, ai.iconTiles.slice(0, 4));
+    if (ai.gradientText?.length) add("Visuals", "warn", "ai-gradient-text", "Gradient-filled text. Use a solid ink color; emphasis through weight, size or a serif italic.", ai.gradientText);
+    if (ai.glows?.length) add("Visuals", "warn", "ai-glow", "Large colored glow shadows behind elements. Use one neutral elevation system (border + soft layered shadow).", ai.glows);
     if (ai.centeredShare > 75) add("Visuals", "info", "ai-centered", `${ai.centeredShare}% of headings and paragraphs are centered; left-aligned editorial layouts read as more intentional.`);
   }
 
@@ -313,6 +319,12 @@ function analyze(desktop, mobile) {
   const levels = d.headings.map((h) => h.level);
   const skips = levels.filter((l, i) => i > 0 && l - levels[i - 1] > 1);
   if (skips.length) add("Accessibility", "warn", "heading-order", "Heading levels skip (e.g. h2 → h4).");
+
+  const ax = d.a11y;
+  if (ax) {
+    if (ax.focusInvisible.length) add("Accessibility", ax.focusInvisible.length > 2 ? "error" : "warn", "focus-invisible", `Keyboard focus is not visible on ${ax.focusInvisible.length} of ${ax.focusChecked} controls checked (outline removed, nothing replaces it). Add a 2px ring with \`:focus-visible\`.`, ax.focusInvisible);
+    if (ax.animated > 0 && !ax.reducedMotion) add("Accessibility", "warn", "reduced-motion", `${ax.animated} animated element(s) and no \`prefers-reduced-motion\` rule; turn animations off for people who ask for it.`);
+  }
 
   return findings;
 }
@@ -797,8 +809,83 @@ function collectPageData() {
     const iconTitleText = kids.every((k) => k.querySelector("svg, img, i, [class*=icon]") && k.querySelector("h3, h4, strong") && k.querySelector("p") && k.children.length <= 4);
     if (iconTitleText) identicalCards.push(selector(parent));
   }
+  const chroma = ([r, g, b]) => Math.max(r, g, b) - Math.min(r, g, b);
+  const painted = (c) => c[3] > 0.05;
+  const h1 = [...document.querySelectorAll("h1")].find(visible);
+  const heroPills = [];
+  if (h1) {
+    const h1r = h1.getBoundingClientRect();
+    for (const el of document.querySelectorAll("a, span, div, p")) {
+      if (el === h1 || el.contains(h1) || h1.contains(el) || !visible(el)) continue;
+      const r = el.getBoundingClientRect();
+      const txt = (el.textContent || "").replace(/\s+/g, " ").trim();
+      if (!txt || txt.length > 70 || r.height > 44 || r.width < 40) continue;
+      if (r.bottom > h1r.top + 4 || h1r.top - r.bottom > 140 || r.top < 0 || r.top > 700) continue;
+      if (el.closest("header, nav")) continue;
+      if (el.querySelector("p, h1, h2, h3, ul, button, img") ) continue;
+      const s = getComputedStyle(el);
+      const pill = parseFloat(s.borderTopLeftRadius) >= Math.min(r.height / 2, 999) - 1 && (painted(rgba(s.backgroundColor)) || parseFloat(s.borderTopWidth) > 0);
+      const dot = [...el.querySelectorAll("span, i, svg")].some((d) => { const dr = d.getBoundingClientRect(); return dr.width > 0 && dr.width <= 12 && dr.height <= 12 && painted(rgba(getComputedStyle(d).backgroundColor)); });
+      if (pill && !heroPills.some((x) => x.el.contains(el) || el.contains(x.el))) heroPills.push({ el, text: txt.slice(0, 40), dot });
+    }
+  }
+  const heroPillOut = heroPills.slice(0, 3).map((x) => `${selector(x.el)} "${x.text}"${x.dot ? " (with dot)" : ""}`);
+  const statusDots = [];
+  const accentBorders = [];
+  const iconTiles = [];
+  const gradientText = [];
+  const glows = [];
+  for (const el of all) {
+    if (!visible(el)) continue;
+    const s = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
+    if (r.width <= 12 && r.height <= 12 && r.width >= 4 && parseFloat(s.borderTopLeftRadius) >= r.width / 2 - 0.5) {
+      const bg = rgba(s.backgroundColor);
+      const h = painted(bg) ? hue(bg) : null;
+      const green = h !== null && h >= 85 && h <= 170;
+      const animated = s.animationName !== "none" && /ping|pulse|blink/i.test(s.animationName);
+      const hasText = el.parentElement && (el.parentElement.textContent || "").trim().length > 2 && el.parentElement.getBoundingClientRect().height < 48;
+      const ps = el.parentElement ? getComputedStyle(el.parentElement) : null;
+      const inPill = ps && parseFloat(ps.borderTopLeftRadius) >= 8 && (painted(rgba(ps.backgroundColor)) || parseFloat(ps.borderTopWidth) > 0);
+      if (hasText && !el.closest("td, th, tr, li, aside") && ((green && inPill && r.top < 900) || animated)) statusDots.push(`${selector(el)}${animated ? " (pulsing)" : ""} next to "${el.parentElement.textContent.replace(/\s+/g, " ").trim().slice(0, 30)}"`);
+    }
+    if (r.width > 120 && r.height > 40 && el.tagName !== "BLOCKQUOTE" && !el.closest("blockquote, nav, [role=tablist], table")) {
+      const sides = ["Top", "Right", "Bottom", "Left"].map((k) => ({ k, w: parseFloat(s[`border${k}Width`]), c: rgba(s[`border${k}Color`]), st: s[`border${k}Style`] }));
+      const thick = sides.filter((x) => x.w >= 2 && x.st !== "none" && painted(x.c) && chroma(x.c) > 40);
+      const others = sides.filter((x) => x.w < 1 || x.st === "none");
+      if (thick.length === 1 && others.length === 3 && thick[0].k !== "Bottom" && (el.textContent || "").trim().length > 10) accentBorders.push(`${selector(el)} (${thick[0].k.toLowerCase()} ${thick[0].w}px)`);
+    }
+    if (r.width >= 28 && r.width <= 64 && Math.abs(r.width - r.height) <= 2 && parseFloat(s.borderTopLeftRadius) > 0 && painted(rgba(s.backgroundColor)) && el.children.length === 1 && /^(svg|i|img)$/i.test(el.children[0].tagName) && !(el.textContent || "").trim() && el.tagName !== "BUTTON" && el.tagName !== "A" && !el.closest("button, a, nav, header")) iconTiles.push(selector(el));
+    if ((s.backgroundClip === "text" || s.webkitBackgroundClip === "text") && s.backgroundImage.includes("gradient") && (el.textContent || "").trim()) gradientText.push(selector(el));
+    if (s.boxShadow && s.boxShadow !== "none" && r.width > 80) {
+      for (const m of s.boxShadow.matchAll(/(rgba?\([^)]*\)|oklch\([^)]*\)|color\([^)]*\))\s+(-?[\d.]+)px\s+(-?[\d.]+)px\s+([\d.]+)px/g)) {
+        const c = rgba(m[1]);
+        if (c[3] >= 0.2 && chroma(c) > 90 && parseFloat(m[4]) >= 20) { glows.push(selector(el)); break; }
+      }
+    }
+  }
   const centered = [...document.querySelectorAll("h1, h2, h3, p")].filter(visible);
   const centeredShare = centered.length ? centered.filter((el) => getComputedStyle(el).textAlign === "center").length / centered.length : 0;
+
+  const focusInvisible = [];
+  const focusable = [...document.querySelectorAll("a[href], button, input:not([type=hidden]), select, textarea, summary, [tabindex]:not([tabindex='-1'])")].filter((el) => visible(el) && !srOnly(el) && !el.disabled && !el.closest("[inert]")).slice(0, 25);
+  const prevFocus = document.activeElement;
+  for (const el of focusable) {
+    const look = () => { const s = getComputedStyle(el); return [s.outlineStyle, s.outlineWidth, s.outlineColor, s.boxShadow, s.borderTopColor, s.backgroundColor, s.textDecorationLine, s.color].join("|"); };
+    const before = look();
+    try { el.focus({ focusVisible: true, preventScroll: true }); } catch { el.focus(); }
+    const after = look();
+    const s = getComputedStyle(el);
+    const outlined = s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0 && rgba(s.outlineColor)[3] > 0;
+    if (document.activeElement === el && before === after && !outlined) focusInvisible.push(selector(el));
+    el.blur();
+  }
+  if (prevFocus && prevFocus.focus) prevFocus.focus();
+  let reducedMotion = false;
+  for (const sheet of document.styleSheets) {
+    try { for (const rule of sheet.cssRules) if (rule.media && /prefers-reduced-motion/.test(rule.media.mediaText)) reducedMotion = true; } catch {}
+  }
+  const animated = all.filter((el) => { const s = getComputedStyle(el); return s.animationName !== "none" && parseFloat(s.animationDuration) > 0; }).length;
 
   const bodyText = document.body.innerText || "";
   return {
@@ -827,7 +914,8 @@ function collectPageData() {
     sectionGaps,
     seo,
     readability,
-    aiLook: { gradients, glass, bigRadius: bigRadius.length, bigRadiusSample: bigRadius.slice(0, 5), radiusElements: radii.length, emoji: emojiIn, cliches, identicalCards, centeredShare: Math.round(centeredShare * 100) },
+    a11y: { focusInvisible: focusInvisible.slice(0, 6), focusChecked: focusable.length, reducedMotion, animated },
+    aiLook: { gradients, glass, bigRadius: bigRadius.length, bigRadiusSample: bigRadius.slice(0, 5), radiusElements: radii.length, emoji: emojiIn, cliches, identicalCards, heroPills: heroPillOut, statusDots: statusDots.slice(0, 5), accentBorders: accentBorders.slice(0, 6), iconTiles, gradientText: gradientText.slice(0, 4), glows: glows.slice(0, 4), centeredShare: Math.round(centeredShare * 100) },
   };
 }
 

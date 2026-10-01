@@ -70,4 +70,6 @@ thead { display: table-header-group }    /* header repeats on each page */
 
 **Proposal / brochure** — `proposal.html`: cover · the client's problem · approach in steps with timing · proof (figures, testimonial, team) · options and prices · one clear next step with contact.
 
-**One-pager / CV / product sheet** — `one-pager.html`: fits on 1 page (2 max), readable in 10 seconds · name + value proposition at the top · visual · key specs · benefits · price · call to action and contact.
+**CV** — `cv.html`: 1 page, dates aligned right, numbers in every bullet, no photo or rating bars unless asked. **Letter** — `letter.html`: letterhead, recipient, date, subject line, short paragraphs (72 characters wide), signature, enclosure.
+
+**One-pager / product sheet** — `one-pager.html`: fits on 1 page (2 max), readable in 10 seconds · name + value proposition at the top · visual · key specs · benefits · price · call to action and contact.

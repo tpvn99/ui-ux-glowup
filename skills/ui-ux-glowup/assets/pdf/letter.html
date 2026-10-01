@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Letter — Atelier Morel to Maison Bellevue, quote follow-up</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:500;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Inter;font-weight:600;src:url(https://cdn.jsdelivr.net/npm/@fontsource/inter@5/files/inter-latin-600-normal.woff2) format("woff2")}
+
+:root{--accent:#1f4d3a;--ink:#18181b;--muted:#5b5b66;--line:#e4e4e7;--font-heading:Inter,sans-serif;--font-body:Inter,sans-serif}
+@page{size:A4;margin:20mm 22mm 18mm}
+
+*{box-sizing:border-box}
+html{font:400 10.5pt/1.6 var(--font-body);color:var(--ink)}
+body{margin:0}
+h1,p{margin:0}
+
+.letterhead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.brand{font:600 14pt/1 var(--font-heading);letter-spacing:-.02em}
+.from{font-size:8.5pt;line-height:1.6;color:var(--muted);text-align:right}
+
+.meta{display:grid;grid-template-columns:1fr auto;gap:24px;margin-top:28px;align-items:start}
+.to{line-height:1.5}
+.date{color:var(--muted);white-space:nowrap}
+
+.subject{margin-top:28px;font:600 11pt/1.4 var(--font-heading)}
+.body{margin-top:16px;max-width:72ch}
+.body p + p{margin-top:12px}
+.sign{margin-top:28px;break-inside:avoid}
+.sign .name{margin-top:36px;font-weight:600}
+.sign .role{color:var(--muted);font-size:9pt}
+.enc{margin-top:28px;padding-top:10px;border-top:1px solid var(--line);font-size:8.5pt;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="letterhead">
+  <p class="brand">Atelier Morel</p>
+  <p class="from">12 rue des Tanneurs, 88000 Épinal<br>03 29 00 00 00 · contact@atelier-morel.example</p>
+</header>
+
+<div class="meta">
+  <p class="to"><b>Maison Bellevue</b><br>À l'attention de Mme Sophie Lambert<br>4 place du Marché<br>54000 Nancy</p>
+  <p class="date">Épinal, September 30, 2026</p>
+</div>
+
+<p class="subject">Subject: quote no. D-2026-0142 — oak kitchen, 3.6 m</p>
+
+<div class="body">
+  <p>Dear Ms Lambert,</p>
+  <p>Thank you for welcoming us on September 22. As agreed, you will find attached our detailed quote for the oak kitchen: solid oak fronts, a 40 mm worktop and full installation, for a total of €12,900 including VAT.</p>
+  <p>The quote is valid until October 31. Once signed, we can start production within three weeks and plan the installation for the second half of December, after the tiling work is done.</p>
+  <p>If you would like to adjust the layout or compare finishes, I can bring samples to Nancy on any weekday, without obligation. You can reach me directly on 06 00 00 00 00.</p>
+  <p>Kind regards,</p>
+</div>
+
+<div class="sign">
+  <p class="name">Julien Morel</p>
+  <p class="role">Founder, Atelier Morel</p>
+</div>
+
+<p class="enc">Enclosure: quote D-2026-0142 (2 pages)</p>
+
+</body>
+</html>

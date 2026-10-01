@@ -45,10 +45,10 @@ td:first-child{color:var(--muted);width:40%}
 .options{list-style:none;padding:0}
 
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;counter-reset:s}
-.steps div{border-top:2px solid var(--ink);padding-top:8px;font-size:8.5pt;color:var(--muted)}
+.steps div{border-top:1px solid var(--ink);padding-top:8px;font-size:8.5pt;color:var(--muted)}
 .steps div::before{counter-increment:s;content:"0" counter(s);display:block;font-size:8pt;font-weight:600;color:var(--accent)}
 .steps b{display:block;color:var(--ink);font-weight:600;font-size:9.5pt}
-blockquote{margin:20px 0 0;padding:12px 16px;border-left:3px solid var(--accent);background:var(--soft);font-size:11pt;line-height:1.5}
+blockquote{margin:20px 0 0;padding:12px 16px;border-radius:8px;background:var(--soft);font-size:11pt;line-height:1.5}
 blockquote footer{margin-top:6px;font-size:8.5pt;color:var(--muted)}
 .cta{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-top:20px;padding:16px 18px;border-radius:10px;background:var(--ink);color:#fff}
 .cta b{display:block;font-size:12pt;font-weight:600}

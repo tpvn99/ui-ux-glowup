@@ -45,7 +45,7 @@ section+section{margin-top:26px}
 .callout p{font-size:9pt;margin-top:6px}
 
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;counter-reset:s}
-.step{border-top:2px solid var(--ink);padding-top:10px;break-inside:avoid}
+.step{border-top:1px solid var(--ink);padding-top:10px;break-inside:avoid}
 .step::before{counter-increment:s;content:"0" counter(s);font-size:8pt;font-weight:600;color:var(--accent)}
 .step b{display:block;margin-top:2px;font-weight:600}
 .step p{font-size:9pt;color:var(--muted);margin-top:4px}
@@ -55,7 +55,7 @@ section+section{margin-top:26px}
 .stat{padding:12px 0;border-bottom:1px solid var(--line)}
 .stat b{display:block;font:500 22pt/1.1 var(--font-heading)}
 .stat span{font-size:8.5pt;color:var(--muted)}
-blockquote{margin-top:16px;padding:14px 18px;border-left:3px solid var(--accent);background:var(--soft);font:500 12pt/1.45 var(--font-heading);break-inside:avoid}
+blockquote{margin-top:16px;padding:14px 18px;border-radius:8px;background:var(--soft);font:500 12pt/1.45 var(--font-heading);break-inside:avoid}
 blockquote footer{margin-top:8px;font:400 8.5pt var(--font-body);color:var(--muted)}
 
 .team{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
