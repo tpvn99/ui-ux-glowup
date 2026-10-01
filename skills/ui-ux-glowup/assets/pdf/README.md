@@ -8,6 +8,8 @@ Print-ready HTML (A4, plain CSS, no framework), checked with `scripts/pdf.mjs`: 
 | `report.html` | Audit / report: dark cover, executive summary with KPIs and findings, contents, chart, tables, action plan | 4 | `report` |
 | `proposal.html` | Commercial proposal: cover, problem, 3-step approach, proof and team, 3 pricing options, next step | 3 | `proposal` |
 | `one-pager.html` | Product or service sheet: hero with visual, benefits, specs, options, steps, testimonial, CTA | 1 | `onepager` |
+| `cv.html` | One-page résumé: name and contact, profile, experience with dates, education, skills | 1 | — |
+| `letter.html` | Business letter: letterhead, recipient, date, subject, body, signature, enclosure | 1 | — |
 
 Adapt:
 1. Fonts: delete the `@font-face` lines and add `<link rel="stylesheet" href="fonts.css">` **after** `</style>` (from `scripts/site-fonts.mjs <site> <dir> --static`); it overrides `--font-heading` and `--font-body`, which the templates use everywhere.

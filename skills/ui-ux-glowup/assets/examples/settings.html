@@ -1,0 +1,113 @@
+<!doctype html>
+<!--
+  Pattern: account / workspace settings (mechanics from Linear, Stripe Dashboard, GitHub)
+  Key points: section nav on the left (a scrolling row on mobile), one card per topic with its own save,
+  rows = label + control, switches as real checkboxes with role="switch", destructive action isolated at the bottom
+  with a plain outline (no red slab, no side bar), 16px inputs.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace settings — Relay · Acme Store</title>
+<meta name="description" content="Manage the Acme Store workspace on Relay: profile, notifications, members, billing and data. Changes apply to everyone in the workspace immediately.">
+<link rel="canonical" href="https://example.com/settings">
+<meta property="og:title" content="Workspace settings — Relay · Acme Store">
+<meta property="og:description" content="Manage profile, notifications, members, billing and data for the Acme Store workspace.">
+<meta property="og:image" content="https://example.com/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%234f46e5%27/%3E%3Cpath%20d%3D%27M9%2022V10h8a4%204%200%200%201%200%208h-8m6%200%204%204%27%20stroke%3D%27white%27%20stroke-width%3D%273%27%20fill%3D%27none%27/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #4f46e5;
+    --color-line: rgb(24 24 27 / .1);
+    --color-muted: #63636b;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+</style>
+</head>
+<body class="bg-zinc-50 font-sans text-zinc-900">
+
+<header class="border-b border-line bg-white">
+  <nav class="mx-auto flex h-14 max-w-5xl items-center justify-between px-6" aria-label="Main">
+    <a href="#" class="font-semibold tracking-tight">Relay <span class="font-normal text-muted">/ Acme Store</span></a>
+    <a href="#" class="inline-flex h-10 items-center text-sm text-muted hover:text-zinc-900">Back to projects</a>
+  </nav>
+</header>
+
+<div class="mx-auto grid max-w-5xl grid-cols-[minmax(0,1fr)] gap-8 px-6 py-10 md:grid-cols-[180px_minmax(0,1fr)] md:gap-12">
+  <h1 class="text-4xl font-semibold tracking-tight md:col-span-2">Settings</h1>
+
+  <!-- Section nav -->
+  <nav aria-label="Settings sections" class="-mx-6 overflow-x-auto px-6 md:mx-0 md:overflow-visible md:px-0">
+    <ul class="flex gap-1 whitespace-nowrap text-[15px] md:flex-col">
+      <li><a href="#profile" aria-current="page" class="flex h-10 items-center rounded-lg bg-white px-3 font-medium shadow-[0_0_0_1px_var(--color-line)]">Profile</a></li>
+      <li><a href="#notifications" class="flex h-10 items-center rounded-lg px-3 text-muted hover:text-zinc-900">Notifications</a></li>
+      <li><a href="#members" class="flex h-10 items-center rounded-lg px-3 text-muted hover:text-zinc-900">Members</a></li>
+      <li><a href="#danger" class="flex h-10 items-center rounded-lg px-3 text-muted hover:text-zinc-900">Data</a></li>
+    </ul>
+  </nav>
+
+  <main class="space-y-8">
+    <!-- Profile -->
+    <section id="profile" aria-labelledby="h-profile" class="rounded-xl border border-line bg-white">
+      <div class="p-6">
+        <h2 id="h-profile" class="font-semibold">Profile</h2>
+        <p class="mt-1 max-w-prose text-[15px] text-muted">Shown to teammates and on shared preview links.</p>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <label class="block text-sm font-medium">Full name<input autocomplete="name" value="Maya Okafor" class="mt-1.5 h-11 w-full rounded-lg border border-line px-3 text-base font-normal"></label>
+          <label class="block text-sm font-medium">Work email<input type="email" autocomplete="email" value="maya@acme-store.com" class="mt-1.5 h-11 w-full rounded-lg border border-line px-3 text-base font-normal"></label>
+          <label class="block text-sm font-medium sm:col-span-2">Workspace URL
+            <span class="mt-1.5 flex h-11 items-center rounded-lg border border-line px-3 text-base font-normal"><span class="text-muted">relay.app/</span><input value="acme-store" class="min-w-0 flex-1 bg-transparent outline-none"></span>
+          </label>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 border-t border-line px-6 py-3">
+        <button class="h-10 rounded-lg px-4 text-sm font-medium text-muted hover:text-zinc-900">Cancel</button>
+        <button class="h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-700">Save changes</button>
+      </div>
+    </section>
+
+    <!-- Notifications -->
+    <section id="notifications" aria-labelledby="h-notif" class="rounded-xl border border-line bg-white">
+      <div class="p-6 pb-2">
+        <h2 id="h-notif" class="font-semibold">Notifications</h2>
+        <p class="mt-1 max-w-prose text-[15px] text-muted">Choose what reaches your inbox. Alerts about failed production deploys cannot be turned off.</p>
+      </div>
+      <ul class="divide-y divide-line px-6">
+        <li><label class="flex cursor-pointer items-center justify-between gap-6 py-4"><span class="text-[15px]"><span class="block font-medium">Failed preview builds</span><span class="block text-[15px] text-muted">Only for branches you pushed.</span></span><input type="checkbox" role="switch" checked class="peer sr-only"><span class="relative h-6 w-11 shrink-0 rounded-full bg-zinc-300 transition before:absolute before:left-0.5 before:top-0.5 before:size-5 before:rounded-full before:bg-white before:transition peer-checked:bg-accent peer-checked:before:translate-x-5 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"></span></label></li>
+        <li><label class="flex cursor-pointer items-center justify-between gap-6 py-4"><span class="text-[15px]"><span class="block font-medium">Weekly summary</span><span class="block text-[15px] text-muted">Mondays at 8:00, with deploy counts and slowest builds.</span></span><input type="checkbox" role="switch" checked class="peer sr-only"><span class="relative h-6 w-11 shrink-0 rounded-full bg-zinc-300 transition before:absolute before:left-0.5 before:top-0.5 before:size-5 before:rounded-full before:bg-white before:transition peer-checked:bg-accent peer-checked:before:translate-x-5 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"></span></label></li>
+        <li><label class="flex cursor-pointer items-center justify-between gap-6 py-4"><span class="text-[15px]"><span class="block font-medium">Product news</span><span class="block text-[15px] text-muted">About one email a month.</span></span><input type="checkbox" role="switch" class="peer sr-only"><span class="relative h-6 w-11 shrink-0 rounded-full bg-zinc-300 transition before:absolute before:left-0.5 before:top-0.5 before:size-5 before:rounded-full before:bg-white before:transition peer-checked:bg-accent peer-checked:before:translate-x-5 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"></span></label></li>
+      </ul>
+    </section>
+
+    <!-- Members -->
+    <section id="members" aria-labelledby="h-members" class="rounded-xl border border-line bg-white">
+      <div class="flex items-start justify-between gap-4 p-6 pb-4">
+        <div><h2 id="h-members" class="font-semibold">Members</h2><p class="mt-1 max-w-prose text-[15px] text-muted">4 of 10 seats used on the Team plan.</p></div>
+        <button class="h-10 shrink-0 rounded-lg border border-line px-4 text-sm font-medium hover:bg-zinc-50">Invite member</button>
+      </div>
+      <ul class="divide-y divide-line border-t border-line">
+        <li class="flex items-center justify-between gap-4 px-6 py-3.5"><p class="min-w-0 text-[15px]"><span class="block truncate font-medium">Maya Okafor</span><span class="block truncate text-sm text-muted">maya@acme-store.com</span></p><p class="text-sm text-muted">Owner</p></li>
+        <li class="flex items-center justify-between gap-4 px-6 py-3.5"><p class="min-w-0 text-[15px]"><span class="block truncate font-medium">Tom Brandt</span><span class="block truncate text-sm text-muted">tom@acme-store.com</span></p><p class="text-sm text-muted">Admin</p></li>
+        <li class="flex items-center justify-between gap-4 px-6 py-3.5"><p class="min-w-0 text-[15px]"><span class="block truncate font-medium">Léa Fontaine</span><span class="block truncate text-sm text-muted">lea@acme-store.com</span></p><p class="text-sm text-muted">Developer</p></li>
+        <li class="flex items-center justify-between gap-4 px-6 py-3.5"><p class="min-w-0 text-[15px]"><span class="block truncate font-medium">Invitation sent</span><span class="block truncate text-sm text-muted">sam@acme-store.com</span></p><p class="text-sm text-muted">Pending</p></li>
+      </ul>
+    </section>
+
+    <!-- Data -->
+    <section id="danger" aria-labelledby="h-data" class="rounded-xl border border-line bg-white p-6">
+      <h2 id="h-data" class="font-semibold">Delete workspace</h2>
+      <p class="mt-1 max-w-prose text-[15px] leading-relaxed text-muted">Permanently removes 12 projects, 4,310 deployments and all logs. Export your data first: deleted workspaces cannot be restored.</p>
+      <div class="mt-5 flex flex-wrap gap-2">
+        <button class="h-10 rounded-lg border border-line px-4 text-sm font-medium hover:bg-zinc-50">Export data</button>
+        <button class="h-10 rounded-lg border border-red-700 px-4 text-sm font-medium text-red-700 hover:bg-red-50">Delete workspace…</button>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

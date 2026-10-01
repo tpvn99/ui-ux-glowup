@@ -4,9 +4,19 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.5.0 | 2026-09-30 |
+| ui-ux-glowup | 1.6.0 | 2026-10-01 |
 
 ## Recent Changes
+
+### 1.6.0 (2026-10-01)
+
+- **ui-ux-glowup** (1.5.0 → 1.6.0): for everyone — creators and people who only modify — and no more "made by AI" tells.
+  - **Anti-AI tells, measured**: new audit rules `ai-hero-pill` (pill, badge or "New" announcement above the H1, with or without a dot), `ai-status-dot` (green or pulsing decorative dots), `ai-accent-border` (colored line on one side of a block), `ai-icon-tile` (icons in tinted rounded squares), `ai-gradient-text`, `ai-glow`. `anti-ai.md` opens with the five tells people spot first; `craft.md`, `sections.md`, `sites.md` no longer recommend eyebrows, badges above the hero or accent borders.
+  - **Accessibility**: `focus-invisible` (tabs through the controls and reports those with no visible focus) and `reduced-motion` (animations with no `prefers-reduced-motion` rule).
+  - **Create or modify**: new entry table in `SKILL.md` (create / modify / document) and plain-words guidance for beginners.
+  - **Examples**: `article.html`, `auth.html`, `settings.html`; existing examples cleaned of the tells (hero pill, side bars, colored glow).
+  - **PDF templates**: `cv.html`, `letter.html`; accent side bars removed from `one-pager.html` and `proposal.html`.
+  - Tests: 55 (new fixtures `ai-tells.html`, `a11y-bugs.html`).
 
 ### 1.5.0 (2026-09-30)
 

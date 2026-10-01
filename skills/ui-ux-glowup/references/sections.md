@@ -14,6 +14,7 @@ For each section: several proven patterns and the site that executes each best. 
 - **Split 55/45** (Mercury, local business sites): text on the left, real photo or visual on the right; proof (Google rating, logos) under the CTAs. → `local-business.html`
 - **Centered hero product** (Apple): for a physical or single product; short heading, huge visual.
 - **Interactive demo** (Cal.com, Clerk): the real, usable component inside the hero.
+- **Always**: the H1 is the first thing on the page. No pill, badge, "New" chip, status dot or eyebrow above it (`anti-ai.md`).
 
 ## Social proof
 
@@ -38,7 +39,7 @@ Forbidden: three identical icon + title + text cards as the only features sectio
 
 ## Pricing
 
-- 3 plans max, the recommended one slightly emphasized (accent border, badge), not enlarged. → `pricing.html`
+- 3 plans max, the recommended one slightly emphasized (darker border or a quiet text label), not enlarged. → `pricing.html`
 - Monthly/annual toggle, detailed comparison table below (Linear, Vercel).
 - Large price with `tabular-nums`, feature list with thin checkmarks.
 

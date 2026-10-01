@@ -2,6 +2,17 @@
 
 People now recognize template AI sites in seconds, and trust them less. The audit flags the measurable tells (rules in brackets); the rest is on you.
 
+## The five tells people spot first (never ship these by default)
+| Tell | Rule | Instead |
+|---|---|---|
+| **Pill / badge / "New" announcement above the H1**, often with a green dot ("Now live", "Available for work") [`ai-hero-pill`] | The page opens on the headline. No label, chip or announcement above it | Put the news in the headline or first paragraph; a real announcement goes in a slim top bar or the nav, not the hero |
+| **Green or pulsing status dot** next to a label [`ai-status-dot`] | A dot means a real, live status in a product UI (Synced, Delivered). Never decoration | Nothing, or plain text |
+| **Colored line on one side of a block** (left bar on cards, quotes, callouts; thick colored top rule on steps) [`ai-accent-border`] | No single-side accent borders | Hairline border all around, a background tint, a bigger number or heading — or nothing |
+| **Icon in a tinted rounded square** repeated on every card [`ai-icon-tile`] | Not 3+ times in a row | Bare icon, larger and in ink color; or a real visual / product crop |
+| **Gradient text** and **colored glows** [`ai-gradient-text`, `ai-glow`] | Text is solid ink; shadows are neutral | Emphasis by weight, size or a serif italic; one border + soft neutral shadow |
+
+Also drop: eyebrow labels above every section heading (keep one at most, only if it carries information such as a category or a date), "Trusted by" strips of unknown logos, scroll-triggered fade-up on everything.
+
 ## Visual tells → what to do instead
 | Tell | Instead |
 |---|---|

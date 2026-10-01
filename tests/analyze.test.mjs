@@ -151,6 +151,23 @@ test("readability rules: long paragraphs, long sentences, justified and uppercas
   for (const r of ["long-paragraphs", "long-sentences", "justified-text", "uppercase-text"]) assert.ok(rules.has(r), r);
 });
 
+test("accessibility rules: invisible focus and missing reduced-motion (v1.6)", () => {
+  const bad = page({ a11y: { focusInvisible: ["a.nav", "button.cta", "a.logo"], focusChecked: 8, reducedMotion: false, animated: 4 } });
+  const rules = new Set(analyze(bad, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
+  assert.ok(rules.has("focus-invisible") && rules.has("reduced-motion"));
+  const ok = page({ a11y: { focusInvisible: [], focusChecked: 8, reducedMotion: true, animated: 4 } });
+  assert.equal(analyze(ok, page({ viewport: { width: 390, height: 844 } })).filter((f) => ["focus-invisible", "reduced-motion"].includes(f.rule)).length, 0);
+});
+
+test("AI-look rules: hero pill, status dot, accent border, icon tiles, gradient text, glow (v1.6)", () => {
+  const d = page({ aiLook: { gradients: [], glass: 0, bigRadius: 0, radiusElements: 10, bigRadiusSample: [], identicalCards: [], emoji: [], cliches: [], centeredShare: 20,
+    heroPills: ["a.badge \"New\""], statusDots: ["span.dot next to \"Live\""], accentBorders: ["div.card (left 4px)"], iconTiles: ["a", "b", "c"], gradientText: ["span.grad"], glows: ["div.card"] } });
+  const rules = new Set(analyze(d, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
+  for (const r of ["ai-hero-pill", "ai-status-dot", "ai-accent-border", "ai-icon-tile", "ai-gradient-text", "ai-glow"]) assert.ok(rules.has(r), r);
+  const two = page({ aiLook: { ...d.aiLook, iconTiles: ["a", "b"], heroPills: [], statusDots: [], accentBorders: [], gradientText: [], glows: [] } });
+  assert.equal(analyze(two, page({ viewport: { width: 390, height: 844 } })).filter((f) => f.rule.startsWith("ai-")).length, 0);
+});
+
 test("AI-look rules: gradients, glass, radii, identical cards, emoji, clichés (v1.3)", () => {
   const d = page({ aiLook: { gradients: ["section.hero"], glass: 5, bigRadius: 8, radiusElements: 10, bigRadiusSample: ["div.card 32px"], identicalCards: ["div.features (3 cards)"], emoji: ["h2 \"Why us 🚀\""], cliches: ["Transform your workflow"], centeredShare: 90 } });
   const rules = new Set(analyze(d, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
