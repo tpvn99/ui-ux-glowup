@@ -16,7 +16,10 @@ Current versions of all skills. Agents can compare against local versions to che
   - **Create or modify**: new entry table in `SKILL.md` (create / modify / document) and plain-words guidance for beginners.
   - **Examples**: `article.html`, `auth.html`, `settings.html`; existing examples cleaned of the tells (hero pill, side bars, colored glow).
   - **PDF templates**: `cv.html`, `letter.html`; accent side bars removed from `one-pager.html` and `proposal.html`.
-  - Tests: 55 (new fixtures `ai-tells.html`, `a11y-bugs.html`).
+  - **Direction first** (`references/direction.md`, adapted from Anthropic's public `frontend-design` skill): subject in 3 lines, token plan, check against AI defaults, one bold place, critique. New audit rules `ai-arrow-cta`, `ai-caps-label`, `ai-numbered-markers`, `ai-accent-word`, `ai-middot-meta`; `anti-ai.md` lists the template-chrome tells.
+  - **Motion** (`references/motion.md`): one orchestrated moment, motion that answers an action, reduced-motion and no-JS safe; no per-section fade-ups.
+  - Fix found by testing on a real site: closed `<details>` (FAQ accordions) no longer count as section content, which produced false `section-gap` warnings.
+  - Tests: 58 (new fixtures `ai-tells.html`, `a11y-bugs.html`, `accordion.html`, `ai-chrome.html`).
 
 ### 1.5.0 (2026-09-30)
 

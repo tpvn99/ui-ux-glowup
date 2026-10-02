@@ -11,6 +11,15 @@ People now recognize template AI sites in seconds, and trust them less. The audi
 | **Icon in a tinted rounded square** repeated on every card [`ai-icon-tile`] | Not 3+ times in a row | Bare icon, larger and in ink color; or a real visual / product crop |
 | **Gradient text** and **colored glows** [`ai-gradient-text`, `ai-glow`] | Text is solid ink; shadows are neutral | Emphasis by weight, size or a serif italic; one border + soft neutral shadow |
 
+### Template chrome (measured by `ai-arrow-cta`, `ai-caps-label`, `ai-numbered-markers`, `ai-accent-word`, `ai-middot-meta`)
+| Tell | Instead |
+|---|---|
+| "→" at the end of most buttons and links | Say what happens; an arrow only where direction matters (next, external) |
+| Small tracked ALL-CAPS label above each heading | None, or a sentence-case label that carries information (category, date) |
+| 01 / 02 / 03 on content that is not a sequence | Number steps and timelines only |
+| One word of a headline in italic, color or another weight | One treatment for the whole headline |
+| "A · B · C" meta strings everywhere | A short sentence, or a list |
+
 Also drop: eyebrow labels above every section heading (keep one at most, only if it carries information such as a category or a date), "Trusted by" strips of unknown logos, scroll-triggered fade-up on everything.
 
 ## Visual tells → what to do instead
@@ -39,6 +48,8 @@ Also drop: eyebrow labels above every section heading (keep one at most, only if
 
 ## Motion tells
 Everything fades up on scroll, parallax on every image, typewriter headlines. → Motion only where it explains (a chart drawing, a toggle switching), 150–600ms, once, off for reduced-motion.
+
+Calibration: also avoid the defaults listed in `direction.md` §4 (cream + serif + terracotta, near-black + one acid accent, identical rounded cards with one radius and one shadow).
 
 ## When a "tell" is fine
 Gradients, 3D and glass aren't banned — **generic** use is. A same-hue gradient on a CTA, a consistent 3D set in a SaaS hero, or blur on a sticky header are all fine when they're deliberate and consistent with the brand.

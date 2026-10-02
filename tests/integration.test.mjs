@@ -105,6 +105,19 @@ test("audit finds removed focus rings and animations without a reduced-motion ru
   assert.ok(rules.has("reduced-motion"), "reduced-motion");
 });
 
+test("closed accordions do not count as section content (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const r = await audit(new URL("./fixtures/accordion.html", import.meta.url).pathname);
+  assert.ok(!r.findings.some((f) => f.rule.startsWith("section-gap")), "no false section-gap on closed details");
+});
+
+test("audit finds template chrome and ignores real counters and sequences (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
+  const r = await audit(new URL("./fixtures/ai-chrome.html", import.meta.url).pathname);
+  const rules = new Set(r.findings.map((f) => f.rule));
+  for (const rule of ["ai-arrow-cta", "ai-caps-label", "ai-numbered-markers", "ai-accent-word", "ai-middot-meta"]) assert.ok(rules.has(rule), `expected ${rule}`);
+  const numbered = r.findings.find((f) => f.rule === "ai-numbered-markers");
+  assert.equal(numbered.items.length, 3, "01/02/03 flagged; '1–5 of 312', '1.8%', '12' and the ordered list are not");
+});
+
 test("inventory lists every element and --compare reports what a redesign lost", { skip: !hasPlaywright && "playwright not installed" }, async () => {
   const { inventory, diffInventories } = await import("../skills/ui-ux-glowup/scripts/inventory.mjs");
   const inv = await inventory(SITE);
