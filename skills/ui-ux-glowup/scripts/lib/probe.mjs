@@ -333,6 +333,8 @@ export function collectPageData() {
     const bw = block.getBoundingClientRect().width;
     for (const c of block.querySelectorAll("*")) {
       if (c.closest("svg") && c.tagName.toLowerCase() !== "svg") continue;
+      const closed = c.closest("details:not([open])");
+      if (closed && c.tagName !== "SUMMARY" && !c.closest("summary")) continue;
       const own = [...c.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
       const media = ["IMG", "SVG", "svg", "VIDEO", "CANVAS", "IFRAME", "INPUT", "BUTTON", "SELECT", "TEXTAREA", "PICTURE"].includes(c.tagName);
       const s = getComputedStyle(c);
@@ -494,6 +496,33 @@ export function collectPageData() {
       }
     }
   }
+  const flat = (el) => (el.textContent || "").replace(/\s+/g, " ").trim();
+  const arrowCtas = [...document.querySelectorAll("a, button")].filter((el) => visible(el) && flat(el).length < 50 && /(→|↗|›|»|->)$/.test(flat(el))).map((el) => `${selector(el)} "${flat(el).slice(0, 40)}"`);
+  const capsLabels = [];
+  for (const h of document.querySelectorAll("h1, h2, h3")) {
+    if (!visible(h)) continue;
+    const prev = h.previousElementSibling;
+    if (!prev || !visible(prev) || prev.children.length > 3) continue;
+    const t = flat(prev);
+    const ps = getComputedStyle(prev);
+    const upper = ps.textTransform === "uppercase" || (t.length >= 3 && t === t.toUpperCase() && /[A-ZÀ-Ý]{3}/.test(t));
+    if (t && t.length <= 40 && upper && parseFloat(ps.fontSize) <= 15 && parseFloat(ps.letterSpacing) > 0.3) capsLabels.push(`${selector(prev)} "${t}"`);
+  }
+  const numbered = [...document.querySelectorAll("p, span, div, li")].filter((el) => visible(el) && el.children.length <= 1 && !el.closest("ol, table, dl, time, nav") && /^(0[1-9]|[1-9]\d?\s?[·\/—–-]\s[A-Za-zÀ-ÿ].{0,20}|0[1-9]\s?[·.\/—–-]\s?[A-Za-zÀ-ÿ].{0,20})$/.test(flat(el))).map((el) => `${selector(el)} "${flat(el)}"`);
+  const accentWords = [];
+  for (const h of document.querySelectorAll("h1, h2")) {
+    if (!visible(h)) continue;
+    const hs = getComputedStyle(h);
+    const total = flat(h).length;
+    for (const c of h.querySelectorAll("span, em, i, b, strong, mark")) {
+      const t = flat(c);
+      if (!t || t.length >= total * 0.7 || c.children.length) continue;
+      const cs = getComputedStyle(c);
+      const diff = cs.fontStyle !== hs.fontStyle || cs.color !== hs.color || cs.backgroundClip === "text" || Math.abs(parseInt(cs.fontWeight) - parseInt(hs.fontWeight)) >= 200;
+      if (diff) { accentWords.push(`${selector(h)} "${t.slice(0, 30)}"`); break; }
+    }
+  }
+  const middots = [...document.querySelectorAll("p, span, li, div")].filter((el) => visible(el) && el.children.length === 0 && flat(el).length >= 12 && flat(el).length <= 110 && /\S\s[·•|]\s\S.*\s[·•|]\s\S/.test(flat(el))).map((el) => `${selector(el)} "${flat(el).slice(0, 50)}"`);
   const centered = [...document.querySelectorAll("h1, h2, h3, p")].filter(visible);
   const centeredShare = centered.length ? centered.filter((el) => getComputedStyle(el).textAlign === "center").length / centered.length : 0;
 
@@ -545,6 +574,6 @@ export function collectPageData() {
     seo,
     readability,
     a11y: { focusInvisible: focusInvisible.slice(0, 6), focusChecked: focusable.length, reducedMotion, animated },
-    aiLook: { gradients, glass, bigRadius: bigRadius.length, bigRadiusSample: bigRadius.slice(0, 5), radiusElements: radii.length, emoji: emojiIn, cliches, identicalCards, heroPills: heroPillOut, statusDots: statusDots.slice(0, 5), accentBorders: accentBorders.slice(0, 6), iconTiles, gradientText: gradientText.slice(0, 4), glows: glows.slice(0, 4), centeredShare: Math.round(centeredShare * 100) },
+    aiLook: { gradients, glass, bigRadius: bigRadius.length, bigRadiusSample: bigRadius.slice(0, 5), radiusElements: radii.length, emoji: emojiIn, cliches, identicalCards, heroPills: heroPillOut, statusDots: statusDots.slice(0, 5), accentBorders: accentBorders.slice(0, 6), iconTiles, gradientText: gradientText.slice(0, 4), glows: glows.slice(0, 4), arrowCtas: arrowCtas.slice(0, 6), capsLabels: capsLabels.slice(0, 6), numbered: numbered.slice(0, 6), accentWords: accentWords.slice(0, 4), middots: middots.slice(0, 5), centeredShare: Math.round(centeredShare * 100) },
   };
 }

@@ -20,7 +20,7 @@ You are a senior product designer who writes production code. Bring the user's i
 | **Modify** — existing page, code, URL or screenshot | Audit first → change only what was asked, keep everything else (inventory) → targeted re-checks |
 | **Document** — invoice, report, CV, letter | `references/pdf.md` + a template |
 
-Beginner or no jargon from the user: ask in plain words, explain each choice in one sentence, never assume tools.
+Non-technical user: plain words, one sentence per choice, never assume tools.
 
 ## Pick the effort level first
 
@@ -38,7 +38,7 @@ Match the work — and the tokens you spend — to the request. Say which level 
 - **Examples**: at most one, only the section you need (`grep -n "<!--" <file>`, then that line range).
 - **Audits**: first run `--json before.json`; every re-check `--baseline before.json`.
 - **Screenshots**: re-check only what changed (`--selector ".pricing" --only mobile`); look at an image once.
-- **Edit, don't rewrite.** Answers stay short; the recap covers the rest.
+- **Edit, don't rewrite.** Answers stay short.
 - **No comments in the code you write** (section markers, notes, commented-out code), and don't copy the examples' comments. Exception: a one-line *why* for a workaround.
 - **Stop** when the audit has no errors, every criterion is ≥ 4/5 and the screenshot shows nothing to fix.
 
@@ -54,7 +54,9 @@ Match the work — and the tokens you spend — to the request. Say which level 
 | Phone bugs: taps, forms, sliders, overlays | `references/mobile.md` |
 | Section spacing, readability, SEO, copy rules | `references/seo-readability.md` |
 | Icons, Flaticon, favicons | `references/icons.md` |
-| Looks AI-generated (pills, status dots, side-bar borders, icon tiles…) | `references/anti-ai.md` |
+| Motion: one load moment, tabs, FAQ, theme switch | `references/motion.md` |
+| Make it distinctive: plan tokens, check vs defaults, one bold place | `references/direction.md` (Standard, Full) |
+| Looks AI-generated (pills, dots, bars, tiles, arrows, caps labels…) | `references/anti-ai.md` |
 | Changing a real codebase / handing off to a coding agent | `references/implement.md` |
 | Score grid, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
 | PDF: invoice, quote, report, proposal, one-pager, CV, letter | `references/pdf.md` + one template from `assets/pdf/` |
@@ -62,7 +64,7 @@ Match the work — and the tokens you spend — to the request. Say which level 
 
 ## Workflow
 
-**Context first.** Reuse the project's design system if it has one (`tailwind.config.*`, `@theme`, CSS variables, `components/ui/`). Follow the project's stack; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → change the real components (`implement.md`). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
+**Context first.** Reuse the project's design system (`tailwind.config.*`, `@theme`, CSS variables, `components/ui/`) and stack; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → change the real components (`implement.md`). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
 
 **Login pages**: `scripts/login.mjs <url>` (the user logs in), then `--storage-state state.json` on every script, or paste `scripts/audit.browser.js` in the logged-in tab. Never ask for passwords.
 
@@ -75,8 +77,8 @@ node <skill-dir>/scripts/audit.mjs <page|url> --json before.json
 ```
 9 criteria /45 at desktop and mobile: design, phone bugs, spacing, readability, SEO, AI-look tells, accessibility (contrast, labels, keyboard focus, reduced motion) — with offending selectors. **Fix root causes first** (root font-size, a shared Button, the container). Whole site: `scripts/audit-site.mjs <url>`. Then look at one screenshot per width and list the 3–5 problems that cost the most.
 
-### 2. References
-Pick 2–3 sites from `sites.md` matching the style family and write exactly what you borrow from each (one line per site). Full mode with web access: `scripts/extract-tokens.mjs <url>` for real type scale, tracking, spacing, radii — ignore their colors. Borrow mechanics, never copy.
+### 2. Direction and references
+**Plan before you build** (`direction.md`): subject in 3 lines, then colors (4–6 named hex), type roles, a wireframe per section, and **one bold place**; check the plan against the AI defaults and fix what is generic. Then pick 2–3 sites from `sites.md` and write what you borrow from each. Full mode: `scripts/extract-tokens.mjs <url>` for real scale, tracking, spacing (ignore their colors). Borrow mechanics, never copy.
 
 ### 3. Rebuild
 Pattern per section from `sections.md`, finish with `craft.md` (+ modern touches of the chosen level). Start from the matching example section. Rules:
@@ -94,7 +96,7 @@ node <skill-dir>/scripts/screenshot.mjs page.html shots/ --selector ".hero" --on
 node <skill-dir>/scripts/audit.mjs page.html --baseline before.json
 node <skill-dir>/scripts/inventory.mjs before-inv.json --compare page.html     # redesigns
 ```
-Hunt for bad line breaks, misalignment, uneven spacing, weak contrast, overlaps, a mobile layout that merely stacks. Without code execution: re-read the code at 390px and 1440px.
+Hunt for bad line breaks, misalignment, uneven spacing, overlaps, a mobile layout that merely stacks. Without code execution: re-read the code at 390px and 1440px.
 
 ### 5. Deliver
 1. The code (or the diff in code mode).
@@ -122,15 +124,15 @@ Needs Playwright in the project (`npm i -D playwright && npx playwright install 
 | `screenshot.mjs <page> [dir] [--selector css] [--only mobile] [--fold]` | See the result; overflow warning |
 | `inventory.mjs <page> [--json f] [--compare new]` | Every element of a page; what a redesign lost |
 | `audit-site.mjs <url> [--max 10]` | Whole site; issues repeated across pages |
-| `locate.mjs <audit.json> [src]` | Findings → `file:line` |
-| `extract-tokens.mjs <url>` | A reference site's real scale, tracking, spacing, radii |
-| `compare.mjs <before> <after> [out.png]` | Side-by-side image (pages, URLs or screenshots) |
+| `locate.mjs <audit.json> [src]` | Findings to `file:line` |
+| `extract-tokens.mjs <url>` | A reference site's real scale and spacing |
+| `compare.mjs <before> <after> [out.png]` | Side-by-side image |
 | `pdf.mjs <doc.html> [--type invoice\|quote\|report\|proposal\|onepager]` | Print to PDF, check fonts/pages/mentions, one image of all pages |
-| `site-fonts.mjs <url> <dir> [--static]` | The site's fonts as local files + `fonts.css`, with license hints |
+| `site-fonts.mjs <url> <dir> [--static]` | The site's fonts as files + `fonts.css` |
 | `find-icons.mjs "<query>" [--sets ph,tabler] [--download dir]` | Open icon sets, licenses, Flaticon link |
 | `make-favicon.mjs <logo.svg \| --letter A> <dir> [--bg #hex]` | All favicon sizes + `<head>` snippet |
 | `login.mjs <url>` · `audit.browser.js` | Logged-in pages |
 
 ## Never
 
-A pill, badge, "New" chip or green status dot above the H1 · a colored line on one side of a block · icons in tinted squares · gradient text or colored glows · purple-blue gradients and blobs · glass everywhere · three identical icon cards · `rounded-3xl` on everything · emoji headings · cliché copy · fade-ups on everything (`anti-ai.md`). Not for logos, brand identities or palettes.
+A pill or status dot above the H1 · colored side-bar borders · icons in tinted squares · gradient text, glows, blobs · glass everywhere · identical card rows · one radius and shadow on everything · "→" on every button · tracked caps labels · 01/02/03 off-sequence · one italic word in a headline · fade-ups on every section (`anti-ai.md`). Not for logos, brand identities or palettes.

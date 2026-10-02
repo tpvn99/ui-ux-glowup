@@ -222,6 +222,11 @@ export function analyze(desktop, mobile) {
     if (ai.iconTiles?.length >= 3) add("Visuals", "warn", "ai-icon-tile", `${ai.iconTiles.length} icons inside small tinted rounded squares — the default AI feature card. Show the icon bare, larger, or replace it with a real visual.`, ai.iconTiles.slice(0, 4));
     if (ai.gradientText?.length) add("Visuals", "warn", "ai-gradient-text", "Gradient-filled text. Use a solid ink color; emphasis through weight, size or a serif italic.", ai.gradientText);
     if (ai.glows?.length) add("Visuals", "warn", "ai-glow", "Large colored glow shadows behind elements. Use one neutral elevation system (border + soft layered shadow).", ai.glows);
+    if (ai.arrowCtas?.length >= 2) add("Content", "warn", "ai-arrow-cta", "Buttons and links ending in an arrow (\"Get started →\") on most actions — template chrome. Say what happens; keep an arrow only where direction matters.", ai.arrowCtas);
+    if (ai.capsLabels?.length >= 2) add("Typography", "warn", "ai-caps-label", `${ai.capsLabels.length} small ALL-CAPS tracked labels above headings. Keep a label only when it carries information (category, date), in sentence case.`, ai.capsLabels);
+    if (ai.numbered?.length >= 3) add("Visuals", "warn", "ai-numbered-markers", "Numbered markers (01 / 02 / 03) on content that is not a sequence. Number steps and timelines only.", ai.numbered);
+    if (ai.accentWords?.length) add("Typography", "warn", "ai-accent-word", "A word or phrase of a heading set apart (italic, color, weight). Let the whole headline carry the type treatment.", ai.accentWords);
+    if (ai.middots?.length >= 2) add("Content", "info", "ai-middot-meta", "Meta strings joined with middle dots (\"A · B · C\") repeated across the page; write short phrases or use a list.", ai.middots);
     if (ai.centeredShare > 75) add("Visuals", "info", "ai-centered", `${ai.centeredShare}% of headings and paragraphs are centered; left-aligned editorial layouts read as more intentional.`);
   }
 

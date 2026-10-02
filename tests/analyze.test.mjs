@@ -159,6 +159,15 @@ test("accessibility rules: invisible focus and missing reduced-motion (v1.6)", (
   assert.equal(analyze(ok, page({ viewport: { width: 390, height: 844 } })).filter((f) => ["focus-invisible", "reduced-motion"].includes(f.rule)).length, 0);
 });
 
+test("template-chrome rules: arrows, caps labels, numbered markers, accent words, middots (v1.6)", () => {
+  const base = { gradients: [], glass: 0, bigRadius: 0, radiusElements: 10, bigRadiusSample: [], identicalCards: [], emoji: [], cliches: [], centeredShare: 20 };
+  const d = page({ aiLook: { ...base, arrowCtas: ["a.btn Start", "a.cta Docs"], capsLabels: ["span FEATURES", "span PRICING"], numbered: ["p 01 A", "p 02 B", "p 03 C"], accentWords: ["h2 right"], middots: ["p A B C", "p D E F"] } });
+  const rules = new Set(analyze(d, page({ viewport: { width: 390, height: 844 } })).map((f) => f.rule));
+  for (const r of ["ai-arrow-cta", "ai-caps-label", "ai-numbered-markers", "ai-accent-word", "ai-middot-meta"]) assert.ok(rules.has(r), r);
+  const few = page({ aiLook: { ...base, arrowCtas: ["a Next"], capsLabels: ["span NEW"], numbered: ["p 01", "p 02"], accentWords: [], middots: ["p A B C"] } });
+  assert.equal(analyze(few, page({ viewport: { width: 390, height: 844 } })).filter((f) => f.rule.startsWith("ai-")).length, 0);
+});
+
 test("AI-look rules: hero pill, status dot, accent border, icon tiles, gradient text, glow (v1.6)", () => {
   const d = page({ aiLook: { gradients: [], glass: 0, bigRadius: 0, radiusElements: 10, bigRadiusSample: [], identicalCards: [], emoji: [], cliches: [], centeredShare: 20,
     heroPills: ["a.badge \"New\""], statusDots: ["span.dot next to \"Live\""], accentBorders: ["div.card (left 4px)"], iconTiles: ["a", "b", "c"], gradientText: ["span.grad"], glows: ["div.card"] } });
