@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixture — structured data that does not match the page</title>
+<meta name="description" content="Fixture: a JSON-LD block that does not parse, a misspelled type, FAQ markup that differs from the visible page and a rating with no reviews.">
+<link rel="canonical" href="https://example.com/services">
+<meta property="og:url" content="https://example.com/services-old">
+<link rel="alternate" hreflang="fr" href="https://example.com/fr/services">
+<link rel="alternate" hreflang="english" href="https://example.com/en/services">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusines","name":"Northgate Roofing",}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusines","name":"Northgate Roofing","aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"3"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Do you repair slate roofs?","acceptedAnswer":{"@type":"Answer","text":"Yes. We replace single slates and re-lay whole slopes."}},
+  {"@type":"Question","name":"Do you offer financing?","acceptedAnswer":{"@type":"Answer","text":"Yes, over twelve months."}},
+  {"@type":"Question","name":"How fast can you come?","acceptedAnswer":{"@type":"Answer","text":"Within two hours, every day of the year, guaranteed or your money back."}}
+]}</script>
+<style>body { margin: 0; font: 16px/1.6 system-ui, sans-serif; } main { max-width: 720px; margin: 0 auto; padding: 64px 24px; }</style>
+</head>
+<body>
+<main>
+  <h1>Roof repairs in Northgate</h1>
+  <p>Slate, tile and flat roofs repaired by a crew of four roofers based on Mill Lane.</p>
+  <details><summary>Do you repair slate roofs?</summary><p>Yes. We replace single slates and re-lay whole slopes.</p></details>
+  <details><summary>How fast can you come?</summary><p>Usually the next working day.</p></details>
+</main>
+</body>
+</html>

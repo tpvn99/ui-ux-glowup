@@ -70,6 +70,75 @@ const CRITERIA = ["Hierarchy", "Typography", "Spacing", "Components", "Visuals",
 
 const PENALTY = { error: 1, warn: 0.5, info: 0 };
 
+/** Tells a brand may own on purpose: stay warnings, and can be accepted with --allow. */
+const BRAND_CHOICE_RULES = ["ai-hero-pill", "ai-accent-word", "ai-caps-label"];
+
+const SCHEMA_TYPES = new Set(
+  "Thing Organization Corporation LocalBusiness ProfessionalService Store Restaurant CafeOrCoffeeShop Bakery BarOrPub Hotel LodgingBusiness HomeAndConstructionBusiness Plumber Electrician RoofingContractor HVACBusiness GeneralContractor HousePainter Locksmith MovingCompany AutoRepair AutoDealer Dentist Physician MedicalClinic MedicalBusiness Pharmacy HealthAndBeautyBusiness BeautySalon HairSalon DaySpa SportsActivityLocation ExerciseGym HealthClub LegalService Attorney Notary AccountingService FinancialService InsuranceAgency RealEstateAgent TravelAgency FurnitureStore ClothingStore ShoeStore HardwareStore GardenStore Florist EducationalOrganization School CollegeOrUniversity NGO OnlineBusiness OnlineStore Person WebSite WebPage AboutPage ContactPage CollectionPage ItemPage ProfilePage SearchResultsPage CheckoutPage FAQPage QAPage Question Answer Article NewsArticle BlogPosting Blog TechArticle Report HowTo HowToStep HowToSection Recipe Product ProductGroup Offer AggregateOffer Service OfferCatalog Review AggregateRating Rating Brand BreadcrumbList ItemList ListItem SiteNavigationElement ImageObject VideoObject AudioObject MediaObject Event BusinessEvent Course CourseInstance JobPosting SoftwareApplication WebApplication MobileApplication Book Movie Place PostalAddress GeoCoordinates OpeningHoursSpecification ContactPoint SearchAction Action ReadAction EntryPoint MonetaryAmount PriceSpecification UnitPriceSpecification QuantitativeValue PropertyValue Country City AdministrativeArea Dataset CreativeWork Clip SpeakableSpecification DefinedTerm MerchantReturnPolicy OfferShippingDetails ShippingDeliveryTime DefinedRegion Audience Language ImageGallery Menu MenuItem MenuSection Vehicle Car Apartment House Residence Accommodation RealEstateListing MedicalOrganization Hospital VeterinaryCare ChildCare EmploymentAgency Library Museum TouristAttraction PodcastSeries PodcastEpisode Guide Certification"
+    .split(" ")
+);
+
+/** Lowercase, no markup, no punctuation, single spaces: for comparing copy across sources. */
+function plain(text) {
+  return String(text || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;|&apos;|’/g, "'")
+    .replace(/&quot;/g, '"')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
+/** Share of the words (3+ letters) of `text` that are missing from `inText` (0–1). */
+function missingShare(text, inText) {
+  const words = plain(text).split(" ").filter((w) => w.length >= 3);
+  if (!words.length) return 0;
+  const have = new Set(plain(inText).split(" "));
+  return words.filter((w) => !have.has(w)).length / words.length;
+}
+
+/** Every node of a JSON-LD document, through arrays, @graph and nested objects. */
+function jsonLdNodes(doc, out = []) {
+  if (Array.isArray(doc)) for (const d of doc) jsonLdNodes(d, out);
+  else if (doc && typeof doc === "object") {
+    out.push(doc);
+    for (const v of Object.values(doc)) jsonLdNodes(v, out);
+  }
+  return out;
+}
+
+/** Findings for the page's JSON-LD blocks: { invalid, unknownTypes, faqMismatch, ratingWithoutReviews }. */
+function checkJsonLd(blocks, pageText, reviewsVisible = 0) {
+  const out = { invalid: [], unknownTypes: [], faqMismatch: [], ratingWithoutReviews: false };
+  const page = plain(pageText);
+  for (const raw of blocks || []) {
+    let doc;
+    try {
+      doc = JSON.parse(raw);
+    } catch (e) {
+      out.invalid.push(String(e.message).slice(0, 80));
+      continue;
+    }
+    for (const node of jsonLdNodes(doc)) {
+      const types = [].concat(node["@type"] || []);
+      for (const t of types) if (typeof t === "string" && !SCHEMA_TYPES.has(t.replace(/^https?:\/\/schema\.org\//, "").replace(/^schema:/, ""))) out.unknownTypes.push(t);
+      if (node.aggregateRating && typeof node.aggregateRating === "object" && !reviewsVisible && !node.review) out.ratingWithoutReviews = true;
+      if (types.includes("FAQPage") && page) {
+        for (const q of [].concat(node.mainEntity || [])) {
+          const name = plain(q && q.name);
+          const answer = plain(q && q.acceptedAnswer && (q.acceptedAnswer.text || [].concat(q.acceptedAnswer)[0]?.text));
+          if (name && !page.includes(name)) out.faqMismatch.push(`question not on the page: "${String(q.name).slice(0, 60)}"`);
+          else if (answer && !page.includes(answer) && missingShare(answer, page) > 0.15) out.faqMismatch.push(`answer differs from the page: "${String(q.name).slice(0, 60)}"`);
+        }
+      }
+    }
+  }
+  out.unknownTypes = [...new Set(out.unknownTypes)];
+  return out;
+}
+
 /** Group numbers and return [value, count] sorted by count desc. */
 function histogram(values, round = (v) => v) {
   const map = new Map();
@@ -121,10 +190,15 @@ function contrastIssues(texts) {
 }
 
 /** Produce findings from desktop + mobile page data. */
-function analyze(desktop, mobile) {
+function analyze(desktop, mobile, { allow = [] } = {}) {
   const findings = [];
+  const accepted = new Set(allow.filter((r) => BRAND_CHOICE_RULES.includes(r)));
   const add = (criterion, severity, rule, message, items = []) =>
-    findings.push({ criterion, severity, rule, message, items: items.slice(0, 8), count: items.length || undefined });
+    findings.push(
+      accepted.has(rule)
+        ? { criterion, severity: "info", rule, accepted: true, message: `accepted (brand choice) — ${message}`, items: items.slice(0, 8), count: items.length || undefined }
+        : { criterion, severity, rule, message, items: items.slice(0, 8), count: items.length || undefined }
+    );
 
   const d = desktop;
   const m = mobile || desktop;
@@ -186,7 +260,12 @@ function analyze(desktop, mobile) {
 
   // ---------- Content ----------
   if (d.lorem) add("Content", "error", "lorem", "Placeholder lorem ipsum text found.");
-  if (d.vagueLinks) add("Content", "warn", "vague-links", `${d.vagueLinks} vague link label(s) like "click here" / "read more"; use verb + object.`);
+  const copy = d.copy;
+  if (copy) {
+    if (copy.vagueCtas?.length) add("Content", "warn", "vague-cta", `${copy.vagueCtaCount || copy.vagueCtas.length} vague call(s) to action ("Learn more", "En savoir plus", "Click here"…). Use an action verb + the result: "See pricing", "Voir les tarifs", "Book a visit".`, copy.vagueCtas);
+    if (copy.unprovenClaims?.length) add("Content", "warn", "unproven-claim", "Claims with no source or link nearby (\"#1\", \"leader\", \"the best\", \"+500 clients\", \"98%\"). Link the proof, name the source, or reword — and list them under \"Product decisions to confirm\". Never invent a figure.", copy.unprovenClaims);
+    if (copy.vagueErrors?.length) add("Content", "warn", "vague-error-message", "Generic error messages (\"Invalid field\", \"Something went wrong\"). Say what to correct and how: \"Enter an email like name@company.com\".", copy.vagueErrors);
+  }
 
   // ---------- Wrapping & clipping (checked at both widths) ----------
   const views = [["desktop", d], ["mobile", m]].filter(([, v], i, arr) => i === 0 || v !== arr[0][1]);
@@ -248,6 +327,31 @@ function analyze(desktop, mobile) {
     if (!seo.ogTitle || !seo.ogImage) add("SEO", "warn", "seo-open-graph", "Missing Open Graph tags (og:title, og:description, og:image): links shared on social apps and messengers look empty.");
     if (!seo.favicon) add("SEO", "warn", "seo-favicon", "No favicon — the tab and search result show a blank icon. Use scripts/make-favicon.mjs.");
     if (!seo.canonical) add("SEO", "info", "seo-canonical", "No canonical URL; add <link rel=\"canonical\"> on indexable pages.");
+    const g = d.h1Glue;
+    if (g && g.raw && plain(g.raw) !== plain(g.rendered) && plain(g.raw).replace(/ /g, "") === plain(g.rendered).replace(/ /g, ""))
+      add("SEO", "error", "h1-word-glue", "The <h1> reads as glued words for crawlers and screen readers: its words sit in separate elements with no space between them. Put a real space (or the whole text) in the HTML.", [`HTML text: "${g.raw.slice(0, 60)}"`, `rendered: "${g.rendered.slice(0, 60)}"`]);
+    else if (g?.gapped?.length) add("SEO", "error", "h1-word-glue", "The <h1> shows separate words, but the HTML has no space between them (spacing done with CSS). Crawlers read them glued; add real spaces.", g.gapped.map((x) => `"${x.replace("|", "")}" ← no space between "${x.split("|")[0]}" and "${x.split("|")[1]}"`));
+    const ld = checkJsonLd(seo.jsonLdRaw, d.snapshot?.text || "", seo.reviewsVisible);
+    if (ld.invalid.length) add("SEO", "error", "jsonld-invalid", "A JSON-LD block does not parse — search engines ignore it entirely.", ld.invalid);
+    if (ld.unknownTypes.length) add("SEO", "warn", "jsonld-unknown-type", "JSON-LD @type not among the common schema.org types (typo or made-up type?).", ld.unknownTypes);
+    if (ld.faqMismatch.length) add("SEO", "error", "faq-jsonld-mismatch", "FAQPage markup does not match the visible page: every question and answer in the JSON-LD must appear as text on the page.", ld.faqMismatch);
+    if (ld.ratingWithoutReviews) add("SEO", "warn", "rating-without-reviews", "aggregateRating in the JSON-LD but no review visible on the page. Never publish a rating or review count without real, visible reviews.");
+    if (seo.canonical && seo.ogUrl && stripSlash(seo.canonical) !== stripSlash(seo.ogUrl)) add("SEO", "warn", "canonical-og-mismatch", "Canonical URL and og:url differ; they must point to the same address.", [`canonical: ${seo.canonical}`, `og:url: ${seo.ogUrl}`]);
+    const hl = hreflangIssues(seo.hreflang, seo.canonical || d.url, d.lang);
+    if (hl.length) add("SEO", "warn", "hreflang", "hreflang annotations are inconsistent.", hl);
+    const nj = d.noJs;
+    const snap = d.snapshot;
+    if (nj && snap) {
+      const lost = [];
+      const squash = (t) => plain(t).replace(/ /g, "");
+      const html = squash(nj.text);
+      if (snap.h1 && !html.includes(squash(snap.h1))) lost.push(`H1 "${snap.h1.slice(0, 60)}"`);
+      const share = missingShare(snap.visibleText, nj.text);
+      if (share > 0.2) lost.push(`${Math.round(share * 100)}% of the main text`);
+      const noFaq = (snap.faq || []).filter((f) => !html.includes(squash(f.q)));
+      if (noFaq.length) lost.push(...noFaq.slice(0, 3).map((f) => `FAQ "${f.q.slice(0, 50)}"`));
+      if (lost.length) add("SEO", "error", "no-js-content-missing", "Content missing when JavaScript is off: many crawlers and AI assistants read the HTML without running scripts. Render it on the server (SSR, static HTML).", lost);
+    }
     if (!seo.jsonLd) add("SEO", "info", "seo-structured-data", "No structured data (JSON-LD): LocalBusiness, Product, Organization or FAQ markup can earn rich results.");
     if (seo.words && seo.words < 120 && d.headings.some((h) => h.level === 1)) add("SEO", "info", "seo-thin", `Only ~${seo.words} words of content; pages that should rank usually need more substance (not filler).`);
   }
@@ -295,6 +399,25 @@ function analyze(desktop, mobile) {
     if (ai.centeredShare > 75) add("Visuals", "info", "ai-centered", `${ai.centeredShare}% of headings and paragraphs are centered; left-aligned editorial layouts read as more intentional.`);
   }
 
+  // ---------- Motion ----------
+  const stuckBy = new Map();
+  for (const h of d.snapshot?.reducedMotion ? d.snapshot.hidden || [] : []) stuckBy.set(h.sel + h.text, { ...h, when: ["reduced motion"] });
+  for (const h of d.noJs?.hidden || []) stuckBy.set(h.sel + h.text, { ...h, when: [...(stuckBy.get(h.sel + h.text)?.when || []), "no JS"] });
+  const stuck = [...stuckBy.values()].map((h) => `${h.sel} (${h.how}; ${h.when.join(" + ")}) "${h.text}"`);
+  if (stuck.length) add("Accessibility", "error", "hidden-until-animated", "Text that stays invisible when the animation never runs (JavaScript off, or reduced motion). Make the visible state the default and animate from it only when motion is allowed.", stuck);
+  const mo = d.motion;
+  if (mo) {
+    if (mo.layoutAnimations?.length) add("Components", "warn", "layout-animation", "Animating width, height, position offsets, margin or padding forces layout on every frame. Animate transform and opacity (or grid-template-rows for accordions).", mo.layoutAnimations);
+    if (mo.sections >= 3 && mo.revealSections / mo.sections > 0.5) add("Visuals", "warn", "ai-reveal-everywhere", `Scroll reveal on ${mo.revealSections} of ${mo.sections} sections — the default AI-template motion. Keep one orchestrated moment; let the rest be there.`, mo.revealSample);
+    if (mo.infiniteAnimations?.length) add("Visuals", "warn", "ai-infinite-animation", "Infinite animations outside a product demo (floating, pulsing, endless marquees). Loop only inside a marked demo area (data-demo, figure) or a loader.", mo.infiniteAnimations);
+    if (mo.slowMotion?.length) add("Visuals", "warn", "ai-slow-motion", "Motion longer than 1s on an interaction or a reveal feels sluggish. Use 150–300ms for interactions, up to 600ms for an entrance.", mo.slowMotion);
+    if (mo.willChange > 10) add("Visuals", "warn", "ai-will-change-everywhere", `will-change on ${mo.willChange} elements: each one reserves GPU memory. Remove it; add it to the one element that stutters, if any.`, mo.willChangeSample);
+  }
+  const cls = d.scrollCls?.value ?? 0;
+  const mcls = m.scrollCls?.value ?? 0;
+  if (Math.max(cls, mcls) > 0.1)
+    add("Responsive", Math.max(cls, mcls) > 0.25 ? "error" : "warn", "scroll-cls", `Layout shifts while scrolling (CLS ${Math.max(cls, mcls)}; good is under 0.1). Reserve the space: width/height on images, min-height on late content, no content inserted above what is being read.`, [...new Set([...(d.scrollCls?.sources || []), ...(m.scrollCls?.sources || [])])]);
+
   // ---------- Responsive ----------
   if (!m.hasViewportMeta) add("Responsive", "error", "viewport-meta", 'Missing <meta name="viewport">.');
   if (m.overflowX > 1) add("Responsive", "error", "overflow", `Horizontal overflow of ${m.overflowX}px on mobile.`);
@@ -332,6 +455,26 @@ function analyze(desktop, mobile) {
   }
 
   return findings;
+}
+
+function stripSlash(u) {
+  return String(u).replace(/#.*$/, "").replace(/\/+$/, "");
+}
+
+/** hreflang problems on one page: bad codes, duplicates, no self-reference, no x-default. */
+function hreflangIssues(list, pageUrl, htmlLang) {
+  if (!list || !list.length) return [];
+  const out = [];
+  const seen = new Set();
+  for (const { lang } of list) {
+    if (!/^(x-default|[a-z]{2,3}(-[a-z]{4})?(-([a-z]{2}|\d{3}))?)$/i.test(lang || "")) out.push(`invalid code "${lang}"`);
+    if (seen.has(String(lang).toLowerCase())) out.push(`"${lang}" declared twice`);
+    seen.add(String(lang).toLowerCase());
+  }
+  if (pageUrl && !list.some((l) => stripSlash(l.href) === stripSlash(pageUrl))) out.push("no self-referencing hreflang for this page");
+  if (list.length > 1 && !seen.has("x-default")) out.push("no x-default");
+  if (htmlLang && !list.some((l) => String(l.lang).toLowerCase().split("-")[0] === htmlLang.toLowerCase().split("-")[0])) out.push(`<html lang="${htmlLang}"> is not among the hreflang languages`);
+  return out;
 }
 
 /** Score 1–5 per criterion from findings. Criteria that can't be fully measured are flagged. */
@@ -803,8 +946,24 @@ function collectPageData() {
   }
   const EMOJI = /\p{Extended_Pictographic}/u;
   const emojiIn = [...document.querySelectorAll("h1, h2, h3, button, a")].filter((el) => visible(el) && EMOJI.test(el.textContent)).map((el) => `${selector(el)} "${el.textContent.trim().slice(0, 40)}"`);
-  const CLICHE = /\b(transform(ez)? (your|votre|vos)|unlock (the|your)|revolutioni[sz]e|révolutionne[zr]?|elevate your|supercharge|seamless(ly)?|game[- ]changer|next[- ]level|take .{0,15} to the next level|boostez|propulsez|all[- ]in[- ]one solution|solution tout[- ]en[- ]un|in today'?s fast[- ]paced|dans un monde en constante évolution|cutting[- ]edge|innovative solutions?|solutions? innovantes?|empower(ing)? (your|you)|harness the power|unleash)\b/i;
-  const cliches = [...document.querySelectorAll("h1, h2, h3, p")].filter((el) => visible(el) && CLICHE.test(el.textContent)).slice(0, 8).map((el) => `${selector(el)} "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 60)}"`);
+  const CLICHE = new RegExp(
+    "(?<![\\p{L}\\p{N}])(" +
+      [
+        "transform(ez)? (your|votre|vos)", "unlock", "revolutioni[sz]e", "révolutionne[zr]?", "elevate", "supercharge", "seamless(ly)?",
+        "game[- ]changer", "next[- ]level", "take .{0,15} to the next level", "all[- ]in[- ]one solution", "in today'?s fast[- ]paced",
+        "cutting[- ]edge", "innovative solutions?", "empower(ing)? (your|you)", "harness the power", "unleash", "in just a few clicks",
+        "boost(er|ez)", "propulsez", "solution tout[- ]en[- ]un", "dans un monde en constante évolution", "solutions? innovantes?",
+        "en quelques clics", "n['’]attendez plus", "à portée de main", "votre partenaire de confiance", "incontournables?", "au c(œ|oe)ur de",
+        "des experts passionnés", "sur[- ]mesure", "clés? en main", "simplifiez[- ]vous la vie",
+      ].join("|") +
+      ")(?![\\p{L}\\p{N}])",
+    "iu"
+  );
+  const clicheEls = [...document.querySelectorAll('h1, h2, h3, h4, p, li, button, a, figcaption, [class*="badge"], [class*="chip"], [class*="pill"]')].filter((el) => visible(el) && CLICHE.test(el.textContent));
+  const cliches = clicheEls
+    .filter((el) => !clicheEls.some((o) => o !== el && el.contains(o)))
+    .slice(0, 8)
+    .map((el) => `${selector(el)} "${(el.textContent.match(CLICHE) || [""])[0].trim()}" in "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 50)}"`);
   // Rows of 3–4 identical "icon + title + text" cards
   const identicalCards = [];
   for (const parent of document.querySelectorAll("div, section, ul")) {
@@ -921,6 +1080,168 @@ function collectPageData() {
   }
   const animated = all.filter((el) => { const s = getComputedStyle(el); return s.animationName !== "none" && parseFloat(s.animationDuration) > 0; }).length;
 
+  // ---------- Copy: vague calls to action, unproven claims, generic error messages ----------
+  const label = (el) => flat(el).replace(/[\s→↗›»>.!…-]+$/u, "").trim();
+  const VAGUE_CTA = /^(en savoir plus|d[ée]couvrir|cliquez ici|cliquer ici|voir plus|lire la suite|plus d['’]infos?|ici|learn more|click here|read more|discover|see more|more info|more|here)$/i;
+  const vagueCtas = [...document.querySelectorAll("a[href], button, [role=button]")]
+    .filter((el) => {
+      if (!visible(el) || !VAGUE_CTA.test(label(el))) return false;
+      const named = (el.getAttribute("aria-label") || el.getAttribute("title") || "").trim();
+      return !named || VAGUE_CTA.test(named);
+    })
+    .map((el) => `${selector(el)} "${label(el)}"`);
+  const SUPERLATIVE = /(?<![\p{L}\p{N}])(n°\s?1|num[ée]ro\s?(1|un)|#\s?1|number one|leaders?|(le|la|les) meilleure?s?|the best|world['’]s leading)(?![\p{L}\p{N}])/iu;
+  const FIGURE = /(\+\s?\d[\d\s.,  ]*k?|\d[\d\s.,  ]*k?\s?\+)\s?(clients?|customers?|users?|utilisateurs?|entreprises?|companies|teams|équipes|projets?|projects?|avis|reviews?|pays|countries|téléchargements?|downloads?|membres?|members?|installations?)|\d{1,3}(?:[.,]\d+)?\s?%\s?(?:de |d['’]|of )?(?:nos |our )?(clients?|customers?|users?|utilisateurs?|satisf\p{L}*|recommand\p{L}*|recommend\p{L}*)/iu;
+  const SOURCED = /(?<![\p{L}])(source|selon|d['’]après|according to|étude|study|survey|enquête|rapport|report|classement|ranking)(?![\p{L}])|[*†¹²³]|\[\d+\]/iu;
+  const claimEls = [...document.querySelectorAll("h1, h2, h3, h4, p, li, dt, dd, figcaption, strong, span, div")].filter((el) => {
+    if (!visible(el) || el.closest('table, nav, footer, form, [role=img], [data-demo], script, style, svg, [itemprop="review"], blockquote, q, cite')) return false;
+    if (["SPAN", "DIV", "STRONG"].includes(el.tagName) && el.children.length) return false;
+    const t = flat(el);
+    return t.length <= 240 && (SUPERLATIVE.test(t) || FIGURE.test(t));
+  });
+  const unprovenClaims = claimEls
+    .filter((el) => !claimEls.some((o) => o !== el && el.contains(o)))
+    .filter((el) => {
+      const scope = el.closest("p, li, figure, blockquote, dl, article, section > div, section") || el.parentElement || el;
+      const near = scope.textContent.length < 600 ? scope : el;
+      return !near.querySelector("a[href], cite, sup, [data-source]") && !el.closest("a[href]") && !SOURCED.test(near.textContent);
+    })
+    .slice(0, 8)
+    .map((el) => `${selector(el)} "${((flat(el).match(SUPERLATIVE) || flat(el).match(FIGURE) || [""])[0]).trim()}" in "${flat(el).slice(0, 50)}"`);
+  const VAGUE_ERROR = /^(invalid( field| input| value| entry)?|error|an error (has )?occurr?ed|something went wrong|oops|please try again|try again|champ invalide|erreur|une erreur est survenue|valeur invalide|saisie (invalide|incorrecte)|invalide|incorrect)[\s.!…]*$/i;
+  const vagueErrors = [...document.querySelectorAll('[role=alert], [aria-live=assertive], [class*="error"], [class*="invalid"], [id$="-error"], [id$="_error"], [data-error]')]
+    .filter((el) => visible(el) && !el.matches("input, select, textarea, form, fieldset") && VAGUE_ERROR.test(flat(el)))
+    .slice(0, 6)
+    .map((el) => `${selector(el)} "${flat(el).slice(0, 40)}"`);
+
+  // ---------- H1 as crawlers read it vs as it renders ----------
+  let h1Glue = null;
+  if (h1) {
+    const clone = h1.cloneNode(true);
+    for (const br of clone.querySelectorAll("br")) br.replaceWith(" ");
+    const kids = [...h1.querySelectorAll("*")].filter((c) => (c.textContent || "").trim() && c.getBoundingClientRect().width > 0);
+    const em = parseFloat(getComputedStyle(h1).fontSize) || 16;
+    const gapped = [];
+    for (const c of kids) {
+      const next = c.nextSibling;
+      if (!next || next.nodeType !== 1 || next.tagName === "BR" || !(next.textContent || "").trim()) continue;
+      if (/\s$/.test(c.textContent) || /^\s/.test(next.textContent)) continue;
+      const a = c.getBoundingClientRect();
+      const b = next.getBoundingClientRect();
+      if (!b.width) continue;
+      if (b.top >= a.bottom - 2 || b.left - a.right > em * 0.15) gapped.push(`${c.textContent.trim().slice(-12)}|${next.textContent.trim().slice(0, 12)}`);
+    }
+    h1Glue = { raw: clone.textContent.replace(/\s+/g, " ").trim().slice(0, 200), rendered: (h1.innerText || "").replace(/\s+/g, " ").trim().slice(0, 200), gapped: gapped.slice(0, 4) };
+  }
+
+  // ---------- Structured data, canonical, hreflang ----------
+  seo.jsonLdRaw = [...document.querySelectorAll('script[type="application/ld+json"]')].slice(0, 6).map((sc) => sc.textContent.slice(0, 20000));
+  seo.ogUrl = meta("og:url");
+  seo.hreflang = [...document.querySelectorAll('link[rel="alternate"][hreflang]')].slice(0, 40).map((l) => ({ lang: l.getAttribute("hreflang"), href: l.href }));
+  seo.reviewsVisible = [...document.querySelectorAll('blockquote, [itemprop="review"], [class*="review"], [class*="testimonial"], [class*="avis"], [data-review], iframe[src*="trustpilot"], iframe[src*="google.com/maps"], [class*="trustpilot"]')].filter((el) => el.tagName === "IFRAME" || visible(el)).length;
+
+  // ---------- Motion: what animates, how long, and whether it moves layout ----------
+  const LAYOUT_PROP = /^(width|height|top|left|right|bottom|inset|margin(-\w+)?|padding(-\w+)?|max-height|max-width|min-height|min-width)$/;
+  const seconds = (v) => Math.max(0, ...String(v || "").split(",").map((x) => (/ms\s*$/.test(x) ? parseFloat(x) / 1000 : parseFloat(x)) || 0));
+  const keyframes = new Map();
+  const safeRules = [];
+  const walkRules = (rules, safe) => {
+    for (const rule of rules) {
+      if (rule.type === 7 && rule.cssRules) {
+        const props = new Set();
+        let fromHidden = false;
+        for (const frame of rule.cssRules) {
+          for (const prop of frame.style) if (LAYOUT_PROP.test(prop)) props.add(prop);
+          if (/^(0%|from)/.test(frame.keyText) && frame.style.opacity !== "" && parseFloat(frame.style.opacity) === 0) fromHidden = true;
+        }
+        keyframes.set(rule.name, { layout: [...props], fromHidden });
+      } else if (rule.selectorText && rule.style) {
+        if (safe && (rule.style.transitionProperty || rule.style.animationName || rule.style.animation || rule.style.transition)) safeRules.push(rule);
+        if (rule.cssRules && rule.cssRules.length) walkRules(rule.cssRules, safe);
+      } else if (rule.cssRules) {
+        const cond = rule.conditionText || (rule.media && rule.media.mediaText) || "";
+        if (/prefers-reduced-motion:\s*reduce/.test(cond)) continue;
+        walkRules(rule.cssRules, safe || /prefers-reduced-motion:\s*no-preference/.test(cond));
+      }
+    }
+  };
+  for (const sheet of document.styleSheets) {
+    try { walkRules(sheet.cssRules, false); } catch {}
+  }
+  const motion = new Map();
+  const noteMotion = (el, src) => {
+    const transDur = seconds(src.transitionDuration);
+    const animDur = seconds(src.animationDuration);
+    const names = String(src.animationName || "").split(",").map((n) => n.trim()).filter((n) => n && n !== "none");
+    const props = transDur > 0 ? String(src.transitionProperty || "").split(",").map((x) => x.trim()).filter(Boolean) : [];
+    if (!props.length && !names.length) return;
+    const m = motion.get(el) || { props: new Set(), names: new Set(), transDur: 0, animDur: 0, infinite: false };
+    props.forEach((x) => m.props.add(x));
+    names.forEach((n) => m.names.add(n));
+    m.transDur = Math.max(m.transDur, transDur);
+    m.animDur = Math.max(m.animDur, names.length ? animDur : 0);
+    if (names.length && /infinite/.test(src.animationIterationCount || "")) m.infinite = true;
+    motion.set(el, m);
+  };
+  let willChange = 0;
+  const willChangeSample = [];
+  for (const el of all) {
+    if (el.closest("svg") && el.tagName.toLowerCase() !== "svg") continue;
+    const s = getComputedStyle(el);
+    noteMotion(el, s);
+    if (s.willChange && s.willChange !== "auto") {
+      willChange++;
+      if (willChangeSample.length < 4) willChangeSample.push(selector(el));
+    }
+  }
+  for (const rule of safeRules) {
+    let els = [];
+    try { els = [...document.querySelectorAll(rule.selectorText.replace(/::?(before|after|hover|focus|focus-visible|focus-within|active)\b/g, ""))].slice(0, 200); } catch {}
+    for (const el of els) noteMotion(el, rule.style);
+  }
+  const DEMO = '[data-demo], figure, [role=img], video, canvas, [class*="demo"], [class*="mockup"], [class*="preview"]';
+  const LOADER = '[role=status], [role=progressbar], [aria-busy=true], [class*="spinner"], [class*="loader"], [class*="loading"], [class*="skeleton"]';
+  const LOADER_NAME = /spin|rotate|load|progress|skeleton|caret|cursor/i;
+  const layoutAnimations = [];
+  const infiniteAnimations = [];
+  const slowMotion = [];
+  const revealEls = [];
+  const REVEAL = /(^|[\s_-])(reveal|fade-?(in|up|down)|slide-?(in|up)|animate-(in|fade|slide)\S*|aos|wow|scroll-animate|in-?view|appear)([\s_-]|$)/i;
+  for (const [el, m] of motion) {
+    if (!visible(el) && getComputedStyle(el).opacity !== "0") continue;
+    const moved = [...m.props].filter((x) => LAYOUT_PROP.test(x));
+    const framed = [...m.names].flatMap((n) => (keyframes.get(n) || { layout: [] }).layout);
+    if (moved.length || framed.length) layoutAnimations.push(`${selector(el)} (${moved.length ? "transition: " + moved.join(", ") : "animation: " + [...new Set(framed)].join(", ")})`);
+    const inDemo = el.closest(DEMO) || el.closest(LOADER) || [...m.names].every((n) => LOADER_NAME.test(n)) && m.names.size > 0;
+    if (m.infinite && m.animDur > 0 && !inDemo) infiniteAnimations.push(`${selector(el)} (${[...m.names].join(", ")})`);
+    const slow = Math.max(m.transDur, m.infinite ? 0 : m.animDur);
+    if (slow > 1 && !inDemo) slowMotion.push(`${selector(el)} (${Math.round(slow * 100) / 100}s)`);
+    if ([...m.names].some((n) => (keyframes.get(n) || {}).fromHidden) && !m.infinite) revealEls.push(el);
+  }
+  for (const el of document.querySelectorAll("[data-aos], [data-animate], [data-reveal], [data-scroll], [data-sal], [data-sr], [class]")) {
+    if (el.hasAttribute("data-aos") || el.hasAttribute("data-animate") || el.hasAttribute("data-reveal") || el.hasAttribute("data-scroll") || el.hasAttribute("data-sal") || el.hasAttribute("data-sr") || REVEAL.test(typeof el.className === "string" ? el.className : "")) revealEls.push(el);
+  }
+  const revealSections = blockList.filter((b) => revealEls.some((el) => b === el || b.contains(el)));
+  const motionOut = {
+    layoutAnimations: [...new Set(layoutAnimations)].slice(0, 8),
+    infiniteAnimations: [...new Set(infiniteAnimations)].slice(0, 6),
+    slowMotion: [...new Set(slowMotion)].slice(0, 6),
+    willChange,
+    willChangeSample,
+    sections: blockList.length,
+    revealSections: revealSections.length,
+    revealSample: revealSections.slice(0, 4).map(selector),
+  };
+
+  // ---------- Layout shift while scrolling (recorded by openPage's init script) ----------
+  let scrollCls = null;
+  const shifts = window.__glowupShifts;
+  if (shifts) {
+    const from = window.__glowupScrollStart || 0;
+    const during = shifts.filter((e) => e.t >= from);
+    scrollCls = { value: Math.round(during.reduce((a, e) => a + e.v, 0) * 1000) / 1000, sources: [...new Set(during.flatMap((e) => e.nodes).filter((n) => n && n.nodeType === 1).map(selector))].slice(0, 5) };
+  }
+
   const bodyText = document.body.innerText || "";
   return {
     url: location.href,
@@ -932,7 +1253,10 @@ function collectPageData() {
     overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
     pageHeight: document.documentElement.scrollHeight,
     lorem: /lorem ipsum|dolor sit amet/i.test(bodyText),
-    vagueLinks: interactive.filter((i) => /^(click here|here|read more|learn more|more|cliquez ici|en savoir plus)$/i.test(i.text)).length,
+    copy: { vagueCtas: vagueCtas.slice(0, 8), vagueCtaCount: vagueCtas.length, unprovenClaims, vagueErrors },
+    h1Glue,
+    motion: motionOut,
+    scrollCls,
     texts,
     interactive,
     images,
@@ -953,6 +1277,67 @@ function collectPageData() {
   };
 }
 
+/**
+ * Text snapshot of the page, also self-contained: run once in the normal render and once with
+ * JavaScript disabled, then compared in analyze.mjs. `hidden` lists in-flow text blocks that are
+ * still invisible after load and a full scroll (opacity 0, visibility hidden, moved off-screen).
+ */
+function collectSnapshot() {
+  const norm = (t) => (t || "").replace(/\s+/g, " ").trim();
+  const selector = (el) => {
+    if (el.id) return `${el.tagName.toLowerCase()}#${el.id}`;
+    const cls = [...el.classList].filter((c) => !c.includes(":") && !c.includes("[")).slice(0, 2);
+    const parent = el.parentElement ? el.parentElement.tagName.toLowerCase() + " > " : "";
+    return parent + el.tagName.toLowerCase() + (cls.length ? "." + cls.join(".") : "");
+  };
+  const textOf = (root) => {
+    const out = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const p = n.parentElement;
+      if (!p || p.tagName === "NOSCRIPT" || p.closest("script, style, template")) continue;
+      if (n.textContent.trim()) out.push(n.textContent);
+    }
+    return norm(out.join(" "));
+  };
+  const main = document.querySelector("main") || document.body;
+  const h1 = document.querySelector("h1");
+  const faq = [...document.querySelectorAll("details")].slice(0, 30).map((d) => {
+    const sum = d.querySelector("summary");
+    const q = norm(sum ? sum.textContent : "");
+    return { q, a: norm(d.textContent).slice(q.length).trim().slice(0, 300) };
+  }).filter((f) => f.q);
+  const SKIP = '[hidden], [aria-hidden="true"], [inert], details:not([open]), [role=dialog], [role=menu], [role=tooltip], [role=tabpanel], [role=listbox], dialog, template, noscript, svg, script, style, select';
+  const hidden = [];
+  const flagged = new Set();
+  const docW = document.documentElement.scrollWidth;
+  for (const el of document.body.querySelectorAll("*")) {
+    if (hidden.length >= 12) break;
+    if ([...flagged].some((f) => f.contains(el))) continue;
+    const s = getComputedStyle(el);
+    if (s.display === "none" || !["static", "relative", "sticky"].includes(s.position)) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) continue;
+    let how = null;
+    if (s.opacity === "0") how = "opacity: 0";
+    else if (s.visibility === "hidden" && (!el.parentElement || getComputedStyle(el.parentElement).visibility !== "hidden")) how = "visibility: hidden";
+    else if (s.transform !== "none" && (r.right <= 0 || r.left >= docW || r.bottom + window.scrollY <= 0)) how = "moved off-screen";
+    if (!how || el.closest(SKIP)) continue;
+    const text = norm(el.textContent);
+    if (text.length < 20) continue;
+    flagged.add(el);
+    hidden.push({ sel: selector(el), how, text: text.slice(0, 40) });
+  }
+  return {
+    h1: norm(h1 ? h1.textContent : ""),
+    text: textOf(document.body).slice(0, 80000),
+    visibleText: norm(main.innerText || "").slice(0, 60000),
+    faq,
+    hidden,
+    reducedMotion: Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
+  };
+}
+
 // ---- lib/report.mjs ----
 // Human-readable audit report (pure — also bundled into audit.browser.js).
 
@@ -969,6 +1354,7 @@ function formatReport(result, { brief = false, maxItems = brief ? 2 : 4 } = {}) 
   if (!brief) lines.push(`Automated audit — ${result.target}`);
   if (result.note) lines.push(result.note);
   lines.push(scoreLine(result));
+  if (noJsLine(result) && !brief) lines.push(noJsLine(result));
   if (!brief) lines.push("(* partly measurable — confirm with a visual review of the screenshots)", "");
   const sorted = sortFindings(result.findings);
   if (!sorted.length) lines.push("No automated findings.");
@@ -1035,12 +1421,19 @@ function scoreLine(result) {
   return "Audit: " + CRITERIA.map((c) => `${SHORT[c]} ${result.scores[c]}`).join(" · ") + ` → ${result.total}/${result.max}`;
 }
 
+/** One line for the checks that need a second page load, so a skipped check never reads as a pass. */
+function noJsLine(result) {
+  if (result.noJsChecked === false) return "No-JS render not checked on this run (first full audit only; force it with --deep).";
+  return "";
+}
+
 function sortFindings(findings) {
   const order = { error: 0, warn: 1, info: 2 };
   return [...findings].sort((a, b) => order[a.severity] - order[b.severity]);
 }
 
 const data = collectPageData();
+data.snapshot = collectSnapshot();
 const findings = analyze(data, data);
 const result = {
   target: location.href,

@@ -9,7 +9,9 @@ Write three lines before anything else: **who** it is for, **what** the page mus
 The first screen shows the subject's own thing: the live product, a real photo of the work, a tool people can try, the number only this business has. "Big number + small label + gradient accent" is the default; use it only if it truly is the best opener.
 
 ## 3. Plan in tokens (compact, written down)
-- **Color**: 4–6 named hex values (base, surface, text, muted, one accent, one signal). Brand colors are kept; *how* they are used is the design.
+- **Color** — two cases, never mixed:
+  - **A brand exists** (logo, site, guidelines, a color the user gives): keep its colors. Write down the 4–6 values you will use (base, surface, text, muted, the brand accent, one signal) and plan only *how* they are used. Neutrals may be tuned; brand hues may not.
+  - **No brand yet** (creation from zero): propose a short palette of 4–6 named hex values, with AA contrast checked for every text/background pair you use (`scripts/audit.mjs` rule `contrast`). Present it under "Product decisions to confirm" as a starting palette for this page. It is not a brand identity: no logo, no naming, no guidelines.
 - **Type**: one family or two clearly different. Pick on purpose (optical sizes, widths, weights), set a scale of 6–9 sizes, tracking tighter on large sizes. Measure under 80 characters (serif slightly longer, with more line-height).
 - **Layout**: one sentence plus an ASCII wireframe per section; say what is centered and what is left-aligned.
 - **Principles**: 2–3 lines on what makes this page unlike the others.
@@ -27,4 +29,4 @@ One memorable element (the product shot, one type treatment, one colored section
 - Keep a 3-line note of what was tried (palette, type, layout) in the recap's "Directions taken".
 
 ## Copy is design
-Active voice, plain verbs, sentence case. A button says what happens ("Save changes", not "Submit") and keeps its name through the flow. Errors say what went wrong and how to fix it. Specific beats clever.
+Active voice, plain verbs, sentence case. A button says what happens ("Save changes", not "Submit") and keeps its name through the flow. Errors say what went wrong and how to fix it (`microcopy.md`). Specific beats clever.

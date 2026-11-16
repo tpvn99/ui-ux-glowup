@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "Here's the landing page for our invoicing SaaS (index.html attached). It works but it looks amateur. Can you make it look like Linear or Stripe? Our brand color is #0E9F6E, keep it.",
-      "expected_output": "Should score the current page with the 8-criteria audit grid and list the top 3–5 problems. Should pick 2–3 references from the SaaS category (e.g. Linear, Stripe, Vercel) and state exactly what is borrowed from each. Should read the matching examples (hero-linear, features-stripe, bento-vercel) before coding. Should keep #0E9F6E as --color-accent and not introduce a new palette. Should rebuild the product UI in HTML with credible invoicing data instead of a generic mockup. Should run scripts/screenshot.mjs, review desktop and mobile, and fix issues. Should deliver complete code plus a before/after score, references used, and 3–5 key changes.",
+      "expected_output": "Should score the current page with the 9-criteria audit grid (/45) and list the top 3–5 problems. Should pick 2–3 references from the SaaS category (e.g. Linear, Stripe, Vercel) and state exactly what is borrowed from each. Should read the matching examples (hero-linear, features-stripe, bento-vercel) before coding. Should keep #0E9F6E as --color-accent and not introduce a new palette. Should rebuild the product UI in HTML with credible invoicing data instead of a generic mockup. Should run scripts/screenshot.mjs, review desktop and mobile, and fix issues. Should deliver complete code plus a before/after score, references used, and 3–5 key changes.",
       "assertions": [
         "Runs the audit grid with scores before changing anything",
         "Names 2–3 reference sites and what is borrowed from each",
@@ -274,6 +274,64 @@
         "Runs pdf.mjs and reports ✓",
         "Fits on one page",
         "Uses specific numbers in the bullets"
+      ],
+      "files": []
+    },
+    {
+      "id": 22,
+      "prompt": "Our new landing page is full of scroll animations (sections fade and slide in, counters count up). A client says the page is blank when he opens it from a corporate laptop, and our SEO tool sees almost no text. Here is the page: landing.html",
+      "expected_output": "Should run audit.mjs (first audit, with the no-JavaScript render) and report hidden-until-animated and no-js-content-missing with the offending selectors. Should make the visible state the default (hidden states only under html.motion and prefers-reduced-motion: no-preference), keep one orchestrated moment instead of a reveal on every section, write each counter's final value in the HTML, and re-check with --baseline.",
+      "assertions": [
+        "Runs the audit with the no-JS render (no --fast)",
+        "Reports hidden-until-animated and/or no-js-content-missing with selectors",
+        "Text is visible without JavaScript and with reduced motion after the fix",
+        "Counters have their final value in the HTML, not 0 or an aria-label only",
+        "Does not keep a reveal on every section",
+        "Re-checks with --baseline"
+      ],
+      "files": [
+        "landing.html"
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "Relis les textes de notre page d'accueil et rends-les plus efficaces. On a des boutons « En savoir plus » et « Découvrir », un bandeau « N°1 de la région », « +500 clients satisfaits » et « 98 % de satisfaction ». Voici la page : accueil.html",
+      "expected_output": "Should flag the vague calls to action (vague-cta) and propose a verb + result for each (\"Voir les tarifs\", \"Demander un devis\"). Should flag the claims (unproven-claim) and list them under \"Product decisions to confirm\", asking for the source instead of rewriting or inventing figures. Should list every text edit before → after and reply in French.",
+      "assertions": [
+        "Replaces each vague CTA with an action verb + result",
+        "Lists the unproven claims under Product decisions to confirm",
+        "Asks for the source of the figures; invents no number, rating or review",
+        "Lists text edits before → after",
+        "Replies in French"
+      ],
+      "files": [
+        "accueil.html"
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "Improve our homepage but don't touch two things, they are part of our brand: the small pill above the main title and the orange word in the headline.",
+      "expected_output": "Should record both as brand choices in the brief, keep them in the result, and run the audit with --allow ai-hero-pill,ai-accent-word so they are reported as accepted (brand choice) without lowering the score. Should still fix the other findings.",
+      "assertions": [
+        "Brief lists the brand choices to keep",
+        "The pill and the accent word are still in the result",
+        "Audit run with --allow for those rules",
+        "Other findings are fixed"
+      ],
+      "files": [
+        "index.html"
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "I'm starting a bookkeeping firm for small businesses. I have a name but no logo, no colors, nothing yet. Build me a homepage.",
+      "expected_output": "Should treat it as a creation with no brand: propose a short palette of 4–6 named hex values with AA contrast checked, present it under Product decisions to confirm, and say it is a starting palette, not a brand identity (no logo, no brand guidelines). Should start from the smb-light example or a close one, and invent no client count, rating or testimonial.",
+      "assertions": [
+        "Proposes 4–6 named hex values with contrast checked",
+        "Palette presented as a decision to confirm, not as a brand identity",
+        "Does not design a logo",
+        "No invented figures, ratings or testimonials",
+        "Includes the Directions taken recap"
       ],
       "files": []
     }

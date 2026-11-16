@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbor Freight Forwarding — customs clearance in Rotterdam</title>
+<meta name="description" content="Fixture: a page whose heading and copy are injected by JavaScript, with blocks that stay invisible until a script or an animation runs.">
+<style>
+  body { margin: 0; font: 16px/1.6 system-ui, sans-serif; color: #18181b; }
+  main { max-width: 720px; margin: 0 auto; padding: 64px 24px; }
+  section { padding: 48px 0; }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .4s, transform .4s; }
+  .reveal.in { opacity: 1; transform: none; }
+  .fade { opacity: 0; animation: fade .5s .2s forwards; }
+  @keyframes fade { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .fade { animation: none; } }
+  .counter { font-size: 40px; font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <div id="app"></div>
+  <section class="reveal">
+    <h2>Customs paperwork handled in one working day</h2>
+    <p>This block only appears when a script adds a class. Without JavaScript it stays at opacity zero.</p>
+  </section>
+  <section class="fade">
+    <h2>Tracking for every container</h2>
+    <p>This block fades in with a CSS animation that the reduced-motion rule switches off, so it never shows.</p>
+  </section>
+  <section>
+    <h2>Always readable</h2>
+    <p>This paragraph is plain HTML and is there in every render.</p>
+    <details><summary>Which ports do you cover?</summary><p>Rotterdam, Antwerp and Hamburg.</p></details>
+  </section>
+</main>
+<script>
+  document.getElementById("app").innerHTML =
+    "<h1>Customs clearance without the waiting</h1>" +
+    "<p>We file import declarations for freight arriving in Rotterdam and release containers faster than a broker working by email. Our team checks commodity codes, duties and licences before the vessel docks, so the goods leave the terminal the day they land.</p>" +
+    "<p>Shippers follow each file in a shared dashboard and receive one invoice per shipment with duties, port fees and our handling charge listed separately.</p>";
+  for (const el of document.querySelectorAll(".reveal")) el.classList.add("in");
+</script>
+</body>
+</html>

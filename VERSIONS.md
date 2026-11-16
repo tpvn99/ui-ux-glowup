@@ -4,9 +4,23 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.6.0 | 2026-10-01 |
+| ui-ux-glowup | 1.7.0 | 2026-11-16 |
 
 ## Recent Changes
+
+### 1.7.0 (2026-11-16)
+
+- **ui-ux-glowup** (1.6.0 → 1.7.0): readable without JavaScript, honest copy, motion that hides nothing, brand choices respected.
+  - **No-JS render, once**: the first audit loads the page once more with JavaScript off (`lib/browser.mjs`, `collectSnapshot` in `lib/probe.mjs`). `no-js-content-missing` (error): the H1, more than 20% of the main text or a FAQ question is absent. `--baseline` re-checks repeat that load only when the first audit found a no-JS problem; `--fast` skips it, `--deep` forces it. A skipped check is stated in the report.
+  - **SEO / GEO**: `h1-word-glue` (error, words in separate elements with no space in the HTML), `jsonld-invalid` (error), `jsonld-unknown-type`, `faq-jsonld-mismatch` (error, FAQPage text differs from the visible page), `rating-without-reviews`, `canonical-og-mismatch`, `hreflang`. `audit-site.mjs` + `lib/site.mjs`: `robots-missing`, `robots-invalid`, `sitemap-missing`, `sitemap-invalid`, `llms-missing`, `ai-bots-blocked` (GPTBot, ClaudeBot, PerplexityBot, Google-Extended), `hreflang-not-reciprocal`. New GEO section in `seo-readability.md`.
+  - **Motion**: `hidden-until-animated` (error, text still at `opacity: 0`, `visibility: hidden` or off-screen with no JS or reduced motion), `layout-animation`, `scroll-cls` (warning above 0.1, error above 0.25, measured with a `layout-shift` observer during the scroll pass), `ai-reveal-everywhere`, `ai-infinite-animation`, `ai-slow-motion`, `ai-will-change-everywhere`. `motion.md`: counters keep their final value in the HTML, shorter travel and no grid stagger on phones.
+  - **Copy**: `vague-cta` replaces `vague-links` (French and English labels, suggests a verb + result), `unproven-claim` ("#1", "leader", "+500 clients", "98%" with no source or link nearby; goes to "Product decisions to confirm"), `vague-error-message`. Cliché list extended in French and English and checked in list items, buttons, links, captions and badges. New `references/microcopy.md` (errors, confirmations, empty states, 404).
+  - **Brand choices**: intake question 11 "Brand choices to keep"; `--allow ai-hero-pill,ai-accent-word,ai-caps-label` reports them as "accepted (brand choice)" with no penalty; these three rules are never errors. "Never" becomes "Avoid by default (unless listed in brand choices)".
+  - **Colors**: one rule. A brand exists → its colors are kept. No brand → a short palette (4–6 named hex, AA checked) proposed as a decision to confirm, never as a brand identity (`SKILL.md`, `direction.md` §3, `intake.md`).
+  - **No invented figures**: the `aggregateRating` of `local-business.html` and the rating of `product-page.html` are now marked placeholders; `seo-readability.md` says "never a rating or review count without real reviews".
+  - **Example**: `smb-light.html` — warm light theme for small-business software and B2B services (hero with one field and one button, product demo in tabs readable without JS, full-width color band, comparison `<table>`, `<details>` FAQ mirrored in FAQPage JSON-LD).
+  - **Docs**: versions aligned (`package.json` was still 1.5.0); README examples table fixed (13 examples + React), before/after image with the measured score (`docs/before-after.png`, `tests/fixtures/after.html`), `README.fr.md`; `SKILL.md` kept at ~10 KB (script rows already shown in the workflow removed). 4 new evals (25).
+  - Tests: 74 (new `tests/v17.test.mjs`; fixtures `no-js.html`, `motion.html`, `copy.html`, `jsonld.html`, `after.html`, `site/`).
 
 ### 1.6.0 (2026-10-01)
 

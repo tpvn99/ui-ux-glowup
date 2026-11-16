@@ -44,6 +44,7 @@ export function resolveTarget(target) {
  * Open a page at a viewport and wait until it is visually settled.
  * options.route: optional (route) => void handler, used by tests to serve assets offline.
  * options.scroll: scroll through the page to trigger lazy content (default true).
+ * options.javaScript: false loads the page with JavaScript disabled (what many crawlers see).
  * options.storageState: path to a Playwright storage state (cookies + localStorage) saved by
  *   login.mjs, to audit pages behind a login. Defaults to $GLOWUP_STORAGE_STATE when set.
  */
@@ -54,16 +55,27 @@ export async function openPage(browser, url, viewport, options = {}) {
     isMobile: viewport.isMobile,
     deviceScaleFactor: viewport.deviceScaleFactor,
     reducedMotion: "reduce",
+    javaScriptEnabled: options.javaScript !== false,
     ...(storageState ? { storageState } : {}),
   });
   if (options.route) await context.route("**/*", options.route);
+  await context.addInitScript(() => {
+    window.__glowupShifts = [];
+    try {
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) window.__glowupShifts.push({ v: e.value, t: e.startTime, nodes: (e.sources || []).map((s) => s.node) });
+      }).observe({ type: "layout-shift", buffered: true });
+    } catch {}
+  });
   const page = await context.newPage();
   await page.goto(url, { waitUntil: "networkidle", timeout: 45000 }).catch(() => {});
   if (options.waitFor) await page.waitForSelector(options.waitFor, { timeout: 15000 }).catch(() => {});
+  if (options.javaScript === false) return { page, close: () => context.close() };
   if (options.dismiss !== false) await dismissOverlays(page);
   await page.evaluate(() => document.fonts && document.fonts.ready).catch(() => {});
   if (options.scroll !== false) {
     await page.evaluate(async () => {
+      window.__glowupScrollStart = performance.now();
       const step = window.innerHeight * 0.8;
       for (let y = 0; y < document.body.scrollHeight; y += step) {
         window.scrollTo(0, y);

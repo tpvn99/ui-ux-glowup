@@ -6,13 +6,19 @@
 // Usage:
 //   node audit-site.mjs <start-url | index.html> [--max 10] [--depth 2] [--json site.json]
 //                       [--pages "url1,url2,…"] [--storage-state state.json]
+//                       [--allow ai-hero-pill,…] [--fast]
+//
+// Also checks the site files once: robots.txt and sitemap.xml (present, valid), llms.txt, AI crawlers
+// blocked in robots.txt, hreflang links that do not point back.
 //
 // Stays on the same origin (or the same folder for local files), skips logout/delete links,
 // anchors, mailto/tel and downloads.
 
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { siteFindings } from "./lib/site.mjs";
 import { loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions, VIEWPORTS } from "./lib/browser.mjs";
-import { auditPage } from "./audit.mjs";
+import { auditPage, auditOptions } from "./audit.mjs";
 import { CRITERIA } from "./lib/analyze.mjs";
 
 const SKIP = /(logout|log-out|signout|sign-out|deconnexion|déconnexion|delete|supprimer|remove|unsubscribe|\/api\/|\.(pdf|zip|png|jpe?g|webp|gif|svg|mp4|csv|xlsx?)$)/i;
@@ -31,6 +37,29 @@ export function sameSite(start, candidate) {
   const b = new URL(candidate);
   if (a.protocol === "file:") return b.protocol === "file:" && b.pathname.startsWith(a.pathname.slice(0, a.pathname.lastIndexOf("/") + 1));
   return a.origin === b.origin;
+}
+
+/** Read /robots.txt, /sitemap.xml (or the one robots.txt declares) and /llms.txt; null when missing. */
+export async function fetchSiteFiles(startUrl) {
+  const start = new URL(startUrl);
+  const get = async (name) => {
+    try {
+      if (start.protocol === "file:") {
+        const file = fileURLToPath(new URL(name, start));
+        return existsSync(file) ? readFileSync(file, "utf8") : null;
+      }
+      const res = await fetch(/^https?:/.test(name) ? name : new URL("/" + name, start.origin), { redirect: "follow", signal: AbortSignal.timeout(10000) });
+      if (!res.ok) return null;
+      const text = await res.text();
+      return name.endsWith(".xml") || !/<html|<!doctype/i.test(text.slice(0, 300)) ? text : name === "robots.txt" ? text : null;
+    } catch {
+      return null;
+    }
+  };
+  const robots = await get("robots.txt");
+  const declared = robots && (robots.match(/^\s*sitemap\s*:\s*(\S+)/im) || [])[1];
+  const sitemap = (declared && start.protocol !== "file:" && (await get(declared))) || (await get("sitemap.xml"));
+  return { robots, sitemap, llms: await get("llms.txt") };
 }
 
 async function collectLinks(browser, url, options) {
@@ -82,7 +111,8 @@ export async function auditSite(start, { max = 10, depth = 2, pages, route, ...o
         byRule.set(f.rule, r);
       }
     const recurring = [...byRule.values()].filter((r) => r.pages.length > 1).sort((a, b) => b.pages.length - a.pages.length);
-    return { start, pages: results.sort((a, b) => a.total - b.total), recurring };
+    const site = siteFindings(await fetchSiteFiles(startUrl), results.map((p) => ({ url: p.url, hreflang: p.result.hreflang })));
+    return { start, pages: results.sort((a, b) => a.total - b.total), recurring, site };
   } finally {
     await browser.close();
   }
@@ -102,6 +132,10 @@ export function formatSiteReport(site) {
   lines.push(`Average score: ${avg.toFixed(1)}/${CRITERIA.length * 5}`, "");
   lines.push("Score  Err  Warn  Page");
   for (const p of site.pages) lines.push(`${String(p.total).padStart(5)}  ${String(p.errors).padStart(3)}  ${String(p.warns).padStart(4)}  ${short(p.url)}`);
+  if (site.site?.length) {
+    lines.push("", "Site files — robots.txt, sitemap.xml, llms.txt, AI crawlers, hreflang:");
+    for (const f of site.site) lines.push(`${f.severity === "error" ? "✗" : "!"} ${f.rule} — ${f.message}${f.items.length ? ` (${f.items.join(", ")})` : ""}`);
+  } else if (site.site) lines.push("", "Site files: robots.txt, sitemap.xml and llms.txt present and valid.");
   if (site.recurring.length) {
     lines.push("", "Recurring issues — fix once in shared components / global CSS:");
     for (const r of site.recurring) lines.push(`${r.severity === "error" ? "✗" : "!"} [${r.criterion}] ${r.rule} on ${r.pages.length}/${site.pages.length} pages — ${r.message.slice(0, 110)}`);
@@ -118,7 +152,7 @@ if (isMain(import.meta.url)) {
   }
   try {
     const pages = typeof flags.pages === "string" ? flags.pages.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
-    const site = await auditSite(start || pages[0], { max: Number(flags.max) || 10, depth: flags.depth !== undefined ? Number(flags.depth) : 2, pages, ...commonOptions(flags) });
+    const site = await auditSite(start || pages[0], { max: Number(flags.max) || 10, depth: flags.depth !== undefined ? Number(flags.depth) : 2, pages, ...commonOptions(flags), ...auditOptions(flags) });
     console.log(formatSiteReport(site));
     if (flags.json) writeFileSync(flags.json === true ? "site.json" : flags.json, JSON.stringify(site, null, 2));
   } catch (e) {

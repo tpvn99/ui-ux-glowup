@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixture — motion that costs layout and looks generated</title>
+<meta name="description" content="Fixture: transitions on layout properties, infinite animations, slow motion, will-change everywhere, reveal on every section and layout shift on scroll.">
+<style>
+  body { margin: 0; font: 16px/1.6 system-ui, sans-serif; color: #18181b; }
+  main { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 64px 0; min-height: 420px; }
+  .panel { height: 80px; transition: height .3s ease; overflow: hidden; }
+  .panel:hover { height: 160px; }
+  .slide { animation: slide .6s ease both; }
+  @keyframes slide { from { margin-left: -40px; } to { margin-left: 0; } }
+  .float { animation: float 3s ease-in-out infinite; display: inline-block; }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  .spinner { width: 16px; height: 16px; border: 2px solid #999; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .slow { transition: opacity 1.5s ease; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid div { will-change: transform; padding: 16px; border: 1px solid #ddd; }
+  .late { height: 0; }
+</style>
+</head>
+<body>
+<main>
+  <section class="reveal"><h1>Motion fixture</h1><p class="slide">A paragraph that slides in by animating its left margin on load.</p><p class="float">A label that floats up and down for ever.</p></section>
+  <section class="reveal"><h2>Accordion</h2><div class="panel">A panel that grows by transitioning its height, which forces layout on every frame.</div><div id="late" class="late"></div><p>Text under a block that appears late and pushes this paragraph down while the reader scrolls.</p></section>
+  <section class="reveal"><h2>Demo</h2><div data-demo><p class="float">Inside a marked demo area, a loop is fine.</p></div><p>Saving <span class="spinner" role="status" aria-label="Saving"></span></p></section>
+  <section class="fade-up"><h2>Slow</h2><a href="#" class="slow">A link whose hover takes a second and a half</a></section>
+  <section><h2>Grid</h2><div class="grid"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div></div></section>
+</main>
+<script>
+  let done = false;
+  addEventListener("scroll", () => {
+    if (done || scrollY < 200) return;
+    done = true;
+    setTimeout(() => { document.getElementById("late").style.height = "480px"; }, 40);
+  });
+</script>
+</body>
+</html>

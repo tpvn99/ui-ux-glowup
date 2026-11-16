@@ -71,10 +71,15 @@ The sites below are widely recognized for the quality of their design. For each:
 
 No single "star": borrow the reassuring mechanics of premium brands.
 - Split hero with text / real photo of the work (Aesop, Mercury for restraint)
-- Concrete proof next to the CTA: Google rating, years in business, service area
+- Concrete proof next to the CTA: Google rating (real figures only), years in business, service area
 - Services as a structured list or photo cards, not generic icons
 - Numbered process steps (Stripe-style "how it works")
 - Persistent contact CTA on mobile (bottom bar)
+
+**Warm light B2B** — small-business software and service firms (see `assets/examples/smb-light.html`)
+- Light, slightly tinted background, one sans-serif, dark ink, the brand color on one band and the buttons
+- Hero with one field and one button; the product shown in tabs right under it
+- A real comparison `<table>` and a `<details>` FAQ instead of card rows
 
 ## Dashboards, apps, back-offices
 

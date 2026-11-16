@@ -21,19 +21,21 @@ ui-ux-glowup/
 ├── skills/
 │   └── ui-ux-glowup/
 │       ├── SKILL.md           # Required skill file (<500 lines)
-│       ├── references/        # Loaded on demand: intake, sites, sections, craft, visuals, mobile, seo-readability, icons, anti-ai, pdf, implement, audit, checklist
+│       ├── references/        # Loaded on demand: intake, direction, sites, sections, craft, visuals, motion, mobile, seo-readability, microcopy, icons, anti-ai, pdf, implement, audit, checklist
 │       ├── assets/examples/   # Tested Tailwind v4 examples + React dashboard
 │       ├── assets/pdf/        # Print-ready PDF templates (plain CSS)
 │       ├── scripts/           # audit, audit-site, inventory, locate, extract-tokens, screenshot, compare, login, find-icons, make-favicon, pdf, site-fonts (+ lib/, audit.browser.js)
 │       └── evals/             # evals.json
 ├── tests/                     # node:test suite + fixtures
+├── docs/                      # before-after.png shown in the README
 ├── package.json               # Dev deps (playwright) and npm scripts
 ├── AGENTS.md                  # This file (CLAUDE.md symlinks here)
 ├── CONTRIBUTING.md
 ├── VERSIONS.md
 ├── validate-skills.sh
 ├── LICENSE
-└── README.md
+├── README.md
+└── README.fr.md               # French translation of the README: update both together
 ```
 
 ## Build / Lint / Test Commands
@@ -106,7 +108,10 @@ skills/skill-name/
 
 ## Content Rules for This Skill
 
-- **Brand colors are never changed** by the skill — only how color is used.
+- **Brand colors are never changed** by the skill — only how color is used. With no brand, the skill proposes a short palette as a decision to confirm, never as a brand identity.
+- **No invented figure, rating or review**, in examples or docs: use marked placeholders (`[rating]`).
+- `ai-hero-pill`, `ai-accent-word` and `ai-caps-label` stay warnings and can be accepted with `--allow` (brand choices). Every audit rule has an id, a severity, the offending selector, a fixture and a test.
+- Everything is in English except `README.fr.md` and the French cliché list.
 - Every pattern in `references/sections.md` should, when possible, point to a working file in `assets/examples/`.
 - Examples use Tailwind v4 (`@tailwindcss/browser`) with two tokens: `--color-accent` and `--color-line`.
 - Examples use realistic, specific content — never lorem ipsum. Unsplash URLs are placeholders.
@@ -134,5 +139,5 @@ skills/skill-name/
 - [ ] `./validate-skills.sh` and `npm test` pass
 - [ ] `SKILL.md` is under 500 lines
 - [ ] Changed examples re-captured at desktop + mobile, no overflow
-- [ ] Versions bumped (`SKILL.md` metadata, `VERSIONS.md`, `plugin.json`, `marketplace.json`)
+- [ ] Versions bumped (`SKILL.md` metadata, `VERSIONS.md`, `plugin.json`, `marketplace.json`, `package.json`)
 - [ ] No sensitive data or credentials

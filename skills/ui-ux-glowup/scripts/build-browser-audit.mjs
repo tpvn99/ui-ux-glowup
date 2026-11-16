@@ -28,6 +28,7 @@ export function buildBrowserAudit() {
 (() => {
 ${body}
 const data = collectPageData();
+data.snapshot = collectSnapshot();
 const findings = analyze(data, data);
 const result = {
   target: location.href,

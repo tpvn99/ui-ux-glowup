@@ -30,8 +30,9 @@
   details summary::-webkit-details-marker { display: none; }
   details[open] .plus { transform: rotate(45deg); }
 </style>
+<!-- No aggregateRating here: add it only with a reviews section on the page and the real figures. -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Product","name":"Elm Coffee Table","brand":{"@type":"Brand","name":"Arbor House"},"material":"Solid oak","offers":{"@type":"Offer","price":"890","priceCurrency":"USD","availability":"https://schema.org/InStock"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","reviewCount":"212"}}
+{"@context":"https://schema.org","@type":"Product","name":"Elm Coffee Table","brand":{"@type":"Brand","name":"Arbor House"},"material":"Solid oak","offers":{"@type":"Offer","price":"890","priceCurrency":"USD","availability":"https://schema.org/InStock"}}
 </script>
 </head>
 <body class="bg-white font-sans text-stone-900">
@@ -51,7 +52,7 @@
     <section class="lg:sticky lg:top-8 lg:self-start" aria-labelledby="titre-produit">
       <p class="text-[13px] text-stone-500">Handmade in Vermont</p>
       <h1 id="titre-produit" class="mt-1 text-3xl font-semibold tracking-[-0.02em]">Elm Coffee Table</h1>
-      <p class="mt-2 flex items-center gap-2 text-sm"><span class="text-amber-500" aria-hidden="true">★★★★★</span><a href="#avis" class="text-stone-600 underline underline-offset-4">4.8 · 212 reviews</a></p>
+      <p class="mt-2 flex items-center gap-2 text-sm"><span class="text-amber-500" aria-hidden="true">★★★★★</span><a href="#avis" class="text-stone-600 underline underline-offset-4">[rating] · [count] reviews</a></p>
       <p class="mt-5 text-2xl tabular-nums">$890</p>
       <p class="text-sm text-stone-500">or 3 interest-free payments of $296.67</p>
 
