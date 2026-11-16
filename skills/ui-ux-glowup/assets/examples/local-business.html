@@ -32,8 +32,9 @@
   }
   html { -webkit-font-smoothing: antialiased; }
 </style>
+<!-- aggregateRating holds placeholders on purpose: a rating or review count must come from real reviews visible on the page. Fill both values from the real source, or delete the aggregateRating block. -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"LocalBusiness","name":"Ashford Woodworks","telephone":"+1-802-555-0142","address":{"@type":"PostalAddress","streetAddress":"12 Mill Street","addressLocality":"Winooski","addressRegion":"VT","postalCode":"05404","addressCountry":"US"},"openingHours":"Mo-Fr 08:00-18:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"127"}}
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"Ashford Woodworks","telephone":"+1-802-555-0142","address":{"@type":"PostalAddress","streetAddress":"12 Mill Street","addressLocality":"Winooski","addressRegion":"VT","postalCode":"05404","addressCountry":"US"},"openingHours":"Mo-Fr 08:00-18:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"REPLACE_WITH_REAL_RATING","reviewCount":"REPLACE_WITH_REAL_COUNT"}}
 </script>
 </head>
 <body class="bg-paper font-sans text-stone-900">
@@ -78,7 +79,7 @@
         <a href="#projects" class="group inline-flex items-center gap-1.5 px-2 py-3 text-[15px] font-medium">See our work <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span></a>
       </div>
       <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-line pt-6 text-sm">
-        <div><dt class="text-muted">Google reviews</dt><dd class="mt-0.5 font-semibold"><span class="text-amber-500" aria-hidden="true">★★★★★</span> 4.9 <span class="font-normal text-muted">(127 reviews)</span></dd></div>
+        <div><dt class="text-muted">Google reviews</dt><dd class="mt-0.5 font-semibold"><span class="text-amber-500" aria-hidden="true">★★★★★</span> [rating] <span class="font-normal text-muted">([count] reviews)</span></dd></div>
         <div><dt class="text-muted">Since</dt><dd class="mt-0.5 font-semibold">1998</dd></div>
         <div><dt class="text-muted">Quotes</dt><dd class="mt-0.5 font-semibold">within 48 h</dd></div>
       </dl>

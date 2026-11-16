@@ -1,6 +1,6 @@
 # Intake Questionnaire
 
-Use it in **Standard** and **Full** mode (skip it in Quick mode). Standard: ask only the 3–5 questions whose answers you can't infer — usually 2, 3, 4 and 7. Full: all of them. Ask **once, in a single message**, with multiple-choice answers the user can reply to in a few words ("1b, 2a, 3: keep the booking form"). Pre-fill what you already know (from the files, the URL, earlier messages) and only ask the rest. If the user skips a question, use the default and say so in the brief.
+Use it in **Standard** and **Full** mode (skip it in Quick mode). Standard: ask only the 3–5 questions whose answers you can't infer — usually 2, 3, 4 and 7, plus 11 when the brand or the current site uses a pattern the audit flags. Full: all of them. Ask **once, in a single message**, with multiple-choice answers the user can reply to in a few words ("1b, 2a, 3: keep the booking form"). Pre-fill what you already know (from the files, the URL, earlier messages) and only ask the rest. If the user skips a question, use the default and say so in the brief.
 
 If the environment has a structured question tool (multiple-choice UI), use it for questions 1–6 and ask the rest as text.
 
@@ -27,7 +27,7 @@ If the environment has a structured question tool (multiple-choice UI), use it f
 - 3) **Bold** — expressive type, bento, 3D, strong motion (tech, creative, youth brands)
 
 **5. Visual assets**
-- Brand: logo / colors / fonts? (never changed — only their usage)
+- Brand: logo / colors / fonts? (never changed — only their usage). No brand yet → you propose a short palette, to confirm (`direction.md` §3)
 - Imagery: a) real photos available · b) need stock placeholders · c) product UI to show · d) illustrations (3D / semi-flat) · e) none
 - Icons: a) outline (Lucide/Tabler) · b) duotone/bold (Phosphor/Solar) · c) illustrated (Flaticon) · d) your choice
 
@@ -42,6 +42,12 @@ If the environment has a structured question tool (multiple-choice UI), use it f
 **9. Likes and dislikes** — 1–3 sites you like (and what about them), anything you don't want.
 
 **10. Constraints** — stack (WordPress, React, Webflow…), deadline, pages needed.
+
+**11. Brand choices to keep** — patterns the brand uses on purpose and that you must not "fix": a pill or badge above the main heading, one word of the headline in italic or in color, small uppercase labels above headings, anything else. Listed here, they stay. Run the audit with `--allow` so they show as "accepted (brand choice)" and cost no points:
+
+```bash
+node <skill-dir>/scripts/audit.mjs <page> --allow ai-hero-pill,ai-accent-word,ai-caps-label
+```
 
 ## Style families (question 2) → starting direction
 
@@ -59,4 +65,4 @@ Modernity level adjusts intensity inside the family: **Classic** drops 3D and mo
 
 Before designing, write the brief back in 6–8 lines and continue unless the user objects:
 
-> **Brief** — Redesign · business showcase (plumber, Leeds) · goal: calls & quotes · modernity 2 (modern) · brand green #1f4d3a kept · real photos · outline icons (Tabler) · auto dark mode: no · keep: phone in header, quote form, Google reviews · SEO: "plumber Leeds", "emergency plumber Leeds" · references: Mercury (sobriety), Stripe (process steps).
+> **Brief** — Redesign · business showcase (plumber, Leeds) · goal: calls & quotes · modernity 2 (modern) · brand green #1f4d3a kept · real photos · outline icons (Tabler) · auto dark mode: no · keep: phone in header, quote form, Google reviews · brand choices: uppercase labels · SEO: "plumber Leeds", "emergency plumber Leeds" · references: Mercury (sobriety), Stripe (process steps).

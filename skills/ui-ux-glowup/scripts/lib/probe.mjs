@@ -428,8 +428,24 @@ export function collectPageData() {
   }
   const EMOJI = /\p{Extended_Pictographic}/u;
   const emojiIn = [...document.querySelectorAll("h1, h2, h3, button, a")].filter((el) => visible(el) && EMOJI.test(el.textContent)).map((el) => `${selector(el)} "${el.textContent.trim().slice(0, 40)}"`);
-  const CLICHE = /\b(transform(ez)? (your|votre|vos)|unlock (the|your)|revolutioni[sz]e|révolutionne[zr]?|elevate your|supercharge|seamless(ly)?|game[- ]changer|next[- ]level|take .{0,15} to the next level|boostez|propulsez|all[- ]in[- ]one solution|solution tout[- ]en[- ]un|in today'?s fast[- ]paced|dans un monde en constante évolution|cutting[- ]edge|innovative solutions?|solutions? innovantes?|empower(ing)? (your|you)|harness the power|unleash)\b/i;
-  const cliches = [...document.querySelectorAll("h1, h2, h3, p")].filter((el) => visible(el) && CLICHE.test(el.textContent)).slice(0, 8).map((el) => `${selector(el)} "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 60)}"`);
+  const CLICHE = new RegExp(
+    "(?<![\\p{L}\\p{N}])(" +
+      [
+        "transform(ez)? (your|votre|vos)", "unlock", "revolutioni[sz]e", "révolutionne[zr]?", "elevate", "supercharge", "seamless(ly)?",
+        "game[- ]changer", "next[- ]level", "take .{0,15} to the next level", "all[- ]in[- ]one solution", "in today'?s fast[- ]paced",
+        "cutting[- ]edge", "innovative solutions?", "empower(ing)? (your|you)", "harness the power", "unleash", "in just a few clicks",
+        "boost(er|ez)", "propulsez", "solution tout[- ]en[- ]un", "dans un monde en constante évolution", "solutions? innovantes?",
+        "en quelques clics", "n['’]attendez plus", "à portée de main", "votre partenaire de confiance", "incontournables?", "au c(œ|oe)ur de",
+        "des experts passionnés", "sur[- ]mesure", "clés? en main", "simplifiez[- ]vous la vie",
+      ].join("|") +
+      ")(?![\\p{L}\\p{N}])",
+    "iu"
+  );
+  const clicheEls = [...document.querySelectorAll('h1, h2, h3, h4, p, li, button, a, figcaption, [class*="badge"], [class*="chip"], [class*="pill"]')].filter((el) => visible(el) && CLICHE.test(el.textContent));
+  const cliches = clicheEls
+    .filter((el) => !clicheEls.some((o) => o !== el && el.contains(o)))
+    .slice(0, 8)
+    .map((el) => `${selector(el)} "${(el.textContent.match(CLICHE) || [""])[0].trim()}" in "${el.textContent.replace(/\s+/g, " ").trim().slice(0, 50)}"`);
   // Rows of 3–4 identical "icon + title + text" cards
   const identicalCards = [];
   for (const parent of document.querySelectorAll("div, section, ul")) {
@@ -546,6 +562,168 @@ export function collectPageData() {
   }
   const animated = all.filter((el) => { const s = getComputedStyle(el); return s.animationName !== "none" && parseFloat(s.animationDuration) > 0; }).length;
 
+  // ---------- Copy: vague calls to action, unproven claims, generic error messages ----------
+  const label = (el) => flat(el).replace(/[\s→↗›»>.!…-]+$/u, "").trim();
+  const VAGUE_CTA = /^(en savoir plus|d[ée]couvrir|cliquez ici|cliquer ici|voir plus|lire la suite|plus d['’]infos?|ici|learn more|click here|read more|discover|see more|more info|more|here)$/i;
+  const vagueCtas = [...document.querySelectorAll("a[href], button, [role=button]")]
+    .filter((el) => {
+      if (!visible(el) || !VAGUE_CTA.test(label(el))) return false;
+      const named = (el.getAttribute("aria-label") || el.getAttribute("title") || "").trim();
+      return !named || VAGUE_CTA.test(named);
+    })
+    .map((el) => `${selector(el)} "${label(el)}"`);
+  const SUPERLATIVE = /(?<![\p{L}\p{N}])(n°\s?1|num[ée]ro\s?(1|un)|#\s?1|number one|leaders?|(le|la|les) meilleure?s?|the best|world['’]s leading)(?![\p{L}\p{N}])/iu;
+  const FIGURE = /(\+\s?\d[\d\s.,  ]*k?|\d[\d\s.,  ]*k?\s?\+)\s?(clients?|customers?|users?|utilisateurs?|entreprises?|companies|teams|équipes|projets?|projects?|avis|reviews?|pays|countries|téléchargements?|downloads?|membres?|members?|installations?)|\d{1,3}(?:[.,]\d+)?\s?%\s?(?:de |d['’]|of )?(?:nos |our )?(clients?|customers?|users?|utilisateurs?|satisf\p{L}*|recommand\p{L}*|recommend\p{L}*)/iu;
+  const SOURCED = /(?<![\p{L}])(source|selon|d['’]après|according to|étude|study|survey|enquête|rapport|report|classement|ranking)(?![\p{L}])|[*†¹²³]|\[\d+\]/iu;
+  const claimEls = [...document.querySelectorAll("h1, h2, h3, h4, p, li, dt, dd, figcaption, strong, span, div")].filter((el) => {
+    if (!visible(el) || el.closest('table, nav, footer, form, [role=img], [data-demo], script, style, svg, [itemprop="review"], blockquote, q, cite')) return false;
+    if (["SPAN", "DIV", "STRONG"].includes(el.tagName) && el.children.length) return false;
+    const t = flat(el);
+    return t.length <= 240 && (SUPERLATIVE.test(t) || FIGURE.test(t));
+  });
+  const unprovenClaims = claimEls
+    .filter((el) => !claimEls.some((o) => o !== el && el.contains(o)))
+    .filter((el) => {
+      const scope = el.closest("p, li, figure, blockquote, dl, article, section > div, section") || el.parentElement || el;
+      const near = scope.textContent.length < 600 ? scope : el;
+      return !near.querySelector("a[href], cite, sup, [data-source]") && !el.closest("a[href]") && !SOURCED.test(near.textContent);
+    })
+    .slice(0, 8)
+    .map((el) => `${selector(el)} "${((flat(el).match(SUPERLATIVE) || flat(el).match(FIGURE) || [""])[0]).trim()}" in "${flat(el).slice(0, 50)}"`);
+  const VAGUE_ERROR = /^(invalid( field| input| value| entry)?|error|an error (has )?occurr?ed|something went wrong|oops|please try again|try again|champ invalide|erreur|une erreur est survenue|valeur invalide|saisie (invalide|incorrecte)|invalide|incorrect)[\s.!…]*$/i;
+  const vagueErrors = [...document.querySelectorAll('[role=alert], [aria-live=assertive], [class*="error"], [class*="invalid"], [id$="-error"], [id$="_error"], [data-error]')]
+    .filter((el) => visible(el) && !el.matches("input, select, textarea, form, fieldset") && VAGUE_ERROR.test(flat(el)))
+    .slice(0, 6)
+    .map((el) => `${selector(el)} "${flat(el).slice(0, 40)}"`);
+
+  // ---------- H1 as crawlers read it vs as it renders ----------
+  let h1Glue = null;
+  if (h1) {
+    const clone = h1.cloneNode(true);
+    for (const br of clone.querySelectorAll("br")) br.replaceWith(" ");
+    const kids = [...h1.querySelectorAll("*")].filter((c) => (c.textContent || "").trim() && c.getBoundingClientRect().width > 0);
+    const em = parseFloat(getComputedStyle(h1).fontSize) || 16;
+    const gapped = [];
+    for (const c of kids) {
+      const next = c.nextSibling;
+      if (!next || next.nodeType !== 1 || next.tagName === "BR" || !(next.textContent || "").trim()) continue;
+      if (/\s$/.test(c.textContent) || /^\s/.test(next.textContent)) continue;
+      const a = c.getBoundingClientRect();
+      const b = next.getBoundingClientRect();
+      if (!b.width) continue;
+      if (b.top >= a.bottom - 2 || b.left - a.right > em * 0.15) gapped.push(`${c.textContent.trim().slice(-12)}|${next.textContent.trim().slice(0, 12)}`);
+    }
+    h1Glue = { raw: clone.textContent.replace(/\s+/g, " ").trim().slice(0, 200), rendered: (h1.innerText || "").replace(/\s+/g, " ").trim().slice(0, 200), gapped: gapped.slice(0, 4) };
+  }
+
+  // ---------- Structured data, canonical, hreflang ----------
+  seo.jsonLdRaw = [...document.querySelectorAll('script[type="application/ld+json"]')].slice(0, 6).map((sc) => sc.textContent.slice(0, 20000));
+  seo.ogUrl = meta("og:url");
+  seo.hreflang = [...document.querySelectorAll('link[rel="alternate"][hreflang]')].slice(0, 40).map((l) => ({ lang: l.getAttribute("hreflang"), href: l.href }));
+  seo.reviewsVisible = [...document.querySelectorAll('blockquote, [itemprop="review"], [class*="review"], [class*="testimonial"], [class*="avis"], [data-review], iframe[src*="trustpilot"], iframe[src*="google.com/maps"], [class*="trustpilot"]')].filter((el) => el.tagName === "IFRAME" || visible(el)).length;
+
+  // ---------- Motion: what animates, how long, and whether it moves layout ----------
+  const LAYOUT_PROP = /^(width|height|top|left|right|bottom|inset|margin(-\w+)?|padding(-\w+)?|max-height|max-width|min-height|min-width)$/;
+  const seconds = (v) => Math.max(0, ...String(v || "").split(",").map((x) => (/ms\s*$/.test(x) ? parseFloat(x) / 1000 : parseFloat(x)) || 0));
+  const keyframes = new Map();
+  const safeRules = [];
+  const walkRules = (rules, safe) => {
+    for (const rule of rules) {
+      if (rule.type === 7 && rule.cssRules) {
+        const props = new Set();
+        let fromHidden = false;
+        for (const frame of rule.cssRules) {
+          for (const prop of frame.style) if (LAYOUT_PROP.test(prop)) props.add(prop);
+          if (/^(0%|from)/.test(frame.keyText) && frame.style.opacity !== "" && parseFloat(frame.style.opacity) === 0) fromHidden = true;
+        }
+        keyframes.set(rule.name, { layout: [...props], fromHidden });
+      } else if (rule.selectorText && rule.style) {
+        if (safe && (rule.style.transitionProperty || rule.style.animationName || rule.style.animation || rule.style.transition)) safeRules.push(rule);
+        if (rule.cssRules && rule.cssRules.length) walkRules(rule.cssRules, safe);
+      } else if (rule.cssRules) {
+        const cond = rule.conditionText || (rule.media && rule.media.mediaText) || "";
+        if (/prefers-reduced-motion:\s*reduce/.test(cond)) continue;
+        walkRules(rule.cssRules, safe || /prefers-reduced-motion:\s*no-preference/.test(cond));
+      }
+    }
+  };
+  for (const sheet of document.styleSheets) {
+    try { walkRules(sheet.cssRules, false); } catch {}
+  }
+  const motion = new Map();
+  const noteMotion = (el, src) => {
+    const transDur = seconds(src.transitionDuration);
+    const animDur = seconds(src.animationDuration);
+    const names = String(src.animationName || "").split(",").map((n) => n.trim()).filter((n) => n && n !== "none");
+    const props = transDur > 0 ? String(src.transitionProperty || "").split(",").map((x) => x.trim()).filter(Boolean) : [];
+    if (!props.length && !names.length) return;
+    const m = motion.get(el) || { props: new Set(), names: new Set(), transDur: 0, animDur: 0, infinite: false };
+    props.forEach((x) => m.props.add(x));
+    names.forEach((n) => m.names.add(n));
+    m.transDur = Math.max(m.transDur, transDur);
+    m.animDur = Math.max(m.animDur, names.length ? animDur : 0);
+    if (names.length && /infinite/.test(src.animationIterationCount || "")) m.infinite = true;
+    motion.set(el, m);
+  };
+  let willChange = 0;
+  const willChangeSample = [];
+  for (const el of all) {
+    if (el.closest("svg") && el.tagName.toLowerCase() !== "svg") continue;
+    const s = getComputedStyle(el);
+    noteMotion(el, s);
+    if (s.willChange && s.willChange !== "auto") {
+      willChange++;
+      if (willChangeSample.length < 4) willChangeSample.push(selector(el));
+    }
+  }
+  for (const rule of safeRules) {
+    let els = [];
+    try { els = [...document.querySelectorAll(rule.selectorText.replace(/::?(before|after|hover|focus|focus-visible|focus-within|active)\b/g, ""))].slice(0, 200); } catch {}
+    for (const el of els) noteMotion(el, rule.style);
+  }
+  const DEMO = '[data-demo], figure, [role=img], video, canvas, [class*="demo"], [class*="mockup"], [class*="preview"]';
+  const LOADER = '[role=status], [role=progressbar], [aria-busy=true], [class*="spinner"], [class*="loader"], [class*="loading"], [class*="skeleton"]';
+  const LOADER_NAME = /spin|rotate|load|progress|skeleton|caret|cursor/i;
+  const layoutAnimations = [];
+  const infiniteAnimations = [];
+  const slowMotion = [];
+  const revealEls = [];
+  const REVEAL = /(^|[\s_-])(reveal|fade-?(in|up|down)|slide-?(in|up)|animate-(in|fade|slide)\S*|aos|wow|scroll-animate|in-?view|appear)([\s_-]|$)/i;
+  for (const [el, m] of motion) {
+    if (!visible(el) && getComputedStyle(el).opacity !== "0") continue;
+    const moved = [...m.props].filter((x) => LAYOUT_PROP.test(x));
+    const framed = [...m.names].flatMap((n) => (keyframes.get(n) || { layout: [] }).layout);
+    if (moved.length || framed.length) layoutAnimations.push(`${selector(el)} (${moved.length ? "transition: " + moved.join(", ") : "animation: " + [...new Set(framed)].join(", ")})`);
+    const inDemo = el.closest(DEMO) || el.closest(LOADER) || [...m.names].every((n) => LOADER_NAME.test(n)) && m.names.size > 0;
+    if (m.infinite && m.animDur > 0 && !inDemo) infiniteAnimations.push(`${selector(el)} (${[...m.names].join(", ")})`);
+    const slow = Math.max(m.transDur, m.infinite ? 0 : m.animDur);
+    if (slow > 1 && !inDemo) slowMotion.push(`${selector(el)} (${Math.round(slow * 100) / 100}s)`);
+    if ([...m.names].some((n) => (keyframes.get(n) || {}).fromHidden) && !m.infinite) revealEls.push(el);
+  }
+  for (const el of document.querySelectorAll("[data-aos], [data-animate], [data-reveal], [data-scroll], [data-sal], [data-sr], [class]")) {
+    if (el.hasAttribute("data-aos") || el.hasAttribute("data-animate") || el.hasAttribute("data-reveal") || el.hasAttribute("data-scroll") || el.hasAttribute("data-sal") || el.hasAttribute("data-sr") || REVEAL.test(typeof el.className === "string" ? el.className : "")) revealEls.push(el);
+  }
+  const revealSections = blockList.filter((b) => revealEls.some((el) => b === el || b.contains(el)));
+  const motionOut = {
+    layoutAnimations: [...new Set(layoutAnimations)].slice(0, 8),
+    infiniteAnimations: [...new Set(infiniteAnimations)].slice(0, 6),
+    slowMotion: [...new Set(slowMotion)].slice(0, 6),
+    willChange,
+    willChangeSample,
+    sections: blockList.length,
+    revealSections: revealSections.length,
+    revealSample: revealSections.slice(0, 4).map(selector),
+  };
+
+  // ---------- Layout shift while scrolling (recorded by openPage's init script) ----------
+  let scrollCls = null;
+  const shifts = window.__glowupShifts;
+  if (shifts) {
+    const from = window.__glowupScrollStart || 0;
+    const during = shifts.filter((e) => e.t >= from);
+    scrollCls = { value: Math.round(during.reduce((a, e) => a + e.v, 0) * 1000) / 1000, sources: [...new Set(during.flatMap((e) => e.nodes).filter((n) => n && n.nodeType === 1).map(selector))].slice(0, 5) };
+  }
+
   const bodyText = document.body.innerText || "";
   return {
     url: location.href,
@@ -557,7 +735,10 @@ export function collectPageData() {
     overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
     pageHeight: document.documentElement.scrollHeight,
     lorem: /lorem ipsum|dolor sit amet/i.test(bodyText),
-    vagueLinks: interactive.filter((i) => /^(click here|here|read more|learn more|more|cliquez ici|en savoir plus)$/i.test(i.text)).length,
+    copy: { vagueCtas: vagueCtas.slice(0, 8), vagueCtaCount: vagueCtas.length, unprovenClaims, vagueErrors },
+    h1Glue,
+    motion: motionOut,
+    scrollCls,
     texts,
     interactive,
     images,
@@ -575,5 +756,66 @@ export function collectPageData() {
     readability,
     a11y: { focusInvisible: focusInvisible.slice(0, 6), focusChecked: focusable.length, reducedMotion, animated },
     aiLook: { gradients, glass, bigRadius: bigRadius.length, bigRadiusSample: bigRadius.slice(0, 5), radiusElements: radii.length, emoji: emojiIn, cliches, identicalCards, heroPills: heroPillOut, statusDots: statusDots.slice(0, 5), accentBorders: accentBorders.slice(0, 6), iconTiles, gradientText: gradientText.slice(0, 4), glows: glows.slice(0, 4), arrowCtas: arrowCtas.slice(0, 6), capsLabels: capsLabels.slice(0, 6), numbered: numbered.slice(0, 6), accentWords: accentWords.slice(0, 4), middots: middots.slice(0, 5), centeredShare: Math.round(centeredShare * 100) },
+  };
+}
+
+/**
+ * Text snapshot of the page, also self-contained: run once in the normal render and once with
+ * JavaScript disabled, then compared in analyze.mjs. `hidden` lists in-flow text blocks that are
+ * still invisible after load and a full scroll (opacity 0, visibility hidden, moved off-screen).
+ */
+export function collectSnapshot() {
+  const norm = (t) => (t || "").replace(/\s+/g, " ").trim();
+  const selector = (el) => {
+    if (el.id) return `${el.tagName.toLowerCase()}#${el.id}`;
+    const cls = [...el.classList].filter((c) => !c.includes(":") && !c.includes("[")).slice(0, 2);
+    const parent = el.parentElement ? el.parentElement.tagName.toLowerCase() + " > " : "";
+    return parent + el.tagName.toLowerCase() + (cls.length ? "." + cls.join(".") : "");
+  };
+  const textOf = (root) => {
+    const out = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const p = n.parentElement;
+      if (!p || p.tagName === "NOSCRIPT" || p.closest("script, style, template")) continue;
+      if (n.textContent.trim()) out.push(n.textContent);
+    }
+    return norm(out.join(" "));
+  };
+  const main = document.querySelector("main") || document.body;
+  const h1 = document.querySelector("h1");
+  const faq = [...document.querySelectorAll("details")].slice(0, 30).map((d) => {
+    const sum = d.querySelector("summary");
+    const q = norm(sum ? sum.textContent : "");
+    return { q, a: norm(d.textContent).slice(q.length).trim().slice(0, 300) };
+  }).filter((f) => f.q);
+  const SKIP = '[hidden], [aria-hidden="true"], [inert], details:not([open]), [role=dialog], [role=menu], [role=tooltip], [role=tabpanel], [role=listbox], dialog, template, noscript, svg, script, style, select';
+  const hidden = [];
+  const flagged = new Set();
+  const docW = document.documentElement.scrollWidth;
+  for (const el of document.body.querySelectorAll("*")) {
+    if (hidden.length >= 12) break;
+    if ([...flagged].some((f) => f.contains(el))) continue;
+    const s = getComputedStyle(el);
+    if (s.display === "none" || !["static", "relative", "sticky"].includes(s.position)) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) continue;
+    let how = null;
+    if (s.opacity === "0") how = "opacity: 0";
+    else if (s.visibility === "hidden" && (!el.parentElement || getComputedStyle(el.parentElement).visibility !== "hidden")) how = "visibility: hidden";
+    else if (s.transform !== "none" && (r.right <= 0 || r.left >= docW || r.bottom + window.scrollY <= 0)) how = "moved off-screen";
+    if (!how || el.closest(SKIP)) continue;
+    const text = norm(el.textContent);
+    if (text.length < 20) continue;
+    flagged.add(el);
+    hidden.push({ sel: selector(el), how, text: text.slice(0, 40) });
+  }
+  return {
+    h1: norm(h1 ? h1.textContent : ""),
+    text: textOf(document.body).slice(0, 80000),
+    visibleText: norm(main.innerText || "").slice(0, 60000),
+    faq,
+    hidden,
+    reducedMotion: Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
   };
 }

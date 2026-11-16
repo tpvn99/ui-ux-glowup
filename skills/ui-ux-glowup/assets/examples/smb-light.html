@@ -1,0 +1,258 @@
+<!doctype html>
+<!--
+  Pattern: warm light theme for small-business software and B2B services
+  Key points: lightly tinted background, one sans-serif, hero with one field + one button,
+  product demo in tabs (every panel is in the HTML and readable without JS), one full-width
+  color band as the single bold place, a real comparison <table>, FAQ in native <details>
+  mirrored word for word in the FAQPage JSON-LD. No rating, review or customer count: add them
+  only with real figures.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fieldbook — Job scheduling for small service companies</title>
+<meta name="description" content="Fieldbook puts every job, crew and van on one schedule, then turns finished jobs into quotes and invoices. Built for service companies with 2 to 40 people.">
+<!-- Replace og:image with a real 1200×630 image and set canonical and og:url to the page URL -->
+<link rel="canonical" href="https://example.com/">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:title" content="Fieldbook — Job scheduling for small service companies">
+<meta property="og:description" content="Every job, crew and van on one schedule, then quotes and invoices from the finished work. Built for service companies with 2 to 40 people.">
+<meta property="og:image" content="https://example.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%232740b8%27/%3E%3Ctext%20x%3D%2716%27%20y%3D%2722%27%20font-family%3D%27system-ui%2Csans-serif%27%20font-size%3D%2717%27%20font-weight%3D%27700%27%20fill%3D%27white%27%20text-anchor%3D%27middle%27%3EF%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-accent: #2740b8;
+    --color-paper: #faf6ee;
+    --color-sand: #f1eadc;
+    --color-line: rgb(41 37 36 / .12);
+    --color-muted: #625b52;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .band :focus-visible { outline-color: #fff; }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] .plus { transform: rotate(45deg); }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Do my crews need to install anything?","acceptedAnswer":{"@type":"Answer","text":"No. Crews open a link on their phone and see today's jobs. The app for iPhone and Android is optional and adds offline access."}},
+{"@type":"Question","name":"Can I import my clients from a spreadsheet?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload a CSV or Excel file with names, addresses and phone numbers. Fieldbook shows the rows it could not read before anything is saved."}},
+{"@type":"Question","name":"Does it work with my accounting software?","acceptedAnswer":{"@type":"Answer","text":"Invoices export to QuickBooks Online and Xero, or as a CSV file for any other tool. Payments recorded in Fieldbook are included in the export."}},
+{"@type":"Question","name":"What happens at the end of the trial?","acceptedAnswer":{"@type":"Answer","text":"The workspace becomes read-only. Nothing is deleted and no card is charged until you choose a plan."}}
+]}
+</script>
+</head>
+<body class="bg-paper font-sans text-stone-900">
+
+<header class="border-b border-line">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4" aria-label="Main">
+    <a href="#" class="py-2 text-lg font-semibold tracking-tight">Fieldbook</a>
+    <div class="hidden items-center gap-8 text-[15px] text-muted md:flex">
+      <a href="#product" class="py-2 hover:text-stone-900">Product</a>
+      <a href="#compare" class="py-2 hover:text-stone-900">Compare</a>
+      <a href="#faq" class="py-2 hover:text-stone-900">Questions</a>
+    </div>
+    <a href="#start" class="rounded-md border border-line bg-white px-4 py-2.5 text-sm font-medium hover:bg-sand">Sign in</a>
+  </nav>
+</header>
+
+<main>
+  <!-- Hero: one field, one button -->
+  <section class="mx-auto max-w-6xl px-6 pb-20 pt-16 md:pb-28 md:pt-24">
+    <div class="max-w-3xl">
+      <h1 class="text-[clamp(2.5rem,4vw+1rem,4.25rem)] font-semibold leading-[1.03] tracking-[-0.035em] [text-wrap:balance]">Every job, crew and van on one schedule.</h1>
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted">Fieldbook is the planning board for service companies with 2 to 40 people in the field: cleaning, heating, landscaping, maintenance. Finished jobs become quotes and invoices without retyping.</p>
+      <form id="start" class="mt-8 flex max-w-xl flex-col gap-3 sm:flex-row" action="#" method="post">
+        <label for="hero-email" class="sr-only">Work email</label>
+        <input id="hero-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="h-12 w-full rounded-md border border-stone-400 bg-white px-4 text-base placeholder:text-stone-500">
+        <button type="submit" class="h-12 shrink-0 whitespace-nowrap rounded-md bg-accent px-6 text-base font-medium text-white hover:brightness-110">Create my workspace</button>
+      </form>
+      <p class="mt-3 text-sm text-muted">Free for 14 days. No card needed.</p>
+    </div>
+  </section>
+
+  <!-- Product demo in tabs: all panels are in the HTML; the script hides the inactive ones -->
+  <section id="product" class="border-y border-line bg-white">
+    <div class="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      <h2 class="max-w-2xl text-3xl font-semibold tracking-[-0.025em] md:text-4xl">One tool from the first call to the paid invoice.</h2>
+      <p class="mt-4 max-w-2xl text-lg text-muted">Fieldbook covers three steps of a service job: planning it, pricing it and getting paid for it.</p>
+
+      <div class="mt-10 inline-flex rounded-md border border-line bg-paper p-1" role="tablist" aria-label="Product tour">
+        <button type="button" role="tab" id="tab-schedule" aria-controls="panel-schedule" aria-selected="true" class="tab min-h-11 rounded px-4 text-[15px] font-medium text-muted aria-selected:bg-white aria-selected:text-stone-900 aria-selected:shadow-sm">Schedule</button>
+        <button type="button" role="tab" id="tab-quotes" aria-controls="panel-quotes" aria-selected="false" tabindex="-1" class="tab min-h-11 rounded px-4 text-[15px] font-medium text-muted aria-selected:bg-white aria-selected:text-stone-900 aria-selected:shadow-sm">Quotes</button>
+        <button type="button" role="tab" id="tab-invoices" aria-controls="panel-invoices" aria-selected="false" tabindex="-1" class="tab min-h-11 rounded px-4 text-[15px] font-medium text-muted aria-selected:bg-white aria-selected:text-stone-900 aria-selected:shadow-sm">Invoices</button>
+      </div>
+
+      <div id="panel-schedule" role="tabpanel" aria-labelledby="tab-schedule" tabindex="0" class="panel mt-8 grid gap-10 lg:grid-cols-[2fr_3fr] lg:items-start">
+        <div>
+          <h3 class="text-xl font-semibold tracking-tight">Drag a job, the crew's phone updates.</h3>
+          <p class="mt-3 leading-relaxed text-muted">The week shows every crew as a row. Move a job to another day or another crew and the people concerned get the new time and address.</p>
+          <ul class="mt-6 space-y-3 text-[15px]">
+            <li class="border-t border-line pt-3">Recurring visits created once, for the whole season</li>
+            <li class="border-t border-line pt-3">Travel time between two addresses shown before you confirm</li>
+            <li class="border-t border-line pt-3">Sick day: reassign a crew's jobs in one move</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-line bg-paper p-4 md:p-6" role="img" aria-label="Weekly schedule with three crews and their jobs from Monday to Wednesday">
+          <div class="grid grid-cols-[4.5rem_repeat(3,1fr)] gap-2 text-[13px]" aria-hidden="true">
+            <div></div><div class="pb-1 font-medium text-muted">Mon</div><div class="pb-1 font-medium text-muted">Tue</div><div class="pb-1 font-medium text-muted">Wed</div>
+            <div class="py-2 font-medium">Crew A</div>
+            <div class="rounded-md border border-line bg-white p-2">Hartley offices<br><span class="text-muted">8:00</span></div>
+            <div class="rounded-md bg-accent p-2 text-white">Elm St. clinic<br><span class="opacity-80">9:30</span></div>
+            <div class="rounded-md border border-line bg-white p-2">Hartley offices<br><span class="text-muted">8:00</span></div>
+            <div class="py-2 font-medium">Crew B</div>
+            <div class="rounded-md border border-line bg-white p-2">Dock 4 depot<br><span class="text-muted">7:30</span></div>
+            <div class="rounded-md border border-dashed border-stone-400 p-2 text-muted">Free</div>
+            <div class="rounded-md border border-line bg-white p-2">Marsh school<br><span class="text-muted">13:00</span></div>
+            <div class="py-2 font-medium">Crew C</div>
+            <div class="rounded-md border border-dashed border-stone-400 p-2 text-muted">Free</div>
+            <div class="rounded-md border border-line bg-white p-2">Quay bakery<br><span class="text-muted">6:00</span></div>
+            <div class="rounded-md border border-line bg-white p-2">Quay bakery<br><span class="text-muted">6:00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-quotes" role="tabpanel" aria-labelledby="tab-quotes" tabindex="0" class="panel mt-8 grid gap-10 lg:grid-cols-[2fr_3fr] lg:items-start">
+        <div>
+          <h3 class="text-xl font-semibold tracking-tight">Price a job from your own rates.</h3>
+          <p class="mt-3 leading-relaxed text-muted">A quote is built from your price list: hours, materials and travel. The client accepts it online and the job lands on the schedule.</p>
+          <ul class="mt-6 space-y-3 text-[15px]">
+            <li class="border-t border-line pt-3">Your price list, with a rate per client if you need one</li>
+            <li class="border-t border-line pt-3">Acceptance by link, with the date and the name kept</li>
+            <li class="border-t border-line pt-3">One click from accepted quote to planned job</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-line bg-paper p-4 md:p-6" role="img" aria-label="Quote with three lines for labour, materials and travel, and its total">
+          <div class="text-sm" aria-hidden="true">
+            <div class="flex justify-between border-b border-line pb-3 font-medium"><span>Quote Q-0218</span><span class="text-muted">Marsh school</span></div>
+            <div class="flex justify-between border-b border-line py-3"><span>Deep clean, 2 people, 6 h</span><span class="tabular-nums">$420.00</span></div>
+            <div class="flex justify-between border-b border-line py-3"><span>Floor sealant, 10 L</span><span class="tabular-nums">$96.00</span></div>
+            <div class="flex justify-between border-b border-line py-3"><span>Travel, 24 km</span><span class="tabular-nums">$18.00</span></div>
+            <div class="flex justify-between pt-3 text-base font-semibold"><span>Total</span><span class="tabular-nums">$534.00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-invoices" role="tabpanel" aria-labelledby="tab-invoices" tabindex="0" class="panel mt-8 grid gap-10 lg:grid-cols-[2fr_3fr] lg:items-start">
+        <div>
+          <h3 class="text-xl font-semibold tracking-tight">Invoice the day the job is done.</h3>
+          <p class="mt-3 leading-relaxed text-muted">When a crew marks a job as finished, the invoice is ready with the quoted lines and the photos. You check it and send it.</p>
+          <ul class="mt-6 space-y-3 text-[15px]">
+            <li class="border-t border-line pt-3">Reminders for unpaid invoices at the delays you set</li>
+            <li class="border-t border-line pt-3">Card and bank transfer payment from the invoice link</li>
+            <li class="border-t border-line pt-3">Export to QuickBooks Online, Xero or CSV</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-line bg-paper p-4 md:p-6" role="img" aria-label="List of four invoices with their status: paid, sent or overdue">
+          <div class="text-sm" aria-hidden="true">
+            <div class="flex items-center justify-between border-b border-line py-3"><span>INV-0412 · Hartley offices</span><span class="font-medium">Paid</span></div>
+            <div class="flex items-center justify-between border-b border-line py-3"><span>INV-0413 · Elm St. clinic</span><span class="text-muted">Sent</span></div>
+            <div class="flex items-center justify-between border-b border-line py-3"><span>INV-0414 · Dock 4 depot</span><span class="font-medium text-red-700">Overdue 9 days</span></div>
+            <div class="flex items-center justify-between py-3"><span>INV-0415 · Quay bakery</span><span class="text-muted">Sent</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full-width color band: the one bold place -->
+  <section class="band bg-accent text-white">
+    <div class="mx-auto grid max-w-6xl gap-8 px-6 py-20 md:grid-cols-[3fr_2fr] md:items-end md:py-28">
+      <h2 class="text-[clamp(2rem,3vw+1rem,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em] [text-wrap:balance]">Crews see today's jobs, the address and the checklist. Nothing else.</h2>
+      <div>
+        <p class="text-lg leading-relaxed text-white/90">The phone view has one screen. People in the field do not have to learn a tool to know where to go next.</p>
+        <a href="#start" class="mt-6 inline-flex h-12 items-center rounded-md bg-white px-6 font-medium text-stone-900 hover:bg-paper">Try it with one crew</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison: a real table -->
+  <section id="compare" class="mx-auto max-w-6xl px-6 py-20 md:py-28">
+    <h2 class="max-w-2xl text-3xl font-semibold tracking-[-0.025em] md:text-4xl">What changes compared with paper and spreadsheets.</h2>
+    <p class="mt-4 max-w-2xl text-lg text-muted">The work stays the same; what changes is who has to pass the information on.</p>
+    <table class="mt-10 w-full table-fixed border-collapse text-left text-sm md:text-[15px]">
+      <caption class="sr-only">Paper and spreadsheets compared with Fieldbook</caption>
+      <thead>
+        <tr class="border-b border-stone-400">
+          <th scope="col" class="w-[30%] py-3 pr-3 font-medium text-muted">Task</th>
+          <th scope="col" class="py-3 pr-3 font-medium text-muted">Paper and spreadsheets</th>
+          <th scope="col" class="py-3 font-semibold">Fieldbook</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-line align-top"><th scope="row" class="py-4 pr-3 font-medium">A job moves</th><td class="py-4 pr-3 text-muted">You call or text each person</td><td class="py-4">The crew's phone shows the new time</td></tr>
+        <tr class="border-b border-line align-top"><th scope="row" class="py-4 pr-3 font-medium">Quote</th><td class="py-4 pr-3 text-muted">Retyped from last month's file</td><td class="py-4">Built from your price list</td></tr>
+        <tr class="border-b border-line align-top"><th scope="row" class="py-4 pr-3 font-medium">Invoice</th><td class="py-4 pr-3 text-muted">Written at the end of the month</td><td class="py-4">Ready when the job is marked done</td></tr>
+        <tr class="border-b border-line align-top"><th scope="row" class="py-4 pr-3 font-medium">Late payment</th><td class="py-4 pr-3 text-muted">Found when you check the bank</td><td class="py-4">Reminder sent at the delay you set</td></tr>
+        <tr class="align-top"><th scope="row" class="py-4 pr-3 font-medium">Job photos</th><td class="py-4 pr-3 text-muted">In someone's camera roll</td><td class="py-4">Attached to the job and the invoice</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FAQ: native details, same text as the FAQPage JSON-LD -->
+  <section id="faq" class="border-t border-line bg-sand">
+    <div class="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-[2fr_3fr] md:py-28">
+      <div>
+        <h2 class="text-3xl font-semibold tracking-[-0.025em] md:text-4xl">Questions before you start.</h2>
+        <p class="mt-4 text-lg text-muted">Four answers owners ask for first. Anything else: <a href="mailto:hello@example.com" class="text-stone-900 underline underline-offset-4">hello@example.com</a>.</p>
+      </div>
+      <div class="divide-y divide-line border-y border-line">
+        <details>
+          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium">Do my crews need to install anything?<span class="plus text-xl leading-none text-muted transition-transform" aria-hidden="true">+</span></summary>
+          <p class="max-w-prose pb-5 leading-relaxed text-muted">No. Crews open a link on their phone and see today's jobs. The app for iPhone and Android is optional and adds offline access.</p>
+        </details>
+        <details>
+          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium">Can I import my clients from a spreadsheet?<span class="plus text-xl leading-none text-muted transition-transform" aria-hidden="true">+</span></summary>
+          <p class="max-w-prose pb-5 leading-relaxed text-muted">Yes. Upload a CSV or Excel file with names, addresses and phone numbers. Fieldbook shows the rows it could not read before anything is saved.</p>
+        </details>
+        <details>
+          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium">Does it work with my accounting software?<span class="plus text-xl leading-none text-muted transition-transform" aria-hidden="true">+</span></summary>
+          <p class="max-w-prose pb-5 leading-relaxed text-muted">Invoices export to QuickBooks Online and Xero, or as a CSV file for any other tool. Payments recorded in Fieldbook are included in the export.</p>
+        </details>
+        <details>
+          <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium">What happens at the end of the trial?<span class="plus text-xl leading-none text-muted transition-transform" aria-hidden="true">+</span></summary>
+          <p class="max-w-prose pb-5 leading-relaxed text-muted">The workspace becomes read-only. Nothing is deleted and no card is charged until you choose a plan.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-line">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-10 text-sm text-muted md:flex-row md:items-center md:justify-between">
+    <p>© 2026 Fieldbook, Inc.</p>
+    <div class="flex gap-8">
+      <a href="#" class="py-3 hover:text-stone-900">Privacy</a>
+      <a href="#" class="py-3 hover:text-stone-900">Terms</a>
+      <a href="#" class="py-3 hover:text-stone-900">Status</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  const select = (tab, focus) => {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute("aria-selected", on);
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+    }
+    if (focus) tab.focus();
+  };
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (e) => {
+      const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (step) select(tabs[(i + step + tabs.length) % tabs.length], true);
+    });
+  });
+  select(tabs[0]);
+</script>
+</body>
+</html>

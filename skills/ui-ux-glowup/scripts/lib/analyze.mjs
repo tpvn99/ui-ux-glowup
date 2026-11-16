@@ -5,6 +5,75 @@ export const CRITERIA = ["Hierarchy", "Typography", "Spacing", "Components", "Vi
 
 const PENALTY = { error: 1, warn: 0.5, info: 0 };
 
+/** Tells a brand may own on purpose: stay warnings, and can be accepted with --allow. */
+export const BRAND_CHOICE_RULES = ["ai-hero-pill", "ai-accent-word", "ai-caps-label"];
+
+const SCHEMA_TYPES = new Set(
+  "Thing Organization Corporation LocalBusiness ProfessionalService Store Restaurant CafeOrCoffeeShop Bakery BarOrPub Hotel LodgingBusiness HomeAndConstructionBusiness Plumber Electrician RoofingContractor HVACBusiness GeneralContractor HousePainter Locksmith MovingCompany AutoRepair AutoDealer Dentist Physician MedicalClinic MedicalBusiness Pharmacy HealthAndBeautyBusiness BeautySalon HairSalon DaySpa SportsActivityLocation ExerciseGym HealthClub LegalService Attorney Notary AccountingService FinancialService InsuranceAgency RealEstateAgent TravelAgency FurnitureStore ClothingStore ShoeStore HardwareStore GardenStore Florist EducationalOrganization School CollegeOrUniversity NGO OnlineBusiness OnlineStore Person WebSite WebPage AboutPage ContactPage CollectionPage ItemPage ProfilePage SearchResultsPage CheckoutPage FAQPage QAPage Question Answer Article NewsArticle BlogPosting Blog TechArticle Report HowTo HowToStep HowToSection Recipe Product ProductGroup Offer AggregateOffer Service OfferCatalog Review AggregateRating Rating Brand BreadcrumbList ItemList ListItem SiteNavigationElement ImageObject VideoObject AudioObject MediaObject Event BusinessEvent Course CourseInstance JobPosting SoftwareApplication WebApplication MobileApplication Book Movie Place PostalAddress GeoCoordinates OpeningHoursSpecification ContactPoint SearchAction Action ReadAction EntryPoint MonetaryAmount PriceSpecification UnitPriceSpecification QuantitativeValue PropertyValue Country City AdministrativeArea Dataset CreativeWork Clip SpeakableSpecification DefinedTerm MerchantReturnPolicy OfferShippingDetails ShippingDeliveryTime DefinedRegion Audience Language ImageGallery Menu MenuItem MenuSection Vehicle Car Apartment House Residence Accommodation RealEstateListing MedicalOrganization Hospital VeterinaryCare ChildCare EmploymentAgency Library Museum TouristAttraction PodcastSeries PodcastEpisode Guide Certification"
+    .split(" ")
+);
+
+/** Lowercase, no markup, no punctuation, single spaces: for comparing copy across sources. */
+export function plain(text) {
+  return String(text || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;|&apos;|’/g, "'")
+    .replace(/&quot;/g, '"')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
+/** Share of the words (3+ letters) of `text` that are missing from `inText` (0–1). */
+export function missingShare(text, inText) {
+  const words = plain(text).split(" ").filter((w) => w.length >= 3);
+  if (!words.length) return 0;
+  const have = new Set(plain(inText).split(" "));
+  return words.filter((w) => !have.has(w)).length / words.length;
+}
+
+/** Every node of a JSON-LD document, through arrays, @graph and nested objects. */
+export function jsonLdNodes(doc, out = []) {
+  if (Array.isArray(doc)) for (const d of doc) jsonLdNodes(d, out);
+  else if (doc && typeof doc === "object") {
+    out.push(doc);
+    for (const v of Object.values(doc)) jsonLdNodes(v, out);
+  }
+  return out;
+}
+
+/** Findings for the page's JSON-LD blocks: { invalid, unknownTypes, faqMismatch, ratingWithoutReviews }. */
+export function checkJsonLd(blocks, pageText, reviewsVisible = 0) {
+  const out = { invalid: [], unknownTypes: [], faqMismatch: [], ratingWithoutReviews: false };
+  const page = plain(pageText);
+  for (const raw of blocks || []) {
+    let doc;
+    try {
+      doc = JSON.parse(raw);
+    } catch (e) {
+      out.invalid.push(String(e.message).slice(0, 80));
+      continue;
+    }
+    for (const node of jsonLdNodes(doc)) {
+      const types = [].concat(node["@type"] || []);
+      for (const t of types) if (typeof t === "string" && !SCHEMA_TYPES.has(t.replace(/^https?:\/\/schema\.org\//, "").replace(/^schema:/, ""))) out.unknownTypes.push(t);
+      if (node.aggregateRating && typeof node.aggregateRating === "object" && !reviewsVisible && !node.review) out.ratingWithoutReviews = true;
+      if (types.includes("FAQPage") && page) {
+        for (const q of [].concat(node.mainEntity || [])) {
+          const name = plain(q && q.name);
+          const answer = plain(q && q.acceptedAnswer && (q.acceptedAnswer.text || [].concat(q.acceptedAnswer)[0]?.text));
+          if (name && !page.includes(name)) out.faqMismatch.push(`question not on the page: "${String(q.name).slice(0, 60)}"`);
+          else if (answer && !page.includes(answer) && missingShare(answer, page) > 0.15) out.faqMismatch.push(`answer differs from the page: "${String(q.name).slice(0, 60)}"`);
+        }
+      }
+    }
+  }
+  out.unknownTypes = [...new Set(out.unknownTypes)];
+  return out;
+}
+
 /** Group numbers and return [value, count] sorted by count desc. */
 export function histogram(values, round = (v) => v) {
   const map = new Map();
@@ -56,10 +125,15 @@ export function contrastIssues(texts) {
 }
 
 /** Produce findings from desktop + mobile page data. */
-export function analyze(desktop, mobile) {
+export function analyze(desktop, mobile, { allow = [] } = {}) {
   const findings = [];
+  const accepted = new Set(allow.filter((r) => BRAND_CHOICE_RULES.includes(r)));
   const add = (criterion, severity, rule, message, items = []) =>
-    findings.push({ criterion, severity, rule, message, items: items.slice(0, 8), count: items.length || undefined });
+    findings.push(
+      accepted.has(rule)
+        ? { criterion, severity: "info", rule, accepted: true, message: `accepted (brand choice) — ${message}`, items: items.slice(0, 8), count: items.length || undefined }
+        : { criterion, severity, rule, message, items: items.slice(0, 8), count: items.length || undefined }
+    );
 
   const d = desktop;
   const m = mobile || desktop;
@@ -121,7 +195,12 @@ export function analyze(desktop, mobile) {
 
   // ---------- Content ----------
   if (d.lorem) add("Content", "error", "lorem", "Placeholder lorem ipsum text found.");
-  if (d.vagueLinks) add("Content", "warn", "vague-links", `${d.vagueLinks} vague link label(s) like "click here" / "read more"; use verb + object.`);
+  const copy = d.copy;
+  if (copy) {
+    if (copy.vagueCtas?.length) add("Content", "warn", "vague-cta", `${copy.vagueCtaCount || copy.vagueCtas.length} vague call(s) to action ("Learn more", "En savoir plus", "Click here"…). Use an action verb + the result: "See pricing", "Voir les tarifs", "Book a visit".`, copy.vagueCtas);
+    if (copy.unprovenClaims?.length) add("Content", "warn", "unproven-claim", "Claims with no source or link nearby (\"#1\", \"leader\", \"the best\", \"+500 clients\", \"98%\"). Link the proof, name the source, or reword — and list them under \"Product decisions to confirm\". Never invent a figure.", copy.unprovenClaims);
+    if (copy.vagueErrors?.length) add("Content", "warn", "vague-error-message", "Generic error messages (\"Invalid field\", \"Something went wrong\"). Say what to correct and how: \"Enter an email like name@company.com\".", copy.vagueErrors);
+  }
 
   // ---------- Wrapping & clipping (checked at both widths) ----------
   const views = [["desktop", d], ["mobile", m]].filter(([, v], i, arr) => i === 0 || v !== arr[0][1]);
@@ -183,6 +262,31 @@ export function analyze(desktop, mobile) {
     if (!seo.ogTitle || !seo.ogImage) add("SEO", "warn", "seo-open-graph", "Missing Open Graph tags (og:title, og:description, og:image): links shared on social apps and messengers look empty.");
     if (!seo.favicon) add("SEO", "warn", "seo-favicon", "No favicon — the tab and search result show a blank icon. Use scripts/make-favicon.mjs.");
     if (!seo.canonical) add("SEO", "info", "seo-canonical", "No canonical URL; add <link rel=\"canonical\"> on indexable pages.");
+    const g = d.h1Glue;
+    if (g && g.raw && plain(g.raw) !== plain(g.rendered) && plain(g.raw).replace(/ /g, "") === plain(g.rendered).replace(/ /g, ""))
+      add("SEO", "error", "h1-word-glue", "The <h1> reads as glued words for crawlers and screen readers: its words sit in separate elements with no space between them. Put a real space (or the whole text) in the HTML.", [`HTML text: "${g.raw.slice(0, 60)}"`, `rendered: "${g.rendered.slice(0, 60)}"`]);
+    else if (g?.gapped?.length) add("SEO", "error", "h1-word-glue", "The <h1> shows separate words, but the HTML has no space between them (spacing done with CSS). Crawlers read them glued; add real spaces.", g.gapped.map((x) => `"${x.replace("|", "")}" ← no space between "${x.split("|")[0]}" and "${x.split("|")[1]}"`));
+    const ld = checkJsonLd(seo.jsonLdRaw, d.snapshot?.text || "", seo.reviewsVisible);
+    if (ld.invalid.length) add("SEO", "error", "jsonld-invalid", "A JSON-LD block does not parse — search engines ignore it entirely.", ld.invalid);
+    if (ld.unknownTypes.length) add("SEO", "warn", "jsonld-unknown-type", "JSON-LD @type not among the common schema.org types (typo or made-up type?).", ld.unknownTypes);
+    if (ld.faqMismatch.length) add("SEO", "error", "faq-jsonld-mismatch", "FAQPage markup does not match the visible page: every question and answer in the JSON-LD must appear as text on the page.", ld.faqMismatch);
+    if (ld.ratingWithoutReviews) add("SEO", "warn", "rating-without-reviews", "aggregateRating in the JSON-LD but no review visible on the page. Never publish a rating or review count without real, visible reviews.");
+    if (seo.canonical && seo.ogUrl && stripSlash(seo.canonical) !== stripSlash(seo.ogUrl)) add("SEO", "warn", "canonical-og-mismatch", "Canonical URL and og:url differ; they must point to the same address.", [`canonical: ${seo.canonical}`, `og:url: ${seo.ogUrl}`]);
+    const hl = hreflangIssues(seo.hreflang, seo.canonical || d.url, d.lang);
+    if (hl.length) add("SEO", "warn", "hreflang", "hreflang annotations are inconsistent.", hl);
+    const nj = d.noJs;
+    const snap = d.snapshot;
+    if (nj && snap) {
+      const lost = [];
+      const squash = (t) => plain(t).replace(/ /g, "");
+      const html = squash(nj.text);
+      if (snap.h1 && !html.includes(squash(snap.h1))) lost.push(`H1 "${snap.h1.slice(0, 60)}"`);
+      const share = missingShare(snap.visibleText, nj.text);
+      if (share > 0.2) lost.push(`${Math.round(share * 100)}% of the main text`);
+      const noFaq = (snap.faq || []).filter((f) => !html.includes(squash(f.q)));
+      if (noFaq.length) lost.push(...noFaq.slice(0, 3).map((f) => `FAQ "${f.q.slice(0, 50)}"`));
+      if (lost.length) add("SEO", "error", "no-js-content-missing", "Content missing when JavaScript is off: many crawlers and AI assistants read the HTML without running scripts. Render it on the server (SSR, static HTML).", lost);
+    }
     if (!seo.jsonLd) add("SEO", "info", "seo-structured-data", "No structured data (JSON-LD): LocalBusiness, Product, Organization or FAQ markup can earn rich results.");
     if (seo.words && seo.words < 120 && d.headings.some((h) => h.level === 1)) add("SEO", "info", "seo-thin", `Only ~${seo.words} words of content; pages that should rank usually need more substance (not filler).`);
   }
@@ -230,6 +334,25 @@ export function analyze(desktop, mobile) {
     if (ai.centeredShare > 75) add("Visuals", "info", "ai-centered", `${ai.centeredShare}% of headings and paragraphs are centered; left-aligned editorial layouts read as more intentional.`);
   }
 
+  // ---------- Motion ----------
+  const stuckBy = new Map();
+  for (const h of d.snapshot?.reducedMotion ? d.snapshot.hidden || [] : []) stuckBy.set(h.sel + h.text, { ...h, when: ["reduced motion"] });
+  for (const h of d.noJs?.hidden || []) stuckBy.set(h.sel + h.text, { ...h, when: [...(stuckBy.get(h.sel + h.text)?.when || []), "no JS"] });
+  const stuck = [...stuckBy.values()].map((h) => `${h.sel} (${h.how}; ${h.when.join(" + ")}) "${h.text}"`);
+  if (stuck.length) add("Accessibility", "error", "hidden-until-animated", "Text that stays invisible when the animation never runs (JavaScript off, or reduced motion). Make the visible state the default and animate from it only when motion is allowed.", stuck);
+  const mo = d.motion;
+  if (mo) {
+    if (mo.layoutAnimations?.length) add("Components", "warn", "layout-animation", "Animating width, height, position offsets, margin or padding forces layout on every frame. Animate transform and opacity (or grid-template-rows for accordions).", mo.layoutAnimations);
+    if (mo.sections >= 3 && mo.revealSections / mo.sections > 0.5) add("Visuals", "warn", "ai-reveal-everywhere", `Scroll reveal on ${mo.revealSections} of ${mo.sections} sections — the default AI-template motion. Keep one orchestrated moment; let the rest be there.`, mo.revealSample);
+    if (mo.infiniteAnimations?.length) add("Visuals", "warn", "ai-infinite-animation", "Infinite animations outside a product demo (floating, pulsing, endless marquees). Loop only inside a marked demo area (data-demo, figure) or a loader.", mo.infiniteAnimations);
+    if (mo.slowMotion?.length) add("Visuals", "warn", "ai-slow-motion", "Motion longer than 1s on an interaction or a reveal feels sluggish. Use 150–300ms for interactions, up to 600ms for an entrance.", mo.slowMotion);
+    if (mo.willChange > 10) add("Visuals", "warn", "ai-will-change-everywhere", `will-change on ${mo.willChange} elements: each one reserves GPU memory. Remove it; add it to the one element that stutters, if any.`, mo.willChangeSample);
+  }
+  const cls = d.scrollCls?.value ?? 0;
+  const mcls = m.scrollCls?.value ?? 0;
+  if (Math.max(cls, mcls) > 0.1)
+    add("Responsive", Math.max(cls, mcls) > 0.25 ? "error" : "warn", "scroll-cls", `Layout shifts while scrolling (CLS ${Math.max(cls, mcls)}; good is under 0.1). Reserve the space: width/height on images, min-height on late content, no content inserted above what is being read.`, [...new Set([...(d.scrollCls?.sources || []), ...(m.scrollCls?.sources || [])])]);
+
   // ---------- Responsive ----------
   if (!m.hasViewportMeta) add("Responsive", "error", "viewport-meta", 'Missing <meta name="viewport">.');
   if (m.overflowX > 1) add("Responsive", "error", "overflow", `Horizontal overflow of ${m.overflowX}px on mobile.`);
@@ -267,6 +390,26 @@ export function analyze(desktop, mobile) {
   }
 
   return findings;
+}
+
+function stripSlash(u) {
+  return String(u).replace(/#.*$/, "").replace(/\/+$/, "");
+}
+
+/** hreflang problems on one page: bad codes, duplicates, no self-reference, no x-default. */
+export function hreflangIssues(list, pageUrl, htmlLang) {
+  if (!list || !list.length) return [];
+  const out = [];
+  const seen = new Set();
+  for (const { lang } of list) {
+    if (!/^(x-default|[a-z]{2,3}(-[a-z]{4})?(-([a-z]{2}|\d{3}))?)$/i.test(lang || "")) out.push(`invalid code "${lang}"`);
+    if (seen.has(String(lang).toLowerCase())) out.push(`"${lang}" declared twice`);
+    seen.add(String(lang).toLowerCase());
+  }
+  if (pageUrl && !list.some((l) => stripSlash(l.href) === stripSlash(pageUrl))) out.push("no self-referencing hreflang for this page");
+  if (list.length > 1 && !seen.has("x-default")) out.push("no x-default");
+  if (htmlLang && !list.some((l) => String(l.lang).toLowerCase().split("-")[0] === htmlLang.toLowerCase().split("-")[0])) out.push(`<html lang="${htmlLang}"> is not among the hreflang languages`);
+  return out;
 }
 
 /** Score 1–5 per criterion from findings. Criteria that can't be fully measured are flagged. */

@@ -14,6 +14,7 @@ export function formatReport(result, { brief = false, maxItems = brief ? 2 : 4 }
   if (!brief) lines.push(`Automated audit — ${result.target}`);
   if (result.note) lines.push(result.note);
   lines.push(scoreLine(result));
+  if (noJsLine(result) && !brief) lines.push(noJsLine(result));
   if (!brief) lines.push("(* partly measurable — confirm with a visual review of the screenshots)", "");
   const sorted = sortFindings(result.findings);
   if (!sorted.length) lines.push("No automated findings.");
@@ -78,6 +79,12 @@ function pushInfo(lines, findings) {
 
 function scoreLine(result) {
   return "Audit: " + CRITERIA.map((c) => `${SHORT[c]} ${result.scores[c]}`).join(" · ") + ` → ${result.total}/${result.max}`;
+}
+
+/** One line for the checks that need a second page load, so a skipped check never reads as a pass. */
+function noJsLine(result) {
+  if (result.noJsChecked === false) return "No-JS render not checked on this run (first full audit only; force it with --deep).";
+  return "";
 }
 
 function sortFindings(findings) {

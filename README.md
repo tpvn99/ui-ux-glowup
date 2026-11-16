@@ -1,36 +1,45 @@
 # UI/UX Glowup — Agent Skill
 
+**English** · [Français](README.fr.md)
+
+![Before and after: the same plumber page, redone with the skill](docs/before-after.png)
+
+Audit score of this page, measured with `scripts/audit.mjs`: **27/45 before → 45/45 after** (`tests/fixtures/before.html` and `tests/fixtures/after.html`).
+
 An AI agent skill that upgrades any web interface to the level of the best-designed sites on the web — Linear, Stripe, Vercel, Apple, Airbnb, Mercury and more. Works with Claude Code, OpenAI Codex, Cursor, Windsurf, GitHub Copilot and any agent that supports the [Agent Skills spec](https://agentskills.io).
 
-It **keeps your brand colors** and works on everything else: structure, typography, spacing, components and finishing details. Then it **looks at its own output** with desktop and mobile screenshots and fixes what it sees.
+It **keeps your brand colors** and works on everything else: structure, typography, spacing, components and finishing details. With no brand yet, it proposes a short palette for you to confirm — never a brand identity. Then it **looks at its own output** with desktop and mobile screenshots and fixes what it sees.
 
 **Contributions welcome!** Found a way to improve the skill or have a new example to add? [Open a PR](#contributing).
 
 ## What makes it different
 
-- **Starts with a short questionnaire.** From zero or for a redesign: project type (SaaS/tech, portfolio/agency, business showcase, e-commerce, dashboard), goal, **modernity level** (Classic / Modern / Bold), assets, icons, dark mode, charts, must-keep elements, SEO phrases. Answers become a brief.
+- **Starts with a short questionnaire.** From zero or for a redesign: project type (SaaS/tech, portfolio/agency, business showcase, e-commerce, dashboard), goal, **modernity level** (Classic / Modern / Bold), assets, icons, dark mode, charts, must-keep elements, brand choices to keep, SEO phrases. Answers become a brief.
 - **Always ends with a "Directions taken" recap.** Style, references and what was borrowed, typography, components, icons, charts/KPIs, mobile fixes, SEO, every text edit before → after, product decisions to confirm.
 
 - **Named references, not vague best practices.** For every job the agent picks 2–3 reference sites from the same category and states exactly what it borrows from each.
-- **Tested example code.** 9 complete pages and sections (including a light/dark KPI & chart kit) in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
+- **Tested example code.** 13 complete pages and sections (including a light/dark KPI & chart kit) in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
 - **Visual self-check.** A Playwright script captures the result at 1440px and 390px and flags horizontal overflow. The agent reviews, fixes and re-captures.
 - **Measured, not eyeballed.** `audit.mjs` checks contrast, touch targets, type scale, spacing grid, headings, labels and more at desktop and mobile, and scores 9 criteria (/45, including SEO) before and after. Nothing ships below 4/5.
 - **Catches real phone bugs.** Amounts and button labels that wrap, table columns pushed off-screen, clipped content, crowded taps, inputs that make iOS zoom, blocked zoom, banners covering the screen, sliders without snap or with tiny/unlabeled arrows — and it names root causes (e.g. a 15px root font-size behind hundreds of fractional spacings).
 - **Spacing, readability and SEO.** Gaps between blocks and section rhythm, long paragraphs and sentences, justified text, title/description/Open Graph/favicon/canonical/JSON-LD, image format, size and lazy-loading. Copy is clarified for readers — never rewritten to stuff keywords.
+- **Readable by crawlers and AI assistants.** The audit loads the page once more with JavaScript off and reports a missing H1, missing text or a missing FAQ; an H1 whose words are glued in the HTML; JSON-LD that does not parse, uses an unknown type, does not match the visible FAQ or carries a rating with no reviews. `audit-site.mjs` adds `robots.txt`, `sitemap.xml`, `llms.txt`, blocked AI crawlers and hreflang.
+- **Motion that never hides content.** Text left invisible when the animation does not run (no JS, reduced motion), animated layout properties, layout shift while scrolling, reveals on every section, infinite loops, slow motion and `will-change` everywhere.
+- **Honest copy.** Vague calls to action ("Learn more", "En savoir plus"), clichés in English and French, claims with no source ("#1", "+500 clients") and generic error messages are flagged. The skill never invents a figure, a rating or a review.
 - **Nothing forgotten.** `inventory.mjs` lists every element of a page (links, CTAs, forms, images, contacts, legal, trackers, structured data) and `--compare` shows what a redesign lost.
 - **Visuals, charts and KPIs.** Guidance for clean 3D, bento with micro-animations, semi-flat, interactive SVG charts (Recharts, Chart.js, Framer Motion), donuts with the key number in the center, KPI cards with sparklines, dark mode for every chart, WebP/AVIF + SVG.
 - **Clean PDFs.** Invoices and quotes (French legal mentions incl. the 2026 reform), reports, proposals and one-pagers from print-ready templates. `pdf.mjs` prints, then checks fonts (embedded, no blurry Type 3, no fallback glyphs), blank or near-empty pages, overflow, tiny text, title, page numbers and the mentions each document type needs — and shows every page in one image. `site-fonts.mjs` reuses the website's own fonts, with license hints.
 - **Icons and favicons.** `find-icons.mjs` searches 200k+ open icons (Phosphor, Solar, Tabler…) with licenses, plus Flaticon; `make-favicon.mjs` generates every favicon size and the `<head>` snippet.
 - **Works on real products.** Audits pages behind a login, whole sites (`audit-site.mjs`), and maps every finding to `file:line` in your codebase (`locate.mjs`) so fixes land in the real components.
 - **Real reference values.** `extract-tokens.mjs` measures a reference site's type scale, heading tracking, spacing rhythm, radii and shadows — so "like Linear" means Linear's actual numbers.
-- **Anti "AI look".** The audit flags the measurable tells (purple gradients, glass everywhere, giant radii, three identical cards, emoji headings, cliché copy, everything centered); `anti-ai.md` gives the fix for each.
+- **Anti "AI look".** The audit flags the measurable tells (purple gradients, glass everywhere, giant radii, three identical cards, emoji headings, cliché copy, everything centered); `anti-ai.md` gives the fix for each. A pattern your brand uses on purpose (a pill above the heading, an accent word, uppercase labels) is listed at intake and accepted with `--allow`.
 
 ## Light on tokens
 
 - **Three effort levels** — Quick (one fix), Standard (one page), Full (whole site): small requests skip the questionnaire, references and inventory.
 - **Loads only what the task needs**: a routing table in `SKILL.md` points to one reference file per need, and examples are read section by section.
 - **Compact re-checks**: `audit.mjs --baseline before.json` prints only score changes and open issues (~70% shorter than a full report); `screenshot.mjs --selector ".pricing" --only mobile` captures just the part you changed.
-- A typical one-page job loads about half the instructions of v1.3.
+- **The extra page load happens once**: the no-JavaScript render runs on the first audit; re-checks repeat it only if it found something (`--fast` skips it, `--deep` forces it).
 
 ## How it works
 
@@ -73,9 +82,13 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 | `local-business.html` | Aesop, Mercury, Stripe | Trades, local services, health |
 | `product-page.html` | Aesop, Allbirds | E-commerce |
 | `kpi-cards.html` | Stripe, Linear, Vercel | KPI cards, donut, goal ring, bars, sparklines — light/dark |
+| `article.html` | Stripe Press, Linear Method | Blog, docs, case studies, news |
+| `auth.html` | Linear, Vercel, Clerk | Login, sign-up, onboarding step |
+| `settings.html` | Linear, Stripe, GitHub | Account, workspace, admin screens |
+| `smb-light.html` | Warm light B2B sites | Small-business software, B2B services |
+| `react/DashboardShell.tsx` | — | React projects |
 
 PDF templates (`assets/pdf/`): `facture-devis.html` (French invoice/quote), `report.html`, `proposal.html`, `one-pager.html`, `cv.html`, `letter.html`.
-| `react/DashboardShell.tsx` | — | React projects |
 
 ## Installation
 
@@ -153,7 +166,10 @@ skills/ui-ux-glowup/
 │   ├── implement.md            # Code mode: from findings to changes in the real codebase
 │   ├── visuals.md              # 3D, bento, semi-flat, charts, KPI designs, dark mode, WebP/SVG
 │   ├── mobile.md               # Taps, forms, carousels, overlays on phones
-│   ├── seo-readability.md      # Section spacing, readability, on-page SEO, copy rules
+│   ├── seo-readability.md      # Section spacing, readability, on-page SEO, GEO, copy rules
+│   ├── microcopy.md            # Form errors, confirmations, empty states, 404
+│   ├── direction.md            # Plan before building: subject, tokens, colors, one bold place
+│   ├── motion.md               # Motion that explains; safe without JS and with reduced motion
 │   ├── icons.md                # Icon search, Flaticon, favicons
 │   ├── pdf.md                  # PDF workflow, fonts and licenses, checklists per document type
 │   ├── anti-ai.md              # Tells of AI-generated design and what to do instead
@@ -166,7 +182,7 @@ skills/ui-ux-glowup/
 │   ├── extract-tokens.mjs      # Measure a reference site's design tokens
 │   ├── screenshot.mjs          # Desktop + mobile capture with overflow warning
 │   ├── compare.mjs             # Before/after side-by-side image (pages or screenshots)
-│   ├── audit-site.mjs          # Crawl + audit a whole site, recurring issues
+│   ├── audit-site.mjs          # Crawl + audit a whole site, recurring issues, robots/sitemap/llms.txt
 │   ├── locate.mjs              # Map findings to file:line in the codebase
 │   ├── login.mjs               # Save a logged-in session (--storage-state)
 │   ├── inventory.mjs           # Every element of a page; --compare for redesigns
@@ -176,7 +192,7 @@ skills/ui-ux-glowup/
 │   ├── make-favicon.mjs        # favicon.ico/svg, apple-touch, PWA icons, <head> snippet
 │   ├── audit.browser.js        # Paste-in-DevTools audit (generated)
 │   ├── build-browser-audit.mjs # Regenerates audit.browser.js
-│   └── lib/                    # Browser loader, color math, page probe, analysis rules, locate, report
+│   └── lib/                    # Browser loader, color math, page probe, analysis rules, site files, locate, report
 └── evals/evals.json            # Test prompts with assertions
 ```
 
@@ -188,6 +204,7 @@ They're useful on their own, with or without an agent:
 npm i -D playwright && npx playwright install chromium
 
 node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com
+node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com --allow ai-hero-pill,ai-caps-label   # brand choices
 node skills/ui-ux-glowup/scripts/extract-tokens.mjs https://stripe.com
 node skills/ui-ux-glowup/scripts/compare.mjs old.png new.html compare.png
 node skills/ui-ux-glowup/scripts/audit-site.mjs https://your-site.com --max 15

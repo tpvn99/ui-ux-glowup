@@ -4,11 +4,16 @@
 // Usage:
 //   node audit.mjs <file.html | url> [--json report.json] [--fail-under 36]
 //                  [--baseline before.json] [--brief] [--max-items 4]
+//                  [--allow ai-hero-pill,ai-accent-word,ai-caps-label] [--fast | --deep]
 //                  [--storage-state state.json] [--wait-for "css selector"] [--no-dismiss]
 //
 //   --json       save the full result (use it as the baseline for later runs)
 //   --baseline   compact delta vs a saved result: scores before → after, fixed rules, what's still open or new
 //   --brief      one line per finding, no explanations (re-audits)
+//   --allow      brand choices the user keeps on purpose: reported as "accepted (brand choice)", no penalty
+//   --fast       skip the no-JavaScript render (one page load less)
+//   --deep       force it on a --baseline re-check (by default a re-check repeats it only when the
+//                first audit found no-JS problems)
 //
 // Pages behind a login: save a session once with login.mjs, then pass --storage-state.
 // Or paste scripts/audit.browser.js into the DevTools console of the logged-in tab.
@@ -19,22 +24,37 @@
 
 import { writeFileSync, readFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
-import { collectPageData } from "./lib/probe.mjs";
+import { collectPageData, collectSnapshot } from "./lib/probe.mjs";
 import { analyze, score, summarizeTokens } from "./lib/analyze.mjs";
 import { formatReport, formatDelta } from "./lib/report.mjs";
 
 export { formatReport, formatDelta };
 
 /** Audit one URL with an already-launched browser (desktop + mobile). */
-export async function auditPage(browser, url, { route, target = url, ...options } = {}) {
+export async function auditPage(browser, url, { route, target = url, allow = [], noJs = true, ...options } = {}) {
   const data = {};
   for (const vp of [VIEWPORTS.desktop, VIEWPORTS.mobile]) {
     const { page, close } = await openPage(browser, url, vp, { route, ...options });
     data[vp.label] = await page.evaluate(collectPageData);
+    if (vp.label === "desktop") data.desktop.snapshot = await page.evaluate(collectSnapshot);
     await close();
   }
-  const findings = analyze(data.desktop, data.mobile);
-  return { target, ...score(findings), findings, tokens: summarizeTokens(data.desktop) };
+  if (noJs) {
+    const { page, close } = await openPage(browser, url, VIEWPORTS.desktop, { route, ...options, javaScript: false, dismiss: false });
+    data.desktop.noJs = await page.evaluate(collectSnapshot).catch(() => null);
+    await close();
+  }
+  const findings = analyze(data.desktop, data.mobile, { allow });
+  return { target, ...score(findings), findings, tokens: summarizeTokens(data.desktop), noJsChecked: Boolean(data.desktop.noJs), hreflang: data.desktop.seo?.hreflang?.length ? data.desktop.seo.hreflang : undefined };
+}
+
+const NO_JS_RULES = ["no-js-content-missing", "hidden-until-animated"];
+
+/** Options of the audit CLIs: --allow, and when to pay for the no-JS render. */
+export function auditOptions(flags, baseline) {
+  const allow = typeof flags.allow === "string" ? flags.allow.split(",").map((s) => s.trim()).filter(Boolean) : [];
+  const repeat = baseline ? Boolean(flags.deep) || baseline.findings.some((f) => NO_JS_RULES.includes(f.rule)) : true;
+  return { allow, noJs: !flags.fast && repeat };
 }
 
 /** Run the audit and return { target, findings, scores, total, max, tokens }. */
@@ -56,9 +76,10 @@ if (isMain(import.meta.url)) {
     process.exit(1);
   }
   try {
-    const result = await audit(target, commonOptions(flags));
+    const baseline = flags.baseline ? JSON.parse(readFileSync(flags.baseline, "utf8")) : null;
+    const result = await audit(target, { ...commonOptions(flags), ...auditOptions(flags, baseline) });
     const maxItems = flags["max-items"] ? Number(flags["max-items"]) : undefined;
-    if (flags.baseline) console.log(formatDelta(JSON.parse(readFileSync(flags.baseline, "utf8")), result, maxItems ? { maxItems } : {}));
+    if (baseline) console.log(formatDelta(baseline, result, maxItems ? { maxItems } : {}));
     else console.log(formatReport(result, { brief: Boolean(flags.brief), ...(maxItems ? { maxItems } : {}) }));
     if (flags.json) writeFileSync(flags.json === true ? "audit.json" : flags.json, JSON.stringify(result, null, 2));
     if (flags["fail-under"] && result.total < Number(flags["fail-under"])) process.exit(2);

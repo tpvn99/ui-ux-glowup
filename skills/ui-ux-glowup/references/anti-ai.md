@@ -2,7 +2,7 @@
 
 People now recognize template AI sites in seconds, and trust them less. The audit flags the measurable tells (rules in brackets); the rest is on you.
 
-## The five tells people spot first (never ship these by default)
+## The five tells people spot first (avoid by default)
 | Tell | Rule | Instead |
 |---|---|---|
 | **Pill / badge / "New" announcement above the H1**, often with a green dot ("Now live", "Available for work") [`ai-hero-pill`] | The page opens on the headline. No label, chip or announcement above it | Put the news in the headline or first paragraph; a real announcement goes in a slim top bar or the nav, not the hero |
@@ -19,6 +19,8 @@ People now recognize template AI sites in seconds, and trust them less. The audi
 | 01 / 02 / 03 on content that is not a sequence | Number steps and timelines only |
 | One word of a headline in italic, color or another weight | One treatment for the whole headline |
 | "A · B · C" meta strings everywhere | A short sentence, or a list |
+
+**Unless it is a brand choice.** A pill above the H1, an accent word in the headline or uppercase labels can be how a brand speaks. If the user lists them under "Brand choices to keep" (`intake.md` question 11), keep them and run the audit with `--allow ai-hero-pill,ai-accent-word,ai-caps-label`: they are reported as "accepted (brand choice)" and cost nothing. These three rules are warnings, never errors.
 
 Also drop: eyebrow labels above every section heading (keep one at most, only if it carries information such as a category or a date), "Trusted by" strips of unknown logos, scroll-triggered fade-up on everything.
 
@@ -43,11 +45,18 @@ Also drop: eyebrow labels above every section heading (keep one at most, only if
 - Pricing with 3 identical cards and "Most popular" ribbon on a scaled card. → Emphasize with border + badge, not scale; comparison table.
 
 ## Copy tells [`ai-cliche`, `ai-emoji`]
-"Transform your…", "Unlock…", "Elevate…", "Seamless", "Revolutionize", "Supercharge", "Next-level", "Innovative solutions", "In today's fast-paced world", "Boostez / Révolutionnez / Solution tout-en-un", emojis in headings and buttons.
+"Transform your…", "Unlock…", "Elevate…", "Seamless", "Revolutionize", "Supercharge", "Next-level", "Innovative solutions", "In today's fast-paced world", "Game-changer", "Cutting-edge", "In just a few clicks", emojis in headings and buttons. French: « Boostez », « Révolutionnez », « Solution tout-en-un », « en quelques clics », « n'attendez plus », « à portée de main », « votre partenaire de confiance », « incontournable », « au cœur de », « des experts passionnés », « sur-mesure », « clé en main », « solution innovante », « simplifiez-vous la vie ». Checked in headings, paragraphs, list items, buttons, links, captions and badges.
 → Say what it does, for whom, with a number or a detail only this business has: "Boilers repaired the same day in Leeds — 1,200 callouts in 2025".
 
 ## Motion tells
-Everything fades up on scroll, parallax on every image, typewriter headlines. → Motion only where it explains (a chart drawing, a toggle switching), 150–600ms, once, off for reduced-motion.
+| Tell | Rule | Instead |
+|---|---|---|
+| A reveal on more than half of the sections | `ai-reveal-everywhere` | One orchestrated moment; the rest is simply there |
+| Infinite loops (floating cards, pulsing shapes, endless marquee) | `ai-infinite-animation` | Loop only inside a marked demo (`data-demo`, `<figure>`) or a loader |
+| Motion longer than 1s on a hover or a reveal | `ai-slow-motion` | 150–300ms for interactions, up to 600ms for an entrance |
+| `will-change` on more than 10 elements | `ai-will-change-everywhere` | Remove it; add it to the one element that stutters |
+
+Also: parallax on every image, typewriter headlines. Motion only where it explains (a chart drawing, a toggle switching), once, off for reduced motion (`motion.md`).
 
 Calibration: also avoid the defaults listed in `direction.md` §4 (cream + serif + terracotta, near-black + one acid accent, identical rounded cards with one radius and one shadow).
 

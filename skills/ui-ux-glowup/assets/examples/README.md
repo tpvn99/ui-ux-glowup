@@ -18,11 +18,12 @@ Complete code, checked at desktop (1440px) and mobile (390px). Read the matching
 | `article.html` | Editorial article: serif body at 68ch, sticky contents, pull quote, data table, author, related reads, newsletter | Stripe Press, Linear Method | Blog, docs, case studies, news |
 | `auth.html` | Sign-in screen: SSO + email, inline error, password reveal, quiet proof panel | Linear, Vercel, Clerk | Login, sign-up, onboarding step |
 | `settings.html` | Settings: section nav (scrolling row on mobile), cards with their own save, switches, members list, isolated delete | Linear, Stripe, GitHub | Account, workspace, admin screens |
+| `smb-light.html` | Warm light theme: tinted background, hero with one field + button, product demo in tabs, full-width color band, comparison `<table>`, `<details>` FAQ mirrored in FAQPage JSON-LD | Warm light B2B sites | Small-business software, B2B services |
 | `react/DashboardShell.tsx` | Same dashboard split into typed components | — | React projects |
 
 ## Audit status
 
-Every example scores ≥ 43/45 and none of the AI-look tells (hero pill, status dot, side-bar border, icon tiles, gradient text, glow) (all 9 criteria, including SEO) with `scripts/audit.mjs` and has no wrapping numbers, no clipped content and no off-screen table columns on mobile. Two expected findings:
+Every example scores ≥ 43/45 with `scripts/audit.mjs` (all 9 criteria, including SEO), shows none of the AI-look tells (hero pill, status dot, side-bar border, icon tiles, gradient text, glow), keeps its text with JavaScript off and has no wrapping numbers, no clipped content and no off-screen table columns on mobile. Two expected findings:
 - `bento-vercel.html` and `features-stripe.html` are **sections** meant to sit below a page hero, so they start at `<h2>` and the audit reports a missing `<h1>`.
 - Unsplash placeholders are reported as broken only when the network blocks them.
 
@@ -31,5 +32,6 @@ Every example scores ≥ 43/45 and none of the AI-look tells (hero pill, status 
 - Tailwind v4 via `@tailwindcss/browser`; tokens in `@theme`: `--color-accent` (the client's brand color) and `--color-line` (hairline borders).
 - Replace `--color-accent` with the brand color; leave the neutrals alone unless there is a reason.
 - Unsplash photos are placeholders: replace them with the client's real visuals.
+- Ratings, review counts and customer numbers are never invented: where an example shows one, it is a marked placeholder (`[rating]`, `REPLACE_WITH_REAL_RATING`). Fill it from the real source or delete it.
 - Decorative product mockups use `role="img"` + `aria-label` on the wrapper and `aria-hidden="true"` (plus `inert` if they contain controls) on the fake UI, so screen readers and the contrast audit skip them.
 - In React: one component per block, data separated from rendering, variants via a mapping object, formatting via `Intl`.
