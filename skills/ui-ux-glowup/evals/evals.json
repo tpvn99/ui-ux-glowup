@@ -334,6 +334,58 @@
         "Includes the Directions taken recap"
       ],
       "files": []
+    },
+    {
+      "id": 26,
+      "prompt": "Audit the UI of our pricing page and tell me what to fix first. Do not change any code.",
+      "expected_output": "Audit-only mode: runs a read-only report (verify.mjs report or the audit scripts), edits no file, takes no restore action, and says so. Presents the verdict, a status per category (not one blended score), a short Fix first list, and what was not tested. Still ends with Directions taken, listing findings instead of changes.",
+      "assertions": [
+        "Changes no file",
+        "Gives a status per category rather than a single blended score",
+        "Lists the most costly issues first",
+        "States what was not tested",
+        "Includes the Directions taken recap listing findings, not changes"
+      ],
+      "files": []
+    },
+    {
+      "id": 27,
+      "prompt": "Propose what you would change on our dashboard, I want to choose before you touch anything.",
+      "expected_output": "Recommend mode: audits, then returns a numbered list where each item has the problem, the proposed fix, the files and the risk, and waits for the user to pick numbers. Edits nothing before the user answers.",
+      "assertions": [
+        "Returns a numbered list of proposals",
+        "Each proposal has problem, fix, files and risk",
+        "Does not edit any file before the user chooses",
+        "Separates design changes from product decisions to confirm"
+      ],
+      "files": []
+    },
+    {
+      "id": 28,
+      "prompt": "Redesign our Next.js shop's product page. Keep our blue, our Inter font and our checkout exactly as they are.",
+      "expected_output": "Code mode in an existing stack: detects the stack (stack.mjs), reads the matching part of frameworks.md, takes a backup (safeguard.mjs) before editing, changes tokens and shared components first, adds no UI library, leaves checkout and data fetching untouched, and runs brand-guard and a before/after verification at the end.",
+      "assertions": [
+        "Detects the framework and where the design tokens live",
+        "Takes a backup before the first edit",
+        "Adds no new UI or CSS library without asking",
+        "Does not modify checkout, routes or data fetching",
+        "Runs a brand check showing the blue and Inter are unchanged",
+        "Runs a before/after verification and reports anything that no longer works"
+      ],
+      "files": []
+    },
+    {
+      "id": 29,
+      "prompt": "We redesigned the homepage last week. Did we break anything compared with before?",
+      "expected_output": "Runs verify.mjs check against a snapshot (or asks for/creates the before state), reports regressions as worked-before-and-broken-now, separates new issues from old ones, gives a PASS / REVIEW / FAIL verdict, and states what was not tested instead of claiming everything works.",
+      "assertions": [
+        "Compares with a before snapshot rather than judging the page alone",
+        "Lists controls, forms or scenarios that worked before and fail now",
+        "Separates new issues from pre-existing ones",
+        "Gives a verdict and what was not tested",
+        "Does not treat a high audit score as proof that nothing broke"
+      ],
+      "files": []
     }
   ]
 }

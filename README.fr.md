@@ -206,6 +206,17 @@ skills/ui-ux-glowup/
 └── evals/evals.json            # Demandes de test avec assertions
 ```
 
+## Documentation
+
+Les guides sont en anglais (le README seul est traduit) :
+
+- [Prise en main](docs/getting-started.md) : installation, premier audit, première amélioration
+- [Par type de projet](docs/by-project-type.md) : page vitrine, application, boutique, WordPress, article, back-office, PDF
+- [Niveaux, modes et limites](docs/levels-and-limits.md) : audit seul / recommandations / application, léger à complet, technologies prises en charge, limites connues
+- [Tutoriels](docs/tutorials.md) : trois pas-à-pas à rejouer dans ce dépôt
+- [Exemple de rapport](docs/example-report.md) : un vrai rapport avant/après
+- [Dépannage](docs/troubleshooting.md)
+
 ## Utiliser les scripts directement
 
 Ils sont utiles seuls, avec ou sans agent :
@@ -214,6 +225,9 @@ Ils sont utiles seuls, avec ou sans agent :
 npm i -D playwright && npx playwright install chromium
 
 node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com
+node skills/ui-ux-glowup/scripts/verify.mjs report https://your-site.com --out report.html    # tout, en lecture seule
+node skills/ui-ux-glowup/scripts/verify.mjs snapshot page.html --dir .glowup/before          # avant le changement
+node skills/ui-ux-glowup/scripts/verify.mjs check page.html --dir .glowup/before --out report.md   # après
 node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com --allow ai-hero-pill,ai-caps-label   # choix de marque
 node skills/ui-ux-glowup/scripts/extract-tokens.mjs https://stripe.com
 node skills/ui-ux-glowup/scripts/compare.mjs old.png new.html compare.png

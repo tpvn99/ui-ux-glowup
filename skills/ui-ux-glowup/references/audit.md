@@ -25,3 +25,25 @@ Top problems:
 2. …
 3. …
 ```
+
+## How the score of 45 is computed, and what it is not
+
+- **9 criteria, 0–5 each, equal weight** (each is 11% of the total). A criterion starts at 5 and loses **1 per error** and **0.5 per warning**; information-level findings cost nothing. The floor is 1, so the lowest possible total is 9.
+- Scores are rounded to the nearest half point. Brand choices accepted with `--allow` (`ai-hero-pill`, `ai-accent-word`, `ai-caps-label`) cost nothing.
+- **Visuals\* and Content\*** are only partly measurable by a script: confirm them by looking at the screenshots and reading the copy.
+- A 45/45 means **no automatic rule fired**. It is not a guarantee of quality: it says nothing about whether the product is easy to use, fast for real users, or works for people with a screen reader. Never present it as one.
+
+What the score does **not** contain, and where each lives (`verify.mjs` reports them as separate categories, never blended into one number):
+
+| Dimension | Measured by |
+|---|---|
+| Functionality, regressions | `smoke.mjs`, `scenario.mjs`, `inventory.mjs --compare` |
+| UX: main action, forms, states, navigation | `ux.mjs` |
+| Accessibility behaviour (keyboard, focus, ARIA, reflow) | `a11y.mjs` |
+| Performance (LCP, CLS, blocking time, weight) | `perf.mjs` |
+| Sizes, long text, right-to-left | `responsive.mjs` |
+| Other browsers | `cross-browser.mjs` |
+| Brand kept | `brand-guard.mjs` |
+| Same site, same product | `consistency.mjs` |
+
+For a combined, classified report with before / after: `node <skill-dir>/scripts/verify.mjs snapshot|check|report <page>` (`modes.md`).

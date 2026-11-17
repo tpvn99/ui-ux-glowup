@@ -53,4 +53,4 @@ export function newFilesSince(backupFiles, currentFiles) {
   return currentFiles.filter((f) => !had.has(f));
 }
 
-export const IGNORE_LINES = [".env", ".env.*", "state.json", "*.state.json", ".glowup-backup/"];
+export const IGNORE_LINES = [".env", ".env.*", "state.json", "*.state.json", ".glowup-backup/", ".glowup/"];
