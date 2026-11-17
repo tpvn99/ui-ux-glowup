@@ -27,7 +27,7 @@ export function isGit(dir) {
 }
 const stamp = () => new Date().toISOString().replace(/[-:]/g, "").replace(/\.(\d+)Z$/, "$1").replace("T", "-");
 const entries = (d) => readdirSync(d).filter((n) => !SKIP.has(n));
-const SKIP = new Set(["node_modules", ".git", ".glowup-backup", "dist", "build", ".next", ".nuxt", ".svelte-kit"]);
+const SKIP = new Set(["node_modules", ".git", ".glowup-backup", ".glowup", "dist", "build", ".next", ".nuxt", ".svelte-kit"]);
 
 export function backup(dir, label = "") {
   let id = stamp();

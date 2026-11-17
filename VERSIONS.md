@@ -4,9 +4,20 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.12.0 | 2026-11-17 |
+| ui-ux-glowup | 1.13.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.13.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.12.0 → 1.13.0): one verification command with an exportable report, modes and levels, documentation for newcomers (roadmap phase 4).
+  - `scripts/verify.mjs` (+ `lib/verify.mjs`): `snapshot` before the change, `check` after, `report` for an audit that changes nothing. Runs the audit, smoke test, UX, accessibility, inventory, optional scenarios, performance and the size sweep (`--fast` skips the last two). The report is classified by **category** (Functionality, UX, Accessibility, Performance, Visual quality, Responsive, SEO) and severity, never blended into one number; it lists *Fix first*, what is new, what was fixed, regressions, the /45 score before → after, performance before → after, and **what was not tested**. Verdict PASS / REVIEW / FAIL (exit 1 on FAIL). `--out report.md` or `.html` (light and dark, escaped).
+  - `references/modes.md`: audit only, recommend (numbered list, the user picks), apply; selecting what to improve; light / intermediate / complete (the effort levels, in plainer words). `references/audit.md`: how the /45 is computed (equal weights, −1 per error, −0.5 per warning, floor 1), which criteria are only partly measurable, and why a high score is not a guarantee.
+  - `docs/`: `getting-started`, `by-project-type`, `levels-and-limits` (supported technologies and known limits), `tutorials` (three walk-throughs, replayed as written), `troubleshooting`, `example-report` (a real run on the README's demo pair, labelled as a fixture, not a client project).
+  - `smoke.mjs`: a renamed link with the same target is a `control-renamed` warning, not a missing control.
+  - **Fix**: scripts did nothing, silently, when the skill was installed through a symbolic link (`isMain` compared the typed path with the real path). It now resolves real paths; test with a symlinked install.
+  - `safeguard.mjs` ignores `.glowup/` (snapshots) in backups; `check` suggests adding it to `.gitignore`.
+  - 4 new evals (audit only, recommend, code mode with brand kept, did we break anything). Tests: 7 new (`verify`, `symlink`; renamed-link case).
 
 ### 1.12.0 (2026-11-17)
 
