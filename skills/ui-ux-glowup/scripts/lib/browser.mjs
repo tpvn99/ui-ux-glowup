@@ -44,7 +44,7 @@ export function resolveTarget(target) {
  * Open a page at a viewport and wait until it is visually settled.
  * options.route: optional (route) => void handler, used by tests to serve assets offline.
  * options.scroll: scroll through the page to trigger lazy content (default true).
- * options.onPage: (page) => void, called before navigation (to listen for errors during load).
+ * options.onPage: (page) => void, called before navigation, awaited (listen for errors, set throttling).
  * options.javaScript: false loads the page with JavaScript disabled (what many crawlers see).
  * options.storageState: path to a Playwright storage state (cookies + localStorage) saved by
  *   login.mjs, to audit pages behind a login. Defaults to $GLOWUP_STORAGE_STATE when set.
@@ -69,7 +69,7 @@ export async function openPage(browser, url, viewport, options = {}) {
     } catch {}
   });
   const page = await context.newPage();
-  if (options.onPage) options.onPage(page);
+  if (options.onPage) await options.onPage(page);
   await page.goto(url, { waitUntil: "networkidle", timeout: 45000 }).catch(() => {});
   if (options.waitFor) await page.waitForSelector(options.waitFor, { timeout: 15000 }).catch(() => {});
   if (options.javaScript === false) return { page, close: () => context.close() };
