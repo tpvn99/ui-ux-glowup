@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.8.0
+  version: 1.9.0
 ---
 
 # UI/UX Glowup
@@ -50,15 +50,16 @@ Match the work — and the tokens you spend — to the request. Say which level 
 | Section patterns (hero, pricing, dashboard…) | `references/sections.md` — only the sections you build |
 | Finishing details, modern touches per level | `references/craft.md` |
 | 3D, bento, charts, KPI cards, dark mode, WebP/SVG | `references/visuals.md` |
-| Phone bugs: taps, forms, sliders, overlays | `references/mobile.md` |
-| Section spacing, readability, SEO, GEO (AI assistants), copy rules | `references/seo-readability.md` |
+| Phone bugs: taps, forms, sliders | `references/mobile.md` |
+| Spacing, readability, SEO, GEO, copy rules | `references/seo-readability.md` |
 | Form errors, confirmations, empty states, 404 | `references/microcopy.md` |
 | Icons, Flaticon, favicons | `references/icons.md` |
 | Motion: one load moment, tabs, FAQ, theme switch | `references/motion.md` |
-| Make it distinctive: plan tokens, check vs defaults, one bold place | `references/direction.md` (Standard, Full) |
-| Looks AI-generated (pills, dots, bars, tiles, arrows, caps labels, motion) | `references/anti-ai.md` |
+| Make it distinctive: tokens, check vs defaults | `references/direction.md` (Standard, Full) |
+| Looks AI-generated | `references/anti-ai.md` |
 | Changing a real codebase / handing off to a coding agent | `references/implement.md` |
 | UX (main action, forms, states, nav, journey length) | `references/ux.md` |
+| Accessibility WCAG 2.2 AA: keyboard, focus, ARIA, reflow | `references/a11y.md` |
 | Proving nothing broke | `references/testing.md` |
 | Score grid, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
 | PDF: invoice, quote, report, proposal, one-pager, CV, letter | `references/pdf.md` + one template from `assets/pdf/` |
@@ -126,6 +127,7 @@ The workflow above shows `audit`, `audit-site`, `inventory`, `extract-tokens`, `
 | Script | Use |
 |---|---|
 | `ux.mjs <page>` | UX audit, a fix per finding |
+| `a11y.mjs <page>` | WCAG 2.2 AA: Tab walk, ARIA, reflow 320px |
 | `safeguard.mjs backup\|restore\|check` | Snapshot, rollback, secrets and session files |
 | `locate.mjs <audit.json> [src]` | Findings to `file:line` |
 | `scenario.mjs <page> <file.json>` | User journeys; regressions vs a saved run |
@@ -137,6 +139,6 @@ The workflow above shows `audit`, `audit-site`, `inventory`, `extract-tokens`, `
 
 ## Avoid by default (unless listed in brand choices)
 
-A pill or status dot above the H1 · colored side-bar borders · icons in tinted squares · gradient text, glows, blobs · glass everywhere · identical card rows · one radius and shadow on everything · "→" on every button · tracked caps labels · 01/02/03 off-sequence · one italic or colored word in a headline · reveals on every section, infinite loops, motion over 1s (`anti-ai.md`).
+Pill or status dot above the H1 · colored side bars · icons in tinted squares · gradient text, glows, blobs · glass everywhere · identical card rows · one radius/shadow for all · "→" on every button · tracked caps labels · 01/02/03 · one colored word in a headline · reveals on every section, infinite loops, motion over 1s (`anti-ai.md`).
 
 Not for logos or brand identities.

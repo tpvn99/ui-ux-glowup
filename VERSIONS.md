@@ -4,9 +4,17 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.8.0 | 2026-11-17 |
+| ui-ux-glowup | 1.9.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.9.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.8.0 → 1.9.0): WCAG 2.2 AA behaviour audit (roadmap phase 2, step 1).
+  - `scripts/a11y.mjs` (+ `lib/a11y.mjs`): presses Tab up to 60 times and checks the page, read-only. Rules: `keyboard-trap`, `focus-obscured` (2.4.11), `focus-order-jumps`, `no-focusable`, `role-not-focusable`, `aria-invalid-role`, `aria-broken-reference`, `aria-hidden-focusable` (ignores `inert`), `dialog-no-name`, `auth-paste-blocked` (3.3.8), `reflow-320` (1.4.10, ignores deliberate scrollers), `no-skip-link`, `no-main-landmark`, `autoplay-no-pause`, `duplicate-id`, `positive-tabindex`, `table-no-headers`. A fix per finding; exit 1 on errors. A custom switch whose hidden input sits under its label is not reported as obscured.
+  - `references/a11y.md`: rule table with WCAG criteria, how to test modals and menus with `scenario.mjs` (`focusWithin`, `focusOutside`), what only a human can check.
+  - Examples fixed after the new checks found real defects at 320 px: `settings.html`, `smb-light.html` (grids without `grid-cols-1` could not shrink), `dashboard-dark.html` (header overflow; "1 pending" stays available to screen readers). Warnings left: no skip link / `<main>` in section-style examples (`dashboard-*`, `settings`, `hero-linear`, `local-business`, `bento-vercel`, `features-stripe`).
+  - Tests: 3 new (`tests/a11y.test.mjs`; fixtures `a11y2-bad.html`, `a11y2-good.html`).
 
 ### 1.8.0 (2026-11-17)
 
