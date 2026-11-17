@@ -18,7 +18,7 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Always ends with a "Directions taken" recap.** Style, references and what was borrowed, typography, components, icons, charts/KPIs, mobile fixes, SEO, every text edit before → after, product decisions to confirm.
 
 - **Named references, not vague best practices.** For every job the agent picks 2–3 reference sites from the same category and states exactly what it borrows from each.
-- **Tested example code.** 13 complete pages and sections (including a light/dark KPI & chart kit) in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
+- **Tested example code.** 15 complete pages and sections (including a light/dark KPI & chart kit) in Tailwind v4 plus a typed React dashboard. The agent starts from them, so the floor is high.
 - **Visual self-check.** A Playwright script captures the result at 1440px and 390px and flags horizontal overflow. The agent reviews, fixes and re-captures.
 - **Measured, not eyeballed.** `audit.mjs` checks contrast, touch targets, type scale, spacing grid, headings, labels and more at desktop and mobile, and scores 9 criteria (/45, including SEO) before and after. Nothing ships below 4/5.
 - **Catches real phone bugs.** Amounts and button labels that wrap, table columns pushed off-screen, clipped content, crowded taps, inputs that make iOS zoom, blocked zoom, banners covering the screen, sliders without snap or with tiny/unlabeled arrows — and it names root causes (e.g. a 15px root font-size behind hundreds of fractional spacings).
@@ -26,6 +26,9 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Readable by crawlers and AI assistants.** The audit loads the page once more with JavaScript off and reports a missing H1, missing text or a missing FAQ; an H1 whose words are glued in the HTML; JSON-LD that does not parse, uses an unknown type, does not match the visible FAQ or carries a rating with no reviews. `audit-site.mjs` adds `robots.txt`, `sitemap.xml`, `llms.txt`, blocked AI crawlers and hreflang.
 - **Motion that never hides content.** Text left invisible when the animation does not run (no JS, reduced motion), animated layout properties, layout shift while scrolling, reveals on every section, infinite loops, slow motion and `will-change` everywhere.
 - **Honest copy.** Vague calls to action ("Learn more", "En savoir plus"), clichés in English and French, claims with no source ("#1", "+500 clients") and generic error messages are flagged. The skill never invents a figure, a rating or a review.
+- **Right register for the sector.** `sectors.md` covers health, public services, finance, real estate, travel, education, fashion, media and more, with a variety check against the default tech look.
+- **Brand kept.** `brand-guard.mjs` fails when a change removes a brand color, drops a font or adds a UI library nobody asked for.
+- **Every size, every language.** `responsive.mjs` sweeps 14 sizes and stress-tests long words, +50% text and right-to-left; `consistency.mjs` checks that pages look like one site.
 - **Your stack, kept.** `stack.mjs` detects Next, Nuxt, Vue, Svelte, Angular, Astro, WordPress (and its page builder), Tailwind, shadcn, MUI, Bootstrap and says where the tokens live; nothing new is added without asking.
 - **Every browser.** `cross-browser.mjs` compares Chromium, Firefox and WebKit; `--browser` works on the other scripts.
 - **Fast.** `perf.mjs` measures LCP, CLS, blocking time and weight on a throttled phone, and names the cause: oversized or lazy hero image, blocking scripts, fonts, heavy libraries.
@@ -90,6 +93,8 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 | `article.html` | Stripe Press, Linear Method | Blog, docs, case studies, news |
 | `auth.html` | Linear, Vercel, Clerk | Login, sign-up, onboarding step |
 | `settings.html` | Linear, Stripe, GitHub | Account, workspace, admin screens |
+| `clinic.html` | Zocdoc, One Medical, NHS | Clinics, health practices, care |
+| `data-table.html` | GitHub, Stripe, Linear lists | Sober back-office lists: search, filter, sort, bulk actions, empty state |
 | `smb-light.html` | Warm light B2B sites | Small-business software, B2B services |
 | `react/DashboardShell.tsx` | — | React projects |
 

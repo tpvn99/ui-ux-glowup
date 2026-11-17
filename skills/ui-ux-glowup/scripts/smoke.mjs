@@ -15,14 +15,18 @@ import { collectControls, classifyEffect, unsafeLabel, smokeFindings, diffSmoke,
 export { diffSmoke, smokeFindings, formatSmoke };
 
 const state = (page) =>
-  page.evaluate(() => ({
+  page.evaluate(() => {
+    const fnv = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    return {
     url: location.href,
-    html: document.body.innerHTML.length,
-    text: document.body.innerText.length,
+    html: fnv(document.body.innerHTML),
+    text: fnv(document.body.innerText),
+    sort: [...document.querySelectorAll("[aria-sort]")].map((e) => e.getAttribute("aria-sort")).join(),
     expanded: document.querySelectorAll('[aria-expanded="true"], details[open]').length,
     dialogs: document.querySelectorAll('dialog[open], [role="dialog"], [aria-modal="true"]').length,
     selected: document.querySelectorAll('[aria-selected="true"], [aria-pressed="true"], [aria-current]').length,
-  }));
+    };
+  });
 
 export async function smoke(target, { route, max = 40, viewport = "desktop", ...options } = {}) {
   const pw = await loadPlaywright();
@@ -43,7 +47,7 @@ export async function smoke(target, { route, max = 40, viewport = "desktop", ...
     const results = [];
     let clicked = 0;
     for (const c of base.controls) {
-      const skip = c.external || c.isSubmit || unsafeLabel(c.label) || clicked >= max;
+      const skip = c.external || c.isSubmit || c.offscreen || unsafeLabel(c.label) || clicked >= max;
       if (skip || c.disabled) {
         results.push({ ...c, effect: "none", skipped: true });
         continue;

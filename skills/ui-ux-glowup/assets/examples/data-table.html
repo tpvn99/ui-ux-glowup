@@ -1,0 +1,167 @@
+<!doctype html>
+<!--
+  Pattern: sober back-office list (mechanics from GitHub issues + Stripe Dashboard lists + Linear lists)
+  Key points: search and one filter above the table, sortable headers with aria-sort, row selection with a
+  bulk bar, result count announced to screen readers, a real empty state with its action, the first column
+  stays visible on phones (the table scrolls inside its own container), everything readable with JavaScript off.
+  Data is fictional demo data (example.com). Replace it with the product's real fields.
+  A real admin page sits behind a login and carries <meta name="robots" content="noindex">.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customers — Ledgerly admin</title>
+<meta name="description" content="Customers list for the Ledgerly admin: search by name or email, filter by status, sort by any column and act on several customers at once.">
+<link rel="canonical" href="https://example.com/admin/customers">
+<meta property="og:title" content="Customers — Ledgerly admin">
+<meta property="og:description" content="Customers list with search, status filter, sorting and bulk actions.">
+<meta property="og:image" content="https://example.com/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%23334155%27/%3E%3Ctext%20x%3D%2716%27%20y%3D%2722.5%27%20font-family%3D%27Arial%27%20font-size%3D%2718%27%20font-weight%3D%27700%27%20text-anchor%3D%27middle%27%20fill%3D%27white%27%3EL%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @layer base { h1, h2, h3 { overflow-wrap: anywhere; } }
+  @theme {
+    --color-accent: #334155;
+    --color-line: rgb(15 23 42 / .12);
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html { -webkit-font-smoothing: antialiased; }
+  th[aria-sort="ascending"] button::after { content: " ↑"; }
+  th[aria-sort="descending"] button::after { content: " ↓"; }
+</style>
+</head>
+<body class="bg-slate-50 font-sans text-[15px] text-slate-900">
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2">Skip to content</a>
+
+<!-- header -->
+<header class="border-b border-line bg-white">
+  <div class="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center justify-between gap-x-4 px-4 md:px-6">
+    <a href="/admin" class="font-semibold">Ledgerly</a>
+    <nav aria-label="Admin" class="flex items-center gap-1 text-slate-600">
+      <a href="/admin/invoices" class="rounded-md px-2 py-2 hover:bg-slate-100 sm:px-3">Invoices</a>
+      <a href="/admin/customers" aria-current="page" class="rounded-md bg-slate-100 px-2 py-2 font-medium sm:px-3 text-slate-900">Customers</a>
+      <a href="/admin/settings" class="rounded-md px-2 py-2 hover:bg-slate-100 sm:px-3">Settings</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="mx-auto max-w-6xl px-4 py-8 md:px-6">
+
+<!-- title and primary action -->
+<div class="flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <h1 class="text-3xl font-semibold tracking-tight">Customers</h1>
+    <p class="mt-1 text-slate-600">People and companies you invoice.</p>
+  </div>
+  <a href="/admin/customers/new" class="inline-flex h-10 items-center rounded-lg bg-accent px-4 font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Add customer</a>
+</div>
+
+<!-- toolbar -->
+<form id="filters" class="mt-6 flex flex-wrap items-end gap-3" role="search" aria-label="Filter customers" onsubmit="return false">
+  <div class="min-w-0 flex-1 basis-60">
+    <label for="q" class="block text-sm font-medium text-slate-700">Search</label>
+    <input id="q" type="search" autocomplete="off" placeholder="Name or email" class="mt-1 h-11 w-full rounded-lg border border-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent">
+  </div>
+  <div>
+    <label for="status" class="block text-sm font-medium text-slate-700">Status</label>
+    <select id="status" class="mt-1 h-11 rounded-lg border border-line bg-white px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent">
+      <option value="">All</option><option>Active</option><option>Overdue</option><option>Archived</option>
+    </select>
+  </div>
+</form>
+
+<p id="count" class="mt-4 text-slate-600" role="status" aria-live="polite">6 customers</p>
+
+<!-- bulk bar -->
+<div id="bulk" hidden class="mt-3 flex flex-wrap items-center gap-3 rounded-lg border border-line bg-white px-4 py-2">
+  <span id="selected" class="font-medium">0 selected</span>
+  <button type="button" class="h-9 rounded-md border border-line px-3 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-accent">Send reminder</button>
+  <button type="button" class="h-9 rounded-md border border-line px-3 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-accent">Archive</button>
+</div>
+
+<!-- table -->
+<div class="mt-3 overflow-x-auto rounded-lg border border-line bg-white">
+  <table id="table" class="w-full border-collapse text-left">
+    <caption class="sr-only">Customers, sortable by column</caption>
+    <thead class="border-b border-line bg-slate-50 text-slate-600">
+      <tr>
+        <th scope="col" class="w-14 bg-slate-50 py-3 pl-3 pr-2 sm:pl-4"><input id="all" type="checkbox" aria-label="Select all customers" class="size-6 rounded border-line"></th>
+        <th scope="col" aria-sort="ascending" class="bg-slate-50 px-2 py-3 font-medium sm:px-3"><button type="button" data-sort="0" class="-mx-2 inline-flex h-9 items-center rounded px-2 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-accent">Customer</button></th>
+        <th scope="col" class="px-2 py-3 font-medium sm:px-3"><button type="button" data-sort="1" class="-mx-2 inline-flex h-9 items-center rounded px-2 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-accent">Status</button></th>
+        <th scope="col" class="px-2 py-3 text-right font-medium sm:px-3"><button type="button" data-sort="2" data-num class="-mx-2 inline-flex h-9 items-center rounded px-2 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-accent">Balance</button></th>
+        <th scope="col" class="hidden px-3 py-3 font-medium sm:table-cell"><button type="button" data-sort="3" class="-mx-2 inline-flex h-9 items-center rounded px-2 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-accent">Last invoice</button></th>
+      </tr>
+    </thead>
+    <tbody id="rows" class="divide-y divide-[color:var(--color-line)]">
+      <tr><td class="bg-white py-2 pl-3 pr-2 sm:pl-4"><input type="checkbox" aria-label="Select Amara Nwosu" class="size-6 rounded border-line"></td><th scope="row" class="bg-white px-2 py-3 font-medium [overflow-wrap:anywhere] sm:px-3">Amara Nwosu<span class="hidden text-[14px] font-normal text-slate-600 sm:block">amara@example.com</span></th><td class="px-2 py-3 sm:px-3">Active</td><td class="px-2 py-3 text-right tabular-nums sm:px-3" data-v="1280">$1,280.00</td><td class="hidden px-3 py-3 sm:table-cell" data-v="2026-11-10">Nov 10, 2026</td></tr>
+      <tr><td class="bg-white py-2 pl-3 pr-2 sm:pl-4"><input type="checkbox" aria-label="Select Brightside Cafe" class="size-6 rounded border-line"></td><th scope="row" class="bg-white px-2 py-3 font-medium [overflow-wrap:anywhere] sm:px-3">Brightside Cafe<span class="hidden text-[14px] font-normal text-slate-600 sm:block">accounts@example.com</span></th><td class="px-2 py-3 sm:px-3">Overdue</td><td class="px-2 py-3 text-right tabular-nums sm:px-3" data-v="4310.5">$4,310.50</td><td class="hidden px-3 py-3 sm:table-cell" data-v="2026-09-28">Sep 28, 2026</td></tr>
+      <tr><td class="bg-white py-2 pl-3 pr-2 sm:pl-4"><input type="checkbox" aria-label="Select Carlos Mendes" class="size-6 rounded border-line"></td><th scope="row" class="bg-white px-2 py-3 font-medium [overflow-wrap:anywhere] sm:px-3">Carlos Mendes<span class="hidden text-[14px] font-normal text-slate-600 sm:block">carlos@example.com</span></th><td class="px-2 py-3 sm:px-3">Active</td><td class="px-2 py-3 text-right tabular-nums sm:px-3" data-v="0">$0.00</td><td class="hidden px-3 py-3 sm:table-cell" data-v="2026-11-02">Nov 2, 2026</td></tr>
+      <tr><td class="bg-white py-2 pl-3 pr-2 sm:pl-4"><input type="checkbox" aria-label="Select Dunmore Studio" class="size-6 rounded border-line"></td><th scope="row" class="bg-white px-2 py-3 font-medium [overflow-wrap:anywhere] sm:px-3">Dunmore Studio<span class="hidden text-[14px] font-normal text-slate-600 sm:block">billing@example.com</span></th><td class="px-2 py-3 sm:px-3">Archived</td><td class="px-2 py-3 text-right tabular-nums sm:px-3" data-v="0">$0.00</td><td class="hidden px-3 py-3 sm:table-cell" data-v="2025-12-14">Dec 14, 2025</td></tr>
+      <tr><td class="bg-white py-2 pl-3 pr-2 sm:pl-4"><input type="checkbox" aria-label="Select Elif Kaya" class="size-6 rounded border-line"></td><th scope="row" class="bg-white px-2 py-3 font-medium [overflow-wrap:anywhere] sm:px-3">Elif Kaya<span class="hidden text-[14px] font-normal text-slate-600 sm:block">elif@example.com</span></th><td class="px-2 py-3 sm:px-3">Overdue</td><td class="px-2 py-3 text-right tabular-nums sm:px-3" data-v="620">$620.00</td><td class="hidden px-3 py-3 sm:table-cell" data-v="2026-10-19">Oct 19, 2026</td></tr>
+      <tr><td class="bg-white py-2 pl-3 pr-2 sm:pl-4"><input type="checkbox" aria-label="Select Fjord Logistics" class="size-6 rounded border-line"></td><th scope="row" class="bg-white px-2 py-3 font-medium [overflow-wrap:anywhere] sm:px-3">Fjord Logistics<span class="hidden text-[14px] font-normal text-slate-600 sm:block">ap@example.com</span></th><td class="px-2 py-3 sm:px-3">Active</td><td class="px-2 py-3 text-right tabular-nums sm:px-3" data-v="9875">$9,875.00</td><td class="hidden px-3 py-3 sm:table-cell" data-v="2026-11-14">Nov 14, 2026</td></tr>
+    </tbody>
+  </table>
+
+  <!-- empty state -->
+  <div id="empty" hidden class="px-6 py-14 text-center">
+    <h2 class="text-lg font-semibold">No customer matches these filters</h2>
+    <p class="mx-auto mt-2 max-w-[44ch] text-slate-600">Check the spelling, or remove a filter to see everyone again.</p>
+    <button id="clear" type="button" class="mt-5 h-10 rounded-lg border border-line px-4 font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-accent">Clear filters</button>
+  </div>
+</div>
+
+<!-- pagination -->
+<nav aria-label="Pagination" class="mt-4 flex items-center justify-between text-slate-600">
+  <p>Page 1 of 1</p>
+  <div class="flex gap-2"><button type="button" disabled class="h-9 rounded-md border border-line bg-white px-3 opacity-50">Previous</button><button type="button" disabled class="h-9 rounded-md border border-line bg-white px-3 opacity-50">Next</button></div>
+</nav>
+
+</main>
+
+<script>
+(() => {
+  const q = document.getElementById("q"), status = document.getElementById("status"), body = document.getElementById("rows");
+  const rows = [...body.rows], count = document.getElementById("count"), empty = document.getElementById("empty");
+  const bulk = document.getElementById("bulk"), selected = document.getElementById("selected"), all = document.getElementById("all");
+  const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+  const boxes = () => rows.filter((r) => !r.hidden).map((r) => r.querySelector("input"));
+  function apply() {
+    const term = q.value.trim().toLowerCase(), st = status.value;
+    let shown = 0;
+    for (const r of rows) {
+      const ok = (!term || r.textContent.toLowerCase().includes(term)) && (!st || r.cells[2].textContent.trim() === st);
+      r.hidden = !ok;
+      if (ok) shown++; else r.querySelector("input").checked = false;
+    }
+    count.textContent = shown ? plural(shown, "customer") : "No customers";
+    empty.hidden = shown !== 0;
+    document.getElementById("table").hidden = shown === 0;
+    sync();
+  }
+  function sync() {
+    const n = rows.filter((r) => r.querySelector("input").checked).length;
+    bulk.hidden = n === 0;
+    selected.textContent = n + " selected";
+    const b = boxes();
+    all.checked = b.length > 0 && b.every((x) => x.checked);
+  }
+  q.addEventListener("input", apply);
+  status.addEventListener("change", apply);
+  document.getElementById("clear").addEventListener("click", () => { q.value = ""; status.value = ""; apply(); q.focus(); });
+  all.addEventListener("change", () => { boxes().forEach((x) => (x.checked = all.checked)); sync(); });
+  body.addEventListener("change", sync);
+  for (const btn of document.querySelectorAll("[data-sort]")) {
+    btn.addEventListener("click", () => {
+      const th = btn.closest("th"), i = Number(btn.dataset.sort), dir = th.getAttribute("aria-sort") === "ascending" ? -1 : 1;
+      document.querySelectorAll("th[aria-sort]").forEach((x) => x.removeAttribute("aria-sort"));
+      th.setAttribute("aria-sort", dir === 1 ? "ascending" : "descending");
+      const key = (r) => { const c = r.cells[i + 1]; const v = c.dataset.v ?? c.textContent.trim().toLowerCase(); return btn.hasAttribute("data-num") ? Number(v) : v; };
+      rows.sort((a, b) => (key(a) > key(b) ? dir : key(a) < key(b) ? -dir : 0)).forEach((r) => body.appendChild(r));
+    });
+  }
+})();
+</script>
+</body>
+</html>

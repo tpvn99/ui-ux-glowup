@@ -103,4 +103,12 @@ node <skill-dir>/scripts/safeguard.mjs backup --label "before redesign"
 
 `check` never prints a secret. When it reports one: say where and what kind, never repeat the value, move it to an environment variable, and tell the user to rotate it. `state.json` files from `login.mjs` hold live sessions. `login.mjs` locks the file (600), adds it to `.gitignore`, and summarises it without printing a value; delete it when done (`login.mjs --clear`). Never commit, paste or upload it, and never print cookies or tokens in a report.
 
+After the change, compare with the backup:
+
+```bash
+node <skill-dir>/scripts/brand-guard.mjs     # brand colors, fonts, UI dependencies vs the last backup
+```
+
+A missing brand color, a dropped font or an added UI library is an error unless the user asked for it (`--allow color,font,dependency`). Restore it, or list it under **Product decisions to confirm**.
+
 **Ask before structural changes**, even when they look like design: adding or replacing a dependency or UI library, moving or renaming files, changing routes, the build or the config, touching business logic, auth, payments, tracking or API calls. List them as **Product decisions to confirm** and wait for a yes. Design-only changes (CSS, markup, copy, assets) proceed.

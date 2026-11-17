@@ -17,7 +17,7 @@ The first screen shows the subject's own thing: the live product, a real photo o
 - **Principles**: 2–3 lines on what makes this page unlike the others.
 
 ## 4. Check the plan against the defaults
-AI-made pages cluster on: cream + serif + terracotta; near-black + one acid accent; newspaper rules with zero radius; **the SaaS-card kit** (identical rounded cards, one radius and one soft shadow everywhere, gradient washes); **template chrome** (tracked ALL-CAPS label above every heading, "A · B · C" meta strings, labels with a spaced em dash, tinted near-black, mono for every small label, "→" on every button). Work the plan through as if for another brand: if you land in the same place, change that part and say what and why.
+AI-made pages cluster on: cream + serif + terracotta; near-black + one acid accent; newspaper rules with zero radius; **the SaaS-card kit** (identical rounded cards, one radius and one soft shadow everywhere, gradient washes); **template chrome** (tracked ALL-CAPS label above every heading, "A · B · C" meta strings, labels with a spaced em dash, tinted near-black, mono for every small label, "→" on every button). Work the plan through as if for another brand: if you land in the same place, change that part and say what and why. Also run the **variety check** in `sectors.md`: if the subject is not a developer tool, the dark hairline Linear look is probably the wrong register, and at least one reference should come from outside tech.
 
 ## 5. Spend boldness in one place
 One memorable element (the product shot, one type treatment, one colored section); everything around it quiet. Structural devices carry information or go: numbering only for real sequences, labels only if they say something, dividers only if they separate.

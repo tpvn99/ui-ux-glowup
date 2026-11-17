@@ -18,7 +18,7 @@ Il **garde les couleurs de votre marque** et travaille tout le reste : structure
 - **Il finit toujours par un récap « Directions taken ».** Style, références et ce qui leur est emprunté, typographie, composants, icônes, graphiques/KPI, corrections mobile, SEO, chaque modification de texte avant → après, décisions produit à confirmer.
 
 - **Des références nommées, pas de vagues bonnes pratiques.** Pour chaque travail, l'agent choisit 2 ou 3 sites de référence de la même catégorie et dit exactement ce qu'il emprunte à chacun.
-- **Du code d'exemple testé.** 13 pages et sections complètes (dont un kit de KPI et de graphiques clair/sombre) en Tailwind v4, plus un tableau de bord React typé. L'agent part de ces exemples, donc le niveau de départ est élevé.
+- **Du code d'exemple testé.** 15 pages et sections complètes (dont un kit de KPI et de graphiques clair/sombre) en Tailwind v4, plus un tableau de bord React typé. L'agent part de ces exemples, donc le niveau de départ est élevé.
 - **Une vérification visuelle.** Un script Playwright capture le résultat à 1440 px et à 390 px et signale tout débordement horizontal. L'agent relit, corrige et capture à nouveau.
 - **Mesuré, pas estimé à l'œil.** `audit.mjs` contrôle le contraste, les zones tactiles, l'échelle typographique, la grille d'espacement, les titres, les labels et plus encore, sur ordinateur et sur mobile, et note 9 critères (/45, SEO compris) avant et après. Rien n'est livré sous 4/5.
 - **Il attrape les vrais bugs sur téléphone.** Les montants et les libellés de boutons qui passent à la ligne, les colonnes de tableau poussées hors de l'écran, le contenu coupé, les zones tactiles trop serrées, les champs qui font zoomer iOS, le zoom bloqué, les bandeaux qui couvrent l'écran, les carrousels sans aimantation ou avec des flèches minuscules ou sans nom. Il nomme aussi les causes racines (par exemple une taille de police racine de 15 px derrière des centaines d'espacements fractionnaires).
@@ -26,6 +26,9 @@ Il **garde les couleurs de votre marque** et travaille tout le reste : structure
 - **Lisible par les robots et les assistants IA.** L'audit charge la page une fois de plus sans JavaScript et signale un H1 absent, du texte absent ou une FAQ absente ; un H1 dont les mots sont collés dans le HTML ; un JSON-LD illisible, d'un type inconnu, différent de la FAQ visible ou portant une note sans avis. `audit-site.mjs` ajoute `robots.txt`, `sitemap.xml`, `llms.txt`, les robots IA bloqués et les hreflang.
 - **Des animations qui ne cachent jamais le contenu.** Texte resté invisible quand l'animation ne se joue pas (sans JS, mouvement réduit), propriétés de mise en page animées, décalages de mise en page au défilement, apparitions sur toutes les sections, boucles infinies, animations lentes et `will-change` partout.
 - **Des textes honnêtes.** Les appels à l'action vagues (« Learn more », « En savoir plus »), les clichés en anglais et en français, les affirmations sans source (« n°1 », « +500 clients ») et les messages d'erreur génériques sont signalés. Le skill n'invente jamais un chiffre, une note ou un avis.
+- **Le bon registre selon le secteur.** `sectors.md` couvre santé, services publics, finance, immobilier, voyage, éducation, mode, médias et plus, avec un contrôle de variété face au look tech par défaut.
+- **Marque conservée.** `brand-guard.mjs` échoue quand un changement retire une couleur de marque, abandonne une police ou ajoute une bibliothèque UI non demandée.
+- **Toutes les tailles, toutes les langues.** `responsive.mjs` balaie 14 tailles et teste mots longs, +50 % de texte et droite-à-gauche ; `consistency.mjs` vérifie que les pages forment un seul site.
 - **Votre stack, conservée.** `stack.mjs` détecte Next, Nuxt, Vue, Svelte, Angular, Astro, WordPress (et son constructeur), Tailwind, shadcn, MUI, Bootstrap et indique où vivent les tokens ; rien de nouveau n'est ajouté sans demander.
 - **Tous les navigateurs.** `cross-browser.mjs` compare Chromium, Firefox et WebKit ; `--browser` fonctionne sur les autres scripts.
 - **Rapide.** `perf.mjs` mesure LCP, CLS, temps de blocage et poids sur un téléphone bridé, et nomme la cause : image principale surdimensionnée ou en lazy, scripts bloquants, polices, bibliothèques lourdes.
@@ -90,6 +93,8 @@ Il **garde les couleurs de votre marque** et travaille tout le reste : structure
 | `article.html` | Stripe Press, Linear Method | Blog, documentation, études de cas, actualités |
 | `auth.html` | Linear, Vercel, Clerk | Connexion, inscription, étape d'accueil |
 | `settings.html` | Linear, Stripe, GitHub | Écrans de compte, d'espace de travail, d'administration |
+| `clinic.html` | Zocdoc, One Medical, NHS | Cabinets, santé, soins |
+| `data-table.html` | GitHub, Stripe, Linear (listes) | Listes d'administration sobres : recherche, filtre, tri, actions groupées, état vide |
 | `smb-light.html` | Sites B2B clairs et chaleureux | Logiciels pour PME, services B2B |
 | `react/DashboardShell.tsx` | — | Projets React |
 

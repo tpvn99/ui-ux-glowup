@@ -28,6 +28,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <style type="text/tailwindcss">
+  @layer base { h1, h2, h3 { overflow-wrap: anywhere; } }
   @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
   @theme {
     --color-accent: #0d9488;
