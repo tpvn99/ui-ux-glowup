@@ -6,6 +6,9 @@ The workflow in `SKILL.md` shows `audit`, `audit-site`, `inventory`, `extract-to
 
 | Script | Use |
 |---|---|
+| `cross-browser.mjs <page>` | Chromium, Firefox, WebKit: what differs; `--browser` on other scripts |
+| `login.mjs <url>` | Saves a session locked (600), git-ignored, summarised without values; `--clear` deletes it |
+| `stack.mjs [dir]` | Framework, styling, token files, WordPress builders |
 | `ux.mjs <page>` | UX audit, a fix per finding |
 | `a11y.mjs <page>` | WCAG 2.2 AA: Tab walk, ARIA, reflow 320px |
 | `perf.mjs <page> [--baseline]` | LCP, CLS, TBT, weight on a throttled phone |

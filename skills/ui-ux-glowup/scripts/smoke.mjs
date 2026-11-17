@@ -9,7 +9,7 @@
 //   Options: --max 40 (controls clicked) · --storage-state state.json · --wait-for "<css>"
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { collectControls, classifyEffect, unsafeLabel, smokeFindings, diffSmoke, formatSmoke } from "./lib/smoke.mjs";
 
 export { diffSmoke, smokeFindings, formatSmoke };
@@ -25,8 +25,8 @@ const state = (page) =>
   }));
 
 export async function smoke(target, { route, max = 40, viewport = "desktop", ...options } = {}) {
-  const { chromium } = await loadPlaywright();
-  const browser = await chromium.launch();
+  const pw = await loadPlaywright();
+  const browser = await launchBrowser(pw, options.browser);
   const url = resolveTarget(target).url;
   const errors = new Set();
   const failedRequests = new Set();

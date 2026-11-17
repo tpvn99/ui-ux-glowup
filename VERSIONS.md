@@ -4,9 +4,18 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.10.0 | 2026-11-17 |
+| ui-ux-glowup | 1.11.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.11.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.10.0 → 1.11.0): stack detection, other browsers, safer sessions (roadmap phase 2, steps 3–5).
+  - `scripts/stack.mjs` (+ `lib/stack.mjs`): detects Next (app / pages router), Nuxt, Vue, SvelteKit, Svelte, Astro, Remix, Angular, Solid, React + Vite, WordPress (classic, block theme, Elementor / Divi / Bricks / Beaver / Oxygen / WPBakery), plain HTML; Tailwind v3 vs v4, shadcn, MUI, Chakra, Mantine, Ant, Vuetify, Angular Material, Bootstrap, styled-components, Emotion, CSS Modules; where the design tokens live; package manager, tests, scripts. `references/frameworks.md`: per-stack rules (keep the stack, tokens first, no new library, where WordPress changes belong, staging and database backup).
+  - `scripts/cross-browser.mjs` (+ `lib/crossbrowser.mjs`): Chromium (reference), Firefox, WebKit at desktop and phone width: `engine-js-error`, `engine-overflow`, `engine-height-differs`, `engine-h1-wraps`, `engine-broken-images`, `engine-unsupported-css` (13 CSS features checked against what the page's stylesheets use); one screenshot per engine and width; missing engines listed with the install command. `--browser chromium|firefox|webkit` on `audit`, `screenshot`, `smoke`, `scenario`, `ux`, `a11y`. `openPage` no longer passes `isMobile` to Firefox (unsupported).
+  - **Sessions**: `login.mjs` locks `state.json` (600), adds it to `.gitignore` in a git repo, prints a summary (cookie count, domains, nearest expiry) and never a value; `login.mjs --clear` deletes it; every script warns once when a session file is readable by other users (`lib/session.mjs`).
+  - Fix found by WebKit: `no-primary-action` ignored buttons under 30px; threshold lowered to 24px (the WCAG minimum).
+  - Tests: 17 new (`stack`, `crossbrowser`, `session`; fixture `engine-diff.html`).
 
 ### 1.10.0 (2026-11-17)
 
