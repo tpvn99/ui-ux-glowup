@@ -36,8 +36,12 @@ Brand colors, fonts and logo are kept. Features, routes, data and business logic
 - **A score is not a guarantee.** The /45 audit score and "no issue found" mean that automatic rules found nothing. They say nothing about real usability, real devices, or screen reader experience.
 - **Performance numbers are lab measurements** on one machine with a simulated phone. They compare before and after; they are not field data.
 - **Scenarios are written by hand** (or by the agent from your code). Only the journeys you describe are tested.
-- **Safari is tested through its engine (WebKit)**, not on a real iPhone.
+- **Safari is tested through its engine (WebKit)**, not on a real iPhone; `--device` emulates a phone's screen, it is not a phone. See the [real-device checklist](real-device-checklist.md).
+- **No screen reader is driven.** Names, roles, states and focus order are checked, which is what a screen reader receives, not what it announces.
+- **Roles**: `roles.mjs` compares what each role's interface shows. A hidden button is not authorization: the server must refuse the action too.
+- **Node**: browser checks need Node 20+ (Playwright); Node 18 runs the scripts that need no browser. Windows is untested.
+- **Benchmark numbers** are exact for seeded defects only; see the [benchmark](benchmark.md).
 - **WordPress content lives in the database**: the file backup does not cover it.
 - **Pages behind a login** need `login.mjs` first; multi-factor flows are done by you in the browser window.
 - **Designs are judged by rules, not taste.** The agent checks for AI-looking patterns and for readability; a human still decides whether it is right for the brand.
-- **No real-project case studies yet**: the examples in this repository are demonstrations on fixtures. If you try it on a real project, a report is welcome in an issue.
+- **No real client project yet**: the examples, the example report and the case studies are built on prepared pages. If you try it on a real project, a report is welcome in an issue.

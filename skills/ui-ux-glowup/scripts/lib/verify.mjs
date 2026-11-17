@@ -7,6 +7,16 @@ import { compareScenarios } from "./scenario.mjs";
 export const CATEGORIES = ["Functionality", "UX", "Accessibility", "Performance", "Visual quality", "Responsive", "SEO"];
 const VISUAL = new Set(["Hierarchy", "Typography", "Spacing", "Components", "Visuals", "Content"]);
 const RANK = { error: 0, warning: 1, info: 2 };
+const IMPACT_RANK = { high: 0, medium: 1, low: 2 };
+const STYLE_RULES = new Set(["shadows", "radii", "type-scale", "font-families", "text-colors", "spacing-grid", "section-rhythm", "heading-tracking", "uppercase-text", "justified-text", "long-sentences", "long-paragraphs", "carousel-affordance"]);
+
+/** A usability or technical problem, or a matter of taste: taste never outranks a problem people will hit. */
+export function kindOf(source, rule, given) {
+  if (given) return given;
+  if (source === "audit" && (rule.startsWith("ai-") || STYLE_RULES.has(rule))) return "style";
+  return "problem";
+}
+const order = (a, b) => RANK[a.severity] - RANK[b.severity] || (a.kind === "style") - (b.kind === "style") || IMPACT_RANK[a.impact || "medium"] - IMPACT_RANK[b.impact || "medium"] || (a.state === "regression" ? -1 : 0) - (b.state === "regression" ? -1 : 0);
 const sev = (s) => (s === "warn" ? "warning" : s === "error" ? "error" : s === "info" ? "info" : "warning");
 
 function categoryOfAudit(criterion) {
@@ -20,7 +30,7 @@ function categoryOfAudit(criterion) {
 /** All findings of one snapshot, in one shape. Accepted brand choices are left out (not issues). */
 export function normalize(snap, smokeFindings = []) {
   const out = [];
-  const push = (source, category, f) => out.push({ source, category, severity: sev(f.severity), rule: f.rule, message: f.message, items: (f.items || []).map(String).slice(0, 4), fix: f.fix || "", key: `${source}:${f.rule}` });
+  const push = (source, category, f) => { const severity = sev(f.severity); out.push({ source, category, severity, rule: f.rule, message: f.message, items: (f.items || []).map(String).slice(0, 4), fix: f.fix || "", key: `${source}:${f.rule}`, impact: f.impact || (severity === "error" ? "high" : "medium"), kind: kindOf(source, f.rule, f.kind === "usability" ? "problem" : f.kind) }); };
   for (const f of snap.audit?.findings || []) if (!f.accepted) push("audit", categoryOfAudit(f.criterion), f);
   for (const f of snap.ux?.findings || []) push("ux", "UX", f);
   for (const f of snap.a11y?.findings || []) push("a11y", "Accessibility", f);
@@ -51,7 +61,7 @@ export function buildReport({ target, date, before = null, after }) {
   const tagged = now.map((f) => ({ ...f, state: before ? (wasKeys.has(f.key) ? "open" : "new") : "open" }));
   const fixed = was.filter((f) => f.severity !== "info" && !nowKeys.has(f.key));
   const categories = CATEGORIES.map((name) => {
-    const list = [...tagged, ...regs.map((r) => ({ ...r, state: "regression" }))].filter((f) => f.category === name).sort((a, b) => RANK[a.severity] - RANK[b.severity] || (a.state === "regression" ? -1 : 0));
+    const list = [...tagged, ...regs.map((r) => ({ ...r, state: "regression" }))].filter((f) => f.category === name).sort(order);
     const errors = list.filter((f) => f.severity === "error").length;
     const warnings = list.filter((f) => f.severity === "warning").length;
     return { name, status: errors ? "error" : warnings ? "warning" : "ok", errors, warnings, fixed: fixed.filter((f) => f.category === name).length, new: list.filter((f) => f.state === "new" || f.state === "regression").length, findings: list };
@@ -69,10 +79,12 @@ export function buildReport({ target, date, before = null, after }) {
     after.perf ? null : "Performance was skipped.",
     after.responsive ? null : "The size sweep was skipped (`--fast`).",
   ].filter(Boolean);
-  const top = all.filter((f) => f.severity !== "info").sort((a, b) => RANK[a.severity] - RANK[b.severity] || (a.state === "regression" ? -1 : 0)).slice(0, 5);
+  const top = all.filter((f) => f.severity !== "info" && (f.kind !== "style" || f.severity === "error")).sort(order).slice(0, 5);
   return {
     mode, target, date, verdict,
     score: { before: before?.audit ? { total: before.audit.total, max: before.audit.max, scores: before.audit.scores } : null, after: after.audit ? { total: after.audit.total, max: after.audit.max, scores: after.audit.scores } : null },
+    context: after.ux?.context || null,
+    visual: after.visual || null,
     metrics: { before: m(before), after: m(after) }, categories, fixed, regressions: regs, top, notTested,
   };
 }
@@ -85,6 +97,7 @@ export function toMarkdown(r) {
   const L = [];
   L.push(`# UI/UX report: ${r.target}`, "", `${r.date} · ${r.mode === "compare" ? "before / after" : "audit only, nothing was changed"} · **Verdict: ${r.verdict}**`, "");
   L.push(r.verdict === "PASS" ? "Nothing new broke and no error remains." : r.verdict === "FAIL" ? (r.mode === "compare" ? "Something that worked before is broken, or the change introduced an error." : "Errors were found.") : "No new error, but issues remain or changed: review them below.", "");
+  if (r.context) L.push(`UX was checked as a **${r.context}** site. Findings are ordered by severity, then impact; matters of style come after problems people will hit.`, "");
   L.push("## Summary by category", "", "A status per category, not one blended score: a high number in one area never hides a problem in another.", "", "| Category | Status | Errors | Warnings | New | Fixed |", "|---|---|---|---|---|---|");
   for (const c of r.categories) L.push(`| ${c.name} | ${ICON[c.status]} ${c.status === "ok" ? "ok" : c.status} | ${c.errors} | ${c.warnings} | ${r.mode === "compare" ? c.new : "–"} | ${r.mode === "compare" ? c.fixed : "–"} |`);
   if (r.top.length) { L.push("", "## Fix first", ""); r.top.forEach((f, i) => L.push(`${i + 1}. **${f.category}**: ${f.message}${f.state === "regression" || f.state === "new" ? ` _(${f.state})_` : ""}`)); }
@@ -93,6 +106,10 @@ export function toMarkdown(r) {
     L.push(`${r.score.before ? `${r.score.before.total} → ` : ""}**${r.score.after.total} / ${r.score.after.max}**. Nine criteria scored 0–5 by \`audit.mjs\`; ${Object.keys(r.score.after.scores).length} of them partly rely on a human check. It measures what an automatic audit can see.`, "");
     L.push("| Criterion | " + (r.score.before ? "Before | " : "") + "After |", "|---|" + (r.score.before ? "---|" : "") + "---|");
     for (const [k, v] of Object.entries(r.score.after.scores)) L.push(`| ${k} | ${r.score.before ? `${r.score.before.scores[k] ?? "–"} | ` : ""}${v} |`);
+  }
+  if (r.visual && r.visual.length) {
+    L.push("", "## Visual change, before → after", "", "Pixels that differ between the screenshot taken before and one taken now (content that moves by itself is ignored). After a redesign most of the page changes; after a refactor nothing should.", "", "| Width | Changed | Page height | Where |", "|---|---|---|---|");
+    for (const v of r.visual) L.push(`| ${v.size}px | ${v.percent}% | ${v.heightBefore} → ${v.heightAfter}px (${v.heightDelta > 0 ? "+" : ""}${v.heightDelta}%) | ${v.regions.slice(0, 3).map((g) => `y=${g.y}px ${g.w}×${g.h}`).join("; ") || "–"} |`);
   }
   if (r.metrics.after) {
     const a = r.metrics.after, b = r.metrics.before;
@@ -104,7 +121,7 @@ export function toMarkdown(r) {
     if (!c.findings.length) continue;
     L.push("", `## ${c.name}`, "");
     for (const f of c.findings) {
-      L.push(`- ${ICON[f.severity]} \`${f.rule}\`${f.state && r.mode === "compare" ? ` _(${f.state})_` : ""}: ${f.message}`);
+      L.push(`- ${ICON[f.severity]} \`${f.rule}\`${f.impact === "high" && f.severity !== "error" ? " **high impact**" : ""}${f.kind === "style" ? " _(style, optional)_" : ""}${f.state && r.mode === "compare" ? ` _(${f.state})_` : ""}: ${f.message}`);
       if (f.items.length) L.push(`  - ${f.items.join(" · ")}`);
       if (f.fix) L.push(`  - Fix: ${f.fix}`);
     }

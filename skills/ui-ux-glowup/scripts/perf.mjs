@@ -5,11 +5,12 @@
 // Numbers are lab measurements on this machine: use them to compare before and after, not as field data.
 //
 // Usage:
-//   node perf.mjs <page | url> [--profile phone|desktop|fast] [--json out.json] [--baseline before.json]
+//   node perf.mjs <page | url> [--profile phone|desktop|fast|slow|flaky] [--json out.json] [--baseline before.json]
 //   phone (default) throttled mobile · desktop 1440px, light throttle · fast: no throttling (CI, local files)
+//   slow: 400 kbps, 400 ms, CPU 6× · flaky: phone + 8% of requests lost (same ones every run): does the page degrade or break?
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, trackPageErrors, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { saveJson } from "./lib/redact.mjs";
 import { initPerf, readPerf, collectImages, collectPage, perfFindings, formatPerf } from "./lib/perf.mjs";
 
@@ -19,7 +20,12 @@ const PROFILES = {
   phone: { viewport: "mobile", cpu: 4, net: { latency: 150, down: (1.6 * 1024 * 1024) / 8, up: (750 * 1024) / 8 } },
   desktop: { viewport: "desktop", cpu: 2, net: { latency: 40, down: (10 * 1024 * 1024) / 8, up: (5 * 1024 * 1024) / 8 } },
   fast: { viewport: "desktop", cpu: 1, net: null },
+  slow: { viewport: "mobile", cpu: 6, net: { latency: 400, down: (400 * 1024) / 8, up: (200 * 1024) / 8 } },
+  flaky: { viewport: "mobile", cpu: 4, net: { latency: 300, down: (1.0 * 1024 * 1024) / 8, up: (500 * 1024) / 8 }, lose: 0.08 },
 };
+
+/** Deterministic pseudo-random numbers, so a flaky run can be repeated exactly. */
+function prng(seed = 42) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 
 export async function perf(target, { route, profile = "phone", ...options } = {}) {
   const prof = PROFILES[profile] || PROFILES.phone;
@@ -28,12 +34,16 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
   const url = resolveTarget(target).url;
   const origin = new URL(url).origin;
   const requests = [];
+  const rnd = prng();
+  let lost = 0, errors = 0;
+  const flakyRoute = prof.lose ? async (r) => { if (r.request().resourceType() !== "document" && rnd() < prof.lose) { lost++; return r.abort("failed"); } return route ? route(r) : r.continue(); } : route;
   try {
     const { page, close } = await openPage(browser, url, VIEWPORTS[prof.viewport], {
-      route, ...options, scroll: false, dismiss: false,
+      route: flakyRoute, reducedMotion: "no-preference", ...options, scroll: false, dismiss: false,
       onPage: async (p) => {
         await p.context().addInitScript(initPerf);
         p.on("requestfinished", (req) => requests.push(req));
+        trackPageErrors(p, url, () => errors++);
         if (prof.net || prof.cpu > 1) {
           const cdp = await p.context().newCDPSession(p);
           if (prof.cpu > 1) await cdp.send("Emulation.setCPUThrottlingRate", { rate: prof.cpu });
@@ -65,7 +75,7 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
     }
     await close();
     const weight = resources.reduce((a, x) => a + x.bytes, 0);
-    const data = { metrics, resources, images, page: pageInfo };
+    const data = { metrics, resources, images, page: pageInfo, resilience: prof.lose ? { failed: lost, errors, bodyText: pageInfo.bodyText, hasH1: pageInfo.hasH1 } : null };
     const findings = perfFindings(data);
     const f1 = (n) => (n == null ? "n/a" : (n / 1000).toFixed(1) + "s");
     return { profile, findings, summary: { profile, lcp: f1(metrics.lcp), cls: metrics.cls, tbt: metrics.tbt, requests: resources.length, weight: weight >= 1048576 ? (weight / 1048576).toFixed(1) + " MB" : Math.round(weight / 1024) + " KB" }, metrics, weightBytes: weight, requests: resources.length };

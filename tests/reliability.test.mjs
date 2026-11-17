@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { redactUrl, redactSecrets, redactDeep, saveJson } from "../skills/ui-ux-glowup/scripts/lib/redact.mjs";
 import { compareVersions, checkNode, checkSkillVersion, formatDoctor } from "../skills/ui-ux-glowup/scripts/lib/doctor.mjs";
-import { backup, restore, list, stagedCheck, hook } from "../skills/ui-ux-glowup/scripts/safeguard.mjs";
+import { backup, restore, list, stagedCheck, hook, check } from "../skills/ui-ux-glowup/scripts/safeguard.mjs";
 
 const scripts = new URL("../skills/ui-ux-glowup/scripts/", import.meta.url).pathname;
 const g = (d, ...a) => execFileSync("git", a, { cwd: d, encoding: "utf8" }).trim();
@@ -114,4 +114,17 @@ test("verify check refuses a snapshot from another version, before running anyth
   assert.ok(Date.now() - t0 < 5000, "fails fast");
   const none = spawnSync("node", [join(scripts, "verify.mjs"), "check", join(d, "page.html"), "--dir", join(d, "nope")], { encoding: "utf8" });
   assert.match(none.stderr, /No snapshot/);
+});
+
+test(".glowup-safeguard-ignore skips the content scan of named paths, never the sensitive file names", () => {
+  const d = repo();
+  mkdirSync(join(d, "tests")); writeFileSync(join(d, "tests/fixture.js"), `const k = "${KEY}";\n`); writeFileSync(join(d, "app.js"), `const k = "${KEY}";\n`);
+  const rules = () => check(d).findings.filter((f) => f.rule === "secret-in-code").map((f) => f.file.split(":")[0]).sort();
+  assert.deepEqual(rules(), ["app.js", "tests/fixture.js"]);
+  writeFileSync(join(d, ".glowup-safeguard-ignore"), "# fake keys\ntests/\n");
+  assert.deepEqual(rules(), ["app.js"]);
+  writeFileSync(join(d, "tests/state.json"), "{}");
+  assert.ok(check(d).findings.some((f) => f.rule === "sensitive-not-ignored" && f.file === "tests/state.json"));
+  g(d, "add", "-f", "tests/fixture.js", "app.js"); g(d, "add", "-f", "tests/state.json");
+  assert.deepEqual(stagedCheck(d).findings.map((f) => f.rule).sort(), ["secret-staged", "sensitive-staged"]);
 });

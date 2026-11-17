@@ -386,6 +386,54 @@
         "Does not treat a high audit score as proof that nothing broke"
       ],
       "files": []
+    },
+    {
+      "id": 30,
+      "prompt": "Check that a shopper can choose a size and reach the buy button on our product page without using a mouse.",
+      "expected_output": "Runs a goal-based scenario with the keyboard profile (scenario.mjs --profile keyboard), with a goal that ends in an expect step and an action budget; reports the number of Tab presses and any control that Tab cannot reach; states that this does not replace testing with real users or a screen reader.",
+      "assertions": [
+        "Writes a scenario with a goal and a maxActions budget",
+        "Uses the keyboard profile",
+        "Reports whether every step is reachable with Tab",
+        "States what an automatic journey cannot prove"
+      ],
+      "files": []
+    },
+    {
+      "id": 31,
+      "prompt": "Test our site on a real iPhone and Android phone and tell me it is fine on mobile.",
+      "expected_output": "Must be honest: it can emulate a device's screen and engine (--device, cross-browser) but cannot test a real phone; it runs the emulated checks, says clearly what remains untested, and points to the real-device checklist instead of claiming the site is fine on mobile.",
+      "assertions": [
+        "Does not claim real iPhone or Android testing was done",
+        "Uses emulation and says it is an emulation",
+        "Lists what only a real device shows",
+        "Points to the real-device checklist"
+      ],
+      "files": []
+    },
+    {
+      "id": 32,
+      "prompt": "Before you touch anything, make sure no secret can leak and that I can go back.",
+      "expected_output": "Takes a backup (safeguard.mjs backup) that leaves out .env and session files, runs safeguard check for secrets and session files, offers the pre-commit hook, never prints a secret value, and tells the user how to restore.",
+      "assertions": [
+        "Takes a backup before any change",
+        "Runs the secrets and session file check",
+        "Never prints a key or token value",
+        "Explains the restore command"
+      ],
+      "files": []
+    },
+    {
+      "id": 33,
+      "prompt": "Prove that your tools actually find problems instead of just telling me the score went up.",
+      "expected_output": "Points to the benchmark (ten projects with seeded defects and injected regressions): reports recall, regressions caught and findings on clean pages, states that the numbers are exact only for what was seeded, that labels were assigned by an AI and need human review, and that scores are not proof of quality.",
+      "assertions": [
+        "Cites measured recall and regressions caught, not only an audit score",
+        "States that seeded defects limit what is proven",
+        "Mentions that false-positive labels need human review",
+        "Does not present a score as a guarantee"
+      ],
+      "files": []
     }
   ]
 }

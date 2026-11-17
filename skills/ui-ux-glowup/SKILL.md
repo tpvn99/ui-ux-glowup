@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.13.0
+  version: 1.14.0
 ---
 
 # UI/UX Glowup
@@ -24,7 +24,7 @@ You are a senior product designer who writes production code. Bring the user's i
 
 ## Pick the effort level first
 
-Match the work to the request; say which level in one line.
+Match the work to the request; say the level in one line.
 
 | Level | When | Do | Skip |
 |---|---|---|---|
@@ -37,7 +37,7 @@ Match the work to the request; say which level in one line.
 - **Load only the references the task needs** (table below), once.
 - **Examples**: one at most, only the section you need (`grep -n "<!--"`).
 - **Re-checks** cover only what changed (`--baseline`, `--selector`); look at an image once.
-- **Edit, don't rewrite.** Answers stay short.
+- **Edit, don't rewrite.** Short answers.
 - **No comments in the code you write**, and don't copy the examples' comments. Exception: a one-line *why* for a workaround.
 - **Stop** when the audit has no errors, every criterion is ≥ 4/5 and the screenshot is clean.
 
@@ -61,7 +61,7 @@ Match the work to the request; say which level in one line.
 | UX (main action, forms, states, nav, journey length) | `references/ux.md` |
 | Accessibility WCAG 2.2 AA: keyboard, focus, ARIA, reflow | `references/a11y.md` |
 | Performance: LCP, CLS, weight, images, scripts | `references/performance.md` |
-| Proving nothing broke; sizes, browsers, consistency | `references/testing.md` |
+| Proving nothing broke; goals, keyboard-only, devices, roles, visual diff | `references/testing.md` |
 | Score grid and what the 45 means, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
 | PDF: invoice, quote, report, CV, letter | `references/pdf.md` + a template in `assets/pdf/` |
 | Working code | `assets/examples/README.md` → one example |
@@ -70,7 +70,7 @@ Match the work to the request; say which level in one line.
 
 **Context first.** `scripts/stack.mjs` names the stack and where its tokens live (`frameworks.md`). Reuse the project's design system and libraries; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → `safeguard.mjs check` + `backup` first, then change the real components (`implement.md` §5: ask before structural changes). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
 
-**Login pages**: `scripts/login.mjs <url>` (the user logs in), then `--storage-state state.json` on every script, or paste `scripts/audit.browser.js` in the logged-in tab. Never ask for passwords.
+**Login pages**: `scripts/login.mjs <url>` (the user logs in), then `--storage-state state.json` on every script. Never ask for passwords.
 
 ### 0. Intake (Standard, Full)
 Ask the open questions from `intake.md` **once, in one message**, multiple choice, pre-filled with what you know: project type, goal, **modernity level** (1 Classic · 2 Modern *default* · 3 Bold), assets and icons, dark mode/charts, must-keep, **brand choices to keep**, audience and search phrases. Write a 4–6 line brief and continue; missing answers → defaults, stated in the brief. Any redesign: `scripts/verify.mjs snapshot <url> --dir .glowup/before` (audit, controls, UX, a11y, perf, inventory in one go).
@@ -101,7 +101,7 @@ node <skill-dir>/scripts/audit.mjs page.html --baseline before.json
 node <skill-dir>/scripts/brand-guard.mjs     # code mode: brand colors, fonts, UI libraries untouched
 node <skill-dir>/scripts/verify.mjs check page.html --dir .glowup/before --out report.md   # controls, inventory, UX, a11y, perf
 ```
-Hunt for bad line breaks, misalignment, uneven spacing, overlaps, a mobile layout that merely stacks. No code execution: re-read the code at 390px and 1440px.
+Hunt for bad line breaks, misalignment, uneven spacing, overlaps, a mobile layout that merely stacks. No code execution: re-read the code at 390 and 1440px.
 
 ### 5. Deliver
 1. The code (or the diff in code mode).
@@ -121,7 +121,7 @@ Hunt for bad line breaks, misalignment, uneven spacing, overlaps, a mobile layou
 
 ## Scripts
 
-Need Playwright (`npm i -D playwright && npx playwright install chromium`). Page scripts accept `--storage-state`, `--wait-for "<css>"`, `--no-dismiss`. Besides the ones in the workflow: `ux`, `a11y`, `perf`, `responsive`, `consistency`, `cross-browser`, `smoke`, `scenario`, `safeguard`, `brand-guard`, `stack`, `locate`, `pdf`, `site-fonts`, `find-icons`, `make-favicon` — usage in `references/scripts.md`.
+Need Playwright and Node 20+ (`npm i -D playwright && npx playwright install chromium`); `doctor.mjs` lists what is missing. Page scripts accept `--storage-state`, `--wait-for "<css>"`, `--no-dismiss`. Besides the ones in the workflow: `ux`, `a11y`, `perf`, `responsive`, `consistency`, `cross-browser`, `visual-diff`, `roles`, `smoke`, `scenario`, `safeguard`, `brand-guard`, `stack`, `doctor`, `locate`, `pdf`, `site-fonts`, `find-icons`, `make-favicon` — usage in `references/scripts.md`.
 
 ## Avoid by default (unless listed in brand choices)
 

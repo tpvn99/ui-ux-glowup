@@ -1,0 +1,9 @@
+{ "scenarios": [
+  { "name": "An admin turns off the weekly summary email",
+    "goal": "An admin finds the weekly summary setting and turns it off",
+    "maxActions": 1,
+    "steps": [
+      { "uncheck": "label:has-text('Weekly summary') input" },
+      { "expect": { "unchecked": "label:has-text('Weekly summary') input" } }
+    ] }
+] }

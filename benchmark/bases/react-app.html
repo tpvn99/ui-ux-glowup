@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team directory — find who to ask | Northwind</title>
+<meta name="description" content="Search the Northwind team by name or role, and keep a short list of the people you work with most. Updated whenever someone joins or moves.">
+<link rel="canonical" href="https://example.com/directory">
+<meta property="og:title" content="Team directory — Northwind">
+<meta property="og:description" content="Search the Northwind team by name or role.">
+<meta property="og:image" content="https://example.com/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%230f766e%27/%3E%3C/svg%3E">
+<style>
+:root{--ink:#16202a;--muted:#4b5b68;--line:#d5dce2;--accent:#0f766e}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#f7f9fa}
+.wrap{max-width:880px;margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-999px;top:8px}.skip:focus{left:8px;background:#fff;padding:8px 12px;z-index:10}
+header.top{background:#fff;border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;min-height:64px}
+header.top a{color:var(--ink);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;min-height:44px}
+h1{font-size:2.25rem;line-height:1.2;margin:40px 0 8px}
+.lead{color:var(--muted);max-width:60ch;margin:0 0 24px}
+.tools{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin-bottom:16px}
+.tools div{display:flex;flex-direction:column;gap:4px}.tools .grow{flex:1 1 220px}
+label{font-weight:600;font-size:15px}
+input,select{font:inherit;min-height:44px;padding:8px 12px;border:1px solid #7b8794;border-radius:8px;background:#fff;color:inherit;width:100%}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.status{color:var(--muted);margin:8px 0 16px}
+ul.cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.card h2{font-size:1.1rem;margin:0}.card p{margin:0;color:var(--muted)}
+.fav{margin-top:12px;align-self:flex-start;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--accent);background:#fff;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
+.fav[aria-pressed="true"]{background:var(--accent);color:#fff}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:32px;text-align:center}
+.empty button{margin-top:12px;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:#fff;font:inherit;cursor:pointer}
+footer{padding:40px 0;color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><a href="/">Northwind</a><nav aria-label="Primary"><a href="/directory">Directory</a></nav></div></header>
+<main id="main" class="wrap">
+  <h1>Team directory</h1>
+  <p class="lead">Find the right person to ask. Mark the ones you work with most and they stay at the top of your list on this device.</p>
+  <div id="root"><p class="status">Loading the directory…</p></div>
+  <noscript><p>The directory needs JavaScript to search and filter.</p></noscript>
+</main>
+<footer><div class="wrap">© 2026 Northwind</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin defer></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin defer></script>
+<script defer>
+window.addEventListener("DOMContentLoaded", function () {
+  var h = React.createElement;
+  var PEOPLE = [
+    { id: 1, name: "Amara Nwosu", role: "Design", desk: "Leeds" }, { id: 2, name: "Ben Carter", role: "Engineering", desk: "Remote" },
+    { id: 3, name: "Chen Wei", role: "Engineering", desk: "Leeds" }, { id: 4, name: "Dina Haddad", role: "Support", desk: "Remote" },
+    { id: 5, name: "Elif Kaya", role: "Design", desk: "Remote" }, { id: 6, name: "Farid Rahimi", role: "Finance", desk: "Leeds" }
+  ];
+  function App() {
+    var q = React.useState(""), role = React.useState(""), favs = React.useState({});
+    var term = q[0].trim().toLowerCase();
+    var shown = PEOPLE.filter(function (p) { return (!term || p.name.toLowerCase().indexOf(term) > -1 || p.role.toLowerCase().indexOf(term) > -1) && (!role[0] || p.role === role[0]); })
+      .sort(function (a, b) { return (favs[0][b.id] ? 1 : 0) - (favs[0][a.id] ? 1 : 0) || a.name.localeCompare(b.name); });
+    var roles = Array.from(new Set(PEOPLE.map(function (p) { return p.role; })));
+    return h(React.Fragment, null,
+      h("form", { className: "tools", role: "search", "aria-label": "Filter the directory", onSubmit: function (e) { e.preventDefault(); } },
+        h("div", { className: "grow" }, h("label", { htmlFor: "q" }, "Search"), h("input", { id: "q", type: "search", autoComplete: "off", placeholder: "Name or role", value: q[0], onChange: function (e) { q[1](e.target.value); } })),
+        h("div", null, h("label", { htmlFor: "role" }, "Role"), h("select", { id: "role", value: role[0], onChange: function (e) { role[1](e.target.value); } }, h("option", { value: "" }, "All"), roles.map(function (r) { return h("option", { key: r, value: r }, r); })))),
+      h("p", { className: "status", role: "status" }, shown.length ? shown.length + (shown.length === 1 ? " person" : " people") : "No one matches"),
+      shown.length
+        ? h("ul", { className: "cards" }, shown.map(function (p) {
+            return h("li", { key: p.id, className: "card" }, h("h2", null, p.name), h("p", null, p.role + " · " + p.desk),
+              h("button", { type: "button", className: "fav", "aria-pressed": !!favs[0][p.id], onClick: function () { var n = Object.assign({}, favs[0]); n[p.id] = !n[p.id]; favs[1](n); } }, favs[0][p.id] ? "Remove " + p.name.split(" ")[0] + " from my list" : "Add " + p.name.split(" ")[0] + " to my list"));
+          }))
+        : h("div", { className: "empty" }, h("h2", null, "No one matches these filters"), h("p", null, "Check the spelling, or clear the filters to see the whole team."),
+            h("button", { type: "button", onClick: function () { q[1](""); role[1](""); } }, "Clear filters")));
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(h(App));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Task board — plan the week, tick it off | Tidyline</title>
+<meta name="description" content="A small task board: add what needs doing, filter by open or done, and see how much of the week is left. Your list stays in this browser.">
+<link rel="canonical" href="https://example.com/board">
+<meta property="og:title" content="Task board — Tidyline">
+<meta property="og:description" content="Add tasks, filter open or done, and see what is left.">
+<meta property="og:image" content="https://example.com/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%237c3aed%27/%3E%3C/svg%3E">
+<style>
+:root{--ink:#1c1b29;--muted:#555266;--line:#dcd9e6;--accent:#6d28d9}
+*{box-sizing:border-box}
+[v-cloak]{display:none}
+body{margin:0;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#faf9fd}
+.wrap{max-width:720px;margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-999px;top:8px}.skip:focus{left:8px;background:#fff;padding:8px 12px;z-index:10}
+header.top{background:#fff;border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;min-height:64px}
+header.top a{color:var(--ink);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;min-height:44px}
+h1{font-size:2.25rem;line-height:1.2;margin:40px 0 8px}
+.lead{color:var(--muted);max-width:56ch;margin:0 0 24px}
+form.add{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:24px}
+form.add div{flex:1 1 240px;display:flex;flex-direction:column;gap:4px}
+label{font-weight:600;font-size:15px}
+input[type=text]{font:inherit;min-height:44px;padding:8px 12px;border:1px solid #7b7790;border-radius:8px;width:100%;background:#fff;color:inherit}
+button{font:inherit;cursor:pointer}
+.primary{min-height:44px;padding:0 20px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.filters{display:flex;gap:8px;margin:0 0 8px;padding:0;border:0}
+.filters legend{position:absolute;left:-999px}
+.filters button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.status{color:var(--muted);margin:8px 0 16px}
+ul.tasks{list-style:none;margin:0;padding:0;background:#fff;border:1px solid var(--line);border-radius:12px}
+ul.tasks li{display:flex;align-items:center;gap:12px;padding:4px 16px;border-top:1px solid var(--line)}
+ul.tasks li:first-child{border-top:0}
+ul.tasks label{display:flex;align-items:center;gap:12px;min-height:44px;flex:1;font-weight:400;font-size:16px;cursor:pointer}
+ul.tasks input[type=checkbox]{flex:none;width:24px;height:24px;accent-color:var(--accent)}
+.done span{text-decoration:line-through;color:var(--muted)}
+.remove{min-height:44px;padding:0 12px;border:0;background:none;color:#8a1c1c;text-decoration:underline}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:32px;text-align:center}
+footer{padding:40px 0;color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><a href="/">Tidyline</a><nav aria-label="Primary"><a href="/board">Board</a></nav></div></header>
+<main id="main" class="wrap">
+  <h1>Task board</h1>
+  <p class="lead">Add what needs doing this week and tick it off. Your list stays in this browser.</p>
+  <div id="app" v-cloak>
+    <form class="add" @submit.prevent="add" aria-label="Add a task">
+      <div><label for="new-task">New task</label><input id="new-task" type="text" v-model="draft" autocomplete="off" placeholder="e.g. Send the quote to Dunmore Studio" required></div>
+      <button class="primary" type="submit">Add task</button>
+    </form>
+    <fieldset class="filters"><legend>Show</legend>
+      <button v-for="f in filters" :key="f" type="button" :aria-pressed="filter === f" @click="filter = f">{{ f }}</button>
+    </fieldset>
+    <p class="status" role="status">{{ remaining }} of {{ tasks.length }} left</p>
+    <ul class="tasks" v-if="shown.length">
+      <li v-for="t in shown" :key="t.id" :class="{ done: t.done }">
+        <label><input type="checkbox" v-model="t.done"><span>{{ t.title }}</span></label>
+        <button class="remove" type="button" @click="remove(t.id)" :aria-label="'Remove ' + t.title">Remove</button>
+      </li>
+    </ul>
+    <div class="empty" v-else><h2>Nothing here</h2><p>Add a task above, or switch the filter to see the others.</p></div>
+  </div>
+  <noscript><p>The board needs JavaScript to add and tick tasks.</p></noscript>
+</main>
+<footer><div class="wrap">© 2026 Tidyline</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/vue@3.4.38/dist/vue.global.prod.js" defer></script>
+<script defer>
+window.addEventListener("DOMContentLoaded", function () {
+  Vue.createApp({
+    data: function () { return { draft: "", filter: "All", filters: ["All", "Open", "Done"], next: 4, tasks: [{ id: 1, title: "Send the quote to Dunmore Studio", done: false }, { id: 2, title: "Book the Leeds workshop room", done: true }, { id: 3, title: "Review the pricing page copy", done: false }] }; },
+    computed: {
+      shown: function () { var f = this.filter; return this.tasks.filter(function (t) { return f === "All" || (f === "Done" ? t.done : !t.done); }); },
+      remaining: function () { return this.tasks.filter(function (t) { return !t.done; }).length; }
+    },
+    methods: {
+      add: function () { var t = this.draft.trim(); if (!t) return; this.tasks.push({ id: this.next++, title: t, done: false }); this.draft = ""; },
+      remove: function (id) { this.tasks = this.tasks.filter(function (t) { return t.id !== id; }); }
+    }
+  }).mount("#app");
+});
+</script>
+</body>
+</html>

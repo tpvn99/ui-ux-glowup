@@ -61,3 +61,28 @@ test("smoke on a real page detects a redesign that broke the menu, the form and 
   for (const x of ["control-missing", "control-broken", "validation-lost", "new-js-error"]) assert.ok(r.includes(x), x);
   assert.deepEqual(diffSmoke(before, before), []);
 });
+
+test("errors thrown by another page (a clicked link leads to the browser's directory listing) are not the tested page's", { skip }, async () => {
+  const { mkdtempSync, writeFileSync } = await import("node:fs"); const { join } = await import("node:path"); const { tmpdir } = await import("node:os");
+  const d = mkdtempSync(join(tmpdir(), "glowup-nav-"));
+  writeFileSync(join(d, "page.html"), `<!doctype html><html lang="en"><head><title>t</title></head><body><a href="file://${d}/">Browse the folder</a><a href="gone.html">Missing</a><button onclick="void 0">Fine</button></body></html>`);
+  const s = await smoke(join(d, "page.html"));
+  assert.deepEqual(s.errors, [], "a directory listing's own script errors must not be blamed on the page");
+  assert.ok(s.results.some((c) => c.label === "Browse the folder"));
+});
+
+test("a skip link parked off-screen is skipped, not reported as a dead control", { skip }, async () => {
+  const { mkdtempSync, writeFileSync } = await import("node:fs"); const { join } = await import("node:path"); const { tmpdir } = await import("node:os");
+  const d = mkdtempSync(join(tmpdir(), "glowup-skip-"));
+  writeFileSync(join(d, "p.html"), '<!doctype html><html lang="en"><head><title>t</title><style>.skip{position:absolute;left:-999px}.skip:focus{left:8px}</style></head><body><a class="skip" href="#m">Skip to content</a><main id="m"><button onclick="document.body.append(document.createElement(&quot;hr&quot;))">Real</button></main></body></html>');
+  const s = await smoke(join(d, "p.html"));
+  assert.equal(s.results.find((c) => c.label === "Skip to content").skipped, true);
+  assert.deepEqual(s.results.filter((c) => c.effect === "none" && !c.skipped && !c.disabled), []);
+});
+
+test("an already-active toggle (aria-pressed, aria-selected, aria-current) that does nothing when clicked again is not dead", async () => {
+  const { smokeFindings } = await import("../skills/ui-ux-glowup/scripts/lib/smoke.mjs");
+  const snap = (active) => ({ results: [{ key: "k", label: "All", tag: "button", effect: "none", active }], forms: [], errors: [], failedRequests: [] });
+  assert.deepEqual(smokeFindings(snap(true)).map((f) => f.rule), []);
+  assert.deepEqual(smokeFindings(snap(false)).map((f) => f.rule), ["dead-control"]);
+});

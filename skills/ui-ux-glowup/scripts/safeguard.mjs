@@ -104,14 +104,23 @@ export function restore(dir, idArg, { clean = false } = {}) {
 
 const HOOK_MARK = "# glowup-safeguard-hook";
 
+/** Paths (prefixes, one per line in .glowup-safeguard-ignore) whose CONTENT is not scanned for secrets, e.g. tests with fake keys. Sensitive file names are always reported. */
+export function scanIgnore(root) {
+  const f = resolve(root, ".glowup-safeguard-ignore");
+  if (!existsSync(f)) return () => false;
+  const prefixes = readFileSync(f, "utf8").split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
+  return (path) => prefixes.some((p) => path === p || path.startsWith(p.endsWith("/") ? p : p + "/") || path.startsWith(p));
+}
+
 /** Secrets and sensitive files in what is about to be committed (git index). */
 export function stagedCheck(dir) {
   const root = git(dir, ["rev-parse", "--show-toplevel"]).trim();
   const names = git(root, ["diff", "--cached", "--name-only", "--diff-filter=ACM", "-z"]).split("\0").filter(Boolean);
+  const skipScan = scanIgnore(root);
   const findings = [];
   for (const f of names) {
     if (isSensitivePath(f)) { findings.push({ rule: "sensitive-staged", file: f, message: "Sensitive file staged for commit.", fix: `git restore --staged "${f}" and add it to .gitignore.` }); continue; }
-    if (/\.(png|jpe?g|webp|gif|ico|pdf|woff2?|ttf|lock|svg)$/i.test(f)) continue;
+    if (/\.(png|jpe?g|webp|gif|ico|pdf|woff2?|ttf|lock|svg)$/i.test(f) || skipScan(f)) continue;
     let text = "";
     try { text = git(root, ["show", `:${f}`]); } catch { continue; }
     if (text.length > 1_000_000) continue;
@@ -144,7 +153,9 @@ export function check(dir) {
   for (const f of tracked.filter(isSensitivePath)) add("error", "sensitive-tracked", f, "Sensitive file is committed to git.", `git rm --cached "${f}", add it to .gitignore, and rotate what it contained (history keeps it).`);
   for (const f of untracked.filter(isSensitivePath)) add("error", "sensitive-not-ignored", f, "Sensitive file would be added by `git add .`.", `Add "${f}" to .gitignore.`);
   const scan = [...new Set([...changed, ...untracked, ...tracked.filter((f) => !/\.(png|jpe?g|webp|gif|ico|pdf|woff2?|ttf|lock|svg)$/i.test(f))])].slice(0, 2000);
+  const skipScan = scanIgnore(root);
   for (const f of scan) {
+    if (skipScan(f)) continue;
     const p = join(root, f);
     if (!existsSync(p) || statSync(p).size > 1_000_000) continue;
     for (const s of scanSecrets(readFileSync(p, "utf8"))) add("error", "secret-in-code", `${f}:${s.line}`, `${s.kind} in source (${s.preview}).`, "Move it to an environment variable, keep it out of git, and rotate it.");

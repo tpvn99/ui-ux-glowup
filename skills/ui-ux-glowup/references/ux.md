@@ -22,6 +22,21 @@ Read-only. Each finding has a rule id, the offending selectors and a concrete fi
 | `nav-too-many` | warning | 9+ top-level links → 5–7 groups |
 | `no-home-link` | warning | No way back → logo links to `/` |
 
+## By kind of site
+
+`ux.mjs` infers what the page is (or take `--context saas|ecommerce|showcase|dashboard|content|app`) and adds the checks that matter there. Every finding carries an **impact** (high, medium, low) and the list is ordered by it.
+
+| Context | Extra rules (impact) |
+|---|---|
+| `ecommerce` | `no-buy-action` (high), `buy-no-price` (high), `primary-action-buried` (high), `no-shipping-info` (medium) |
+| `saas` | `no-signup-action` (high), `primary-action-buried` (high), `no-pricing-link` (medium), `no-login-link` (low) |
+| `showcase` | `no-contact-method` (high), `no-hours-or-address` (medium) |
+| `dashboard`, `app` | `table-no-search` (medium), `table-no-sort` (low), `table-no-count` (low) for tables of 8+ rows |
+| `content` | `no-date` (medium), `no-author` (low); no main action is required on a reading page |
+| any | `radio-group-no-legend` (medium), `invalid-not-described` (high); with `--links`: `broken-internal-link` (high) |
+
+A problem people will hit (UX, accessibility, functionality) always comes before a matter of taste (an `ai-*` pattern, a radius, a shadow): `verify.mjs` marks those *style, optional*.
+
 ## What the script cannot see — check by hand
 
 - **Journey length**: `scenario.mjs` prints the actions (clicks, fills, selects, presses) per scenario and flags more than 6. Count from landing to goal for sign-up, purchase, contact; each field and each page load is a step to justify.

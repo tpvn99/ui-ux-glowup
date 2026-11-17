@@ -47,9 +47,13 @@ Open `report.html` in a browser. An [example report](example-report.md) shows wh
 
 The agent first saves a backup, asks only the questions it needs, makes the change, and runs the checks again. You receive the code, a before/after comparison and a **Directions taken** recap. If you dislike the result: `node <skill-dir>/scripts/safeguard.mjs restore latest --yes` puts everything back.
 
+## Keeping it up to date
+
+`node <skill-dir>/scripts/doctor.mjs --online` says whether a newer release exists and which command updates it (see [installing for each agent](install-by-agent.md)).
+
 ## 6. Where to go next
 
 - [By type of project](by-project-type.md): which prompt and which commands for a landing page, an app, a shop, WordPress…
 - [Levels, modes and limits](levels-and-limits.md): audit only, recommend, apply; light to complete; what is supported and what is not.
 - [Tutorials](tutorials.md): three walk-throughs you can run in this repository.
-- [Troubleshooting](troubleshooting.md): when something does not work.
+- [FAQ](faq.md), [Troubleshooting](troubleshooting.md), [Installing for each agent](install-by-agent.md), [Real device checklist](real-device-checklist.md), [Benchmark](benchmark.md).

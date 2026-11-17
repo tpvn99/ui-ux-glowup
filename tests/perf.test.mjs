@@ -1,6 +1,7 @@
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
 import { deflateSync } from "node:zlib";
 import { randomBytes } from "node:crypto";
 import { perfFindings } from "../skills/ui-ux-glowup/scripts/lib/perf.mjs";
@@ -31,10 +32,11 @@ const pages = {
 <style>@font-face{font-family:X;src:url(/x.woff2);font-display:swap}</style></head><body>
 <img src="/small.png" width="300" height="150" fetchpriority="high" alt="hero"><h1>Hello</h1></body></html>`,
 };
-const assets = { "/blocking.js": ["text/javascript", Buffer.from("window.x=1")], "/hero.png": ["image/png", png(2400, 1200)], "/noisy.png": ["image/png", png(500, 330, true)], "/small.png": ["image/png", png(600, 300)] };
+const assets = { ...Object.fromEntries(Array.from({ length: 40 }, (_, i) => [`/lib-${i}.js`, ["text/javascript", Buffer.from(`window.__${i}={start(){}}`)]])),  "/blocking.js": ["text/javascript", Buffer.from("window.x=1")], "/hero.png": ["image/png", png(2400, 1200)], "/noisy.png": ["image/png", png(500, 330, true)], "/small.png": ["image/png", png(600, 300)] };
 for (let i = 1; i <= 4; i++) assets[`/s${i}.png`] = ["image/png", png(200, 120)];
 const server = createServer((req, res) => {
   const p = req.url.split("?")[0];
+  if (p === "/fragile.html") { res.setHeader("content-type", "text/html"); return res.end(readFileSync(new URL("./fixtures/fragile.html", import.meta.url))); }
   if (pages[p]) { res.setHeader("content-type", "text/html"); return res.end(pages[p]); }
   if (assets[p]) { res.setHeader("content-type", assets[p][0]); return res.end(assets[p][1]); }
   res.statusCode = 404; res.end();
@@ -92,4 +94,27 @@ test("perf.mjs measures a real page and finds the causes, and passes a clean one
   assert.ok(bad.requests >= 8 && bad.weightBytes > 300 * 1024);
   const good = await perf(`${base}/good.html`, { profile: "fast" });
   assert.deepEqual(rules(good.findings), [], JSON.stringify(good.findings));
+});
+
+test("animations: layout-property animations and swarms are reported, a compositor-only animation is not", () => {
+  const page = (o) => ({ blockingScripts: [], fontFaces: 0, fontsNoDisplay: 0, costlyEffects: 0, viewportH: 844, runningAnimations: 1, layoutAnims: [], bodyText: 500, hasH1: true, ...o });
+  assert.deepEqual(rules(perfFindings(D({ page: page({ layoutAnims: ["div#bar animates width"], runningAnimations: 15 }) }))), ["animates-layout", "many-animations"]);
+  assert.deepEqual(rules(perfFindings(D({ page: page({}) }))), []);
+});
+
+test("resilience: a page that throws or empties when requests are lost is reported", () => {
+  const page = { blockingScripts: [], fontFaces: 0, fontsNoDisplay: 0, costlyEffects: 0, viewportH: 844, runningAnimations: 0, layoutAnims: [], bodyText: 500, hasH1: true };
+  assert.deepEqual(rules(perfFindings({ ...D(), page, resilience: { failed: 3, errors: 2, bodyText: 500, hasH1: true } })), ["breaks-on-failed-requests"]);
+  assert.deepEqual(rules(perfFindings({ ...D(), page, resilience: { failed: 3, errors: 0, bodyText: 80, hasH1: true } })), ["breaks-on-failed-requests"]);
+  assert.deepEqual(rules(perfFindings({ ...D(), page, resilience: { failed: 3, errors: 0, bodyText: 500, hasH1: true } })), []);
+});
+
+test("real pages: layout animation found, calm animation clean; the flaky profile loses the same requests every run and flags a fragile page", { skip }, async () => {
+  const bad = await perf(new URL("./fixtures/anim-bad.html", import.meta.url).pathname, { profile: "fast" });
+  assert.ok(rules(bad.findings).includes("animates-layout") && rules(bad.findings).includes("many-animations"), rules(bad.findings).join());
+  assert.deepEqual(rules((await perf(new URL("./fixtures/anim-good.html", import.meta.url).pathname, { profile: "fast" })).findings), []);
+  const runs = [];
+  for (let i = 0; i < 2; i++) runs.push(await perf(`${base}/fragile.html`, { profile: "flaky" }));
+  assert.ok(runs.every((r) => rules(r.findings).includes("breaks-on-failed-requests")), runs.map((r) => rules(r.findings).join()).join(" | "));
+  assert.equal(runs[0].requests, runs[1].requests, "the same requests are lost on every run");
 });

@@ -1,0 +1,10 @@
+{ "scenarios": [
+  { "name": "A visitor finds a product",
+    "goal": "A visitor searches for a product by name and reaches its page",
+    "maxActions": 3,
+    "steps": [
+      { "fill": ["REPLACE: search field selector, e.g. input[type=search]", "REPLACE: a product name that exists"] },
+      { "click": "REPLACE: first result link, e.g. [data-testid=result] a >> nth=0" },
+      { "expect": { "visible": "REPLACE: something only the product page shows, e.g. button:has-text('Add to cart')" } }
+    ] }
+] }

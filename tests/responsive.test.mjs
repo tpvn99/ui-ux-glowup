@@ -42,3 +42,13 @@ test("responsive.mjs finds the problems of a bad page, passes a good one, and th
   const rtl = await responsive(fixture("resp-good.html"), { widths: [390], stress: "rtl" });
   assert.deepEqual(rtl.findings.filter((f) => f.rule === "rtl-not-applied"), []);
 });
+
+test("a visually hidden radio or checkbox is measured through its label, not reported as a tiny target", { skip }, async () => {
+  const { mkdtempSync, writeFileSync } = await import("node:fs"); const { join } = await import("node:path"); const { tmpdir } = await import("node:os");
+  const d = mkdtempSync(join(tmpdir(), "glowup-sr-"));
+  const hidden = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)';
+  writeFileSync(join(d, "ok.html"), `<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>t</title></head><body><label style="display:block;padding:14px 20px"><input type="radio" name="s" style="${hidden}"> Small</label></body></html>`);
+  writeFileSync(join(d, "bad.html"), `<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>t</title></head><body><input type="checkbox" style="width:14px;height:14px"></body></html>`);
+  assert.equal((await responsive(join(d, "ok.html"), { widths: [390] })).findings.some((f) => f.rule === "target-small"), false);
+  assert.equal((await responsive(join(d, "bad.html"), { widths: [390] })).findings.some((f) => f.rule === "target-small"), true);
+});

@@ -24,8 +24,9 @@ ui-ux-glowup/
 │       ├── references/        # Loaded on demand: intake, direction, sites, sectors, sections, craft, visuals, motion, mobile, seo-readability, microcopy, icons, anti-ai, pdf, implement, frameworks, testing, ux, a11y, performance, modes, scripts, audit, checklist
 │       ├── assets/examples/   # Tested Tailwind v4 examples + React dashboard
 │       ├── assets/pdf/        # Print-ready PDF templates (plain CSS)
-│       ├── scripts/           # audit, audit-site, verify, smoke, scenario, ux, a11y, perf, responsive, consistency, cross-browser, brand-guard, safeguard, stack, inventory, locate, extract-tokens, screenshot, compare, login, find-icons, make-favicon, pdf, site-fonts (+ lib/, audit.browser.js); the table of scripts lives in references/scripts.md, not in SKILL.md
+│       ├── scripts/           # audit, audit-site, verify, doctor, roles, visual-diff, smoke, scenario, ux, a11y, perf, responsive, consistency, cross-browser, brand-guard, safeguard, stack, inventory, locate, extract-tokens, screenshot, compare, login, find-icons, make-favicon, pdf, site-fonts (+ lib/, audit.browser.js); the table of scripts lives in references/scripts.md, not in SKILL.md
 │       └── evals/             # evals.json
+├── benchmark/                 # ten projects with seeded defects and regressions (run.mjs, RESULTS.md, baseline.json, labels.json)
 ├── tests/                     # node:test suite + fixtures
 ├── docs/                      # before-after.png, getting-started, by-project-type, levels-and-limits, tutorials, troubleshooting, example-report (tutorial commands must run as written)
 ├── package.json               # Dev deps (playwright) and npm scripts
@@ -118,6 +119,7 @@ skills/skill-name/
 - Every HTML example has full SEO head tags (title 30–60 chars, description, canonical, Open Graph, favicon) and must pass the audit's mobile, SEO and `ai-*` rules.
 - Every delivery in the workflow ends with the "Directions taken" recap — keep it in `SKILL.md` when editing the workflow.
 - **Every script**: has an `isMain` guard (symlink-safe), a `Usage:` line, read-only behaviour unless it says otherwise, exit 1 on errors, `--json` output when it measures something, and tests with a good and a bad fixture. A new check goes into `verify.mjs` when it belongs in a before/after report.
+- **Benchmark**: a change to the scripts or the examples must keep `node benchmark/run.mjs --check` green (recall, regressions caught, no new error or false positive on clean pages). A deliberate improvement updates `baseline.json` in the same PR. Findings on clean pages are labelled in `labels.json`.
 - **Token budget**: `SKILL.md` stays under ~10 KB and the description under ~500 characters (it is loaded in every session). New detail goes in a reference file listed in the "Load on demand" table, never in `SKILL.md`. Script output must stay compact (cap listed items, offer `--brief`/`--baseline`-style modes).
 - PDF templates must print with `scripts/pdf.mjs` and report ✓: static fonts only, every character covered, no blank or near-empty page. All IDs (SIREN, VAT, IBAN) are fictional placeholders.
 - Never reproduce a reference site's copy, logos or illustrations: borrow mechanics only.

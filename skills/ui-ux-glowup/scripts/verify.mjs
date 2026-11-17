@@ -24,6 +24,7 @@ import { inventory } from "./inventory.mjs";
 import { runScenarios } from "./scenario.mjs";
 import { buildReport, toMarkdown, toHtml, summaryLine } from "./lib/verify.mjs";
 import { redactDeep, redactText } from "./lib/redact.mjs";
+import { captureShots, compareShots } from "./visual-diff.mjs";
 
 export const SNAPSHOT_SCHEMA = 1;
 
@@ -36,6 +37,7 @@ export async function collect(target, { scenarios = null, fast = false, ...optio
   snap.smoke = await smoke(target, options);
   snap.smokeFindings = smokeFindings(snap.smoke);
   snap.ux = await ux(target, options);
+  snap.ux = { context: snap.ux.context, findings: [...snap.ux.findings] };
   snap.a11y = await a11y(target, options);
   snap.inventory = await inventory(target, options);
   if (scenarios) snap.scenarios = await runScenarios(target, scenarios, options);
@@ -76,9 +78,19 @@ if (isMain(import.meta.url)) {
     const snap = redactDeep(await collect(target, options));
     if (cmd === "snapshot") {
       mkdirSync(dir, { recursive: true });
+      if (!flags.fast) {
+        const shots = await captureShots(target, [390, 1440], options);
+        snap.shots = {};
+        for (const [w, s] of Object.entries(shots)) { writeFileSync(join(dir, `before-${w}.png`), s.png); snap.shots[w] = { height: s.height, file: `before-${w}.png` }; }
+      }
       writeFileSync(join(dir, "snapshot.json"), JSON.stringify(snap));
       console.log(`Snapshot saved in ${dir}/snapshot.json (${snap.audit.total}/${snap.audit.max} audit, ${snap.smoke.results.length} controls, ${snap.inventory.navigation.length} nav links${snap.scenarios ? `, ${snap.scenarios.results.length} scenarios` : ""}). Make the change, then: node verify.mjs check ${target} --dir ${dir}${scenarios ? " --scenarios " + flags.scenarios : ""} --out report.md`);
       process.exit(0);
+    }
+    if (before?.shots && !flags.fast) {
+      const saved = {};
+      for (const [w, s] of Object.entries(before.shots)) { try { saved[w] = { png: readFileSync(join(dir, s.file)), height: s.height }; } catch {} }
+      if (Object.keys(saved).length) snap.visual = await compareShots(saved, target, { options });
     }
     const report = buildReport({ target, date: snap.date, before, after: snap });
     console.log(summaryLine(report));

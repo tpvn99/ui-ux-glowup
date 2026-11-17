@@ -10,7 +10,7 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { VIEWPORTS, ENGINES, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, ENGINES, loadPlaywright, launchBrowser, trackPageErrors, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { saveJson } from "./lib/redact.mjs";
 import { collectLayout, crossFindings, formatCross } from "./lib/crossbrowser.mjs";
 
@@ -35,7 +35,7 @@ export async function crossBrowser(target, { engines = ENGINES, out = "shots", r
     try {
       for (const vp of ["desktop", "mobile"]) {
         const errors = [];
-        const { page, close } = await openPage(browser, url, VIEWPORTS[vp], { route, ...options, onPage: (p) => p.on("pageerror", (e) => errors.push(String(e.message).slice(0, 120))) });
+        const { page, close } = await openPage(browser, url, VIEWPORTS[vp], { route, ...options, onPage: (p) => trackPageErrors(p, url, (m) => errors.push(m)) });
         const layout = await page.evaluate(collectLayout);
         const file = join(out, `${name}-${engine}-${vp}.png`);
         await page.screenshot({ path: file, fullPage: true }).catch(() => {});

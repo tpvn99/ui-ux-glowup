@@ -9,7 +9,7 @@
 //   Options: --max 40 (controls clicked) · --storage-state state.json · --wait-for "<css>"
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, trackPageErrors, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { saveJson } from "./lib/redact.mjs";
 import { collectControls, classifyEffect, unsafeLabel, smokeFindings, diffSmoke, formatSmoke } from "./lib/smoke.mjs";
 
@@ -36,7 +36,7 @@ export async function smoke(target, { route, max = 40, viewport = "desktop", ...
   const errors = new Set();
   const failedRequests = new Set();
   const hook = (page) => {
-    page.on("pageerror", (e) => errors.add(String(e.message).slice(0, 120)));
+    trackPageErrors(page, url, (m) => errors.add(m));
     page.on("response", (r) => {
       if (r.status() >= 400 && new URL(r.url()).origin === new URL(url).origin) failedRequests.add(`${r.status()} ${new URL(r.url()).pathname}`);
     });

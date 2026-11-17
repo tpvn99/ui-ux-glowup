@@ -23,7 +23,7 @@ export function collectControls() {
     seen.set(key, n);
     if (n > 1) key += "#" + n;
     const rect = el.getBoundingClientRect();
-    const offscreen = rect.width <= 2 || rect.height <= 2;
+    const offscreen = rect.width <= 2 || rect.height <= 2 || rect.right <= 0 || rect.left >= innerWidth;
     const inForm = !!el.closest("form");
     const isSubmit = (tag === "button" && (el.type || "submit") === "submit" && inForm) || (tag === "input" && el.type === "submit");
     const external = tag === "a" && el.origin && el.origin !== location.origin;
@@ -32,6 +32,7 @@ export function collectControls() {
       key, tag, label, href, role: el.getAttribute("role") || "",
       disabled: el.disabled === true || el.getAttribute("aria-disabled") === "true",
       isSubmit, external, anchor, offscreen,
+      active: ["aria-pressed", "aria-selected", "aria-checked", "aria-current"].some((a) => { const v = el.getAttribute(a); return v && v !== "false"; }),
     });
   }
   const forms = [...document.forms].filter(visible).map((f, i) => ({
@@ -63,7 +64,7 @@ export function classifyEffect(b, a) {
 export function smokeFindings(snap) {
   const out = [];
   for (const c of snap.results) {
-    if (c.effect === "none" && !c.skipped && !c.disabled && c.tag !== "input") {
+    if (c.effect === "none" && !c.skipped && !c.disabled && !c.active && c.tag !== "input") {
       out.push({ rule: "dead-control", severity: "warning", key: c.key, message: `"${c.label || c.key}" does nothing when clicked` });
     }
     if (c.href === "#" || /^javascript:/i.test(c.href || "")) {
