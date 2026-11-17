@@ -8,6 +8,7 @@
 
 import { writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectUx, uxFindings, formatUx } from "./lib/ux.mjs";
 
 export { uxFindings, formatUx };
@@ -35,7 +36,7 @@ if (isMain(import.meta.url)) {
     const viewport = flags.only === "mobile" ? "mobile" : "desktop";
     const r = await ux(target, { ...commonOptions(flags), viewport });
     console.log(formatUx(r.findings, viewport));
-    if (flags.json) writeFileSync(flags.json === true ? "ux.json" : flags.json, JSON.stringify(r, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "ux.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") ? 1 : 0);
   } catch (e) {
     console.error(e.message);

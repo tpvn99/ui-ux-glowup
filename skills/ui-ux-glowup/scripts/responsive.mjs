@@ -9,6 +9,7 @@
 
 import { writeFileSync } from "node:fs";
 import { loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { SIZES, applyStress, collectResponsive, responsiveFindings, formatResponsive } from "./lib/responsive.mjs";
 
 export { responsiveFindings, formatResponsive };
@@ -43,7 +44,7 @@ if (isMain(import.meta.url)) {
     const stress = flags.stress === "long" || flags.stress === "rtl" ? flags.stress : null;
     const r = await responsive(target, { ...commonOptions(flags), stress, widths });
     console.log(formatResponsive(r.findings, r.perSize, stress));
-    if (flags.json) writeFileSync(flags.json === true ? "responsive.json" : flags.json, JSON.stringify(r, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "responsive.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") ? 1 : 0);
   } catch (e) {
     console.error(e.message);

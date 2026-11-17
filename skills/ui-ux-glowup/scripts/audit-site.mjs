@@ -18,6 +18,7 @@ import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { siteFindings } from "./lib/site.mjs";
 import { loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions, VIEWPORTS } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { auditPage, auditOptions } from "./audit.mjs";
 import { CRITERIA } from "./lib/analyze.mjs";
 
@@ -154,7 +155,7 @@ if (isMain(import.meta.url)) {
     const pages = typeof flags.pages === "string" ? flags.pages.split(",").map((s) => s.trim()).filter(Boolean) : undefined;
     const site = await auditSite(start || pages[0], { max: Number(flags.max) || 10, depth: flags.depth !== undefined ? Number(flags.depth) : 2, pages, ...commonOptions(flags), ...auditOptions(flags) });
     console.log(formatSiteReport(site));
-    if (flags.json) writeFileSync(flags.json === true ? "site.json" : flags.json, JSON.stringify(site, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "site.json" : flags.json, site);
   } catch (e) {
     console.error(e.message);
     process.exit(1);

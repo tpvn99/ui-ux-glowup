@@ -139,7 +139,7 @@ Zip the `skills/ui-ux-glowup` folder and upload it from the Skills section of Cl
 
 ### Recommended: enable the visual check
 
-The screenshot step needs Node 18+ and Playwright in the project where the agent works:
+The checks that open a browser (audit, screenshots, tests) need **Node 20+** and Playwright in the project where the agent works (Node 18 only runs the scripts that need no browser); `node <skill-dir>/scripts/doctor.mjs` tells you what is missing:
 
 ```bash
 npm i -D playwright && npx playwright install chromium

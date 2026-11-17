@@ -10,6 +10,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { initPerf, readPerf, collectImages, collectPage, perfFindings, formatPerf } from "./lib/perf.mjs";
 
 export { perfFindings, formatPerf };
@@ -88,7 +89,7 @@ if (isMain(import.meta.url)) {
       const d = (k, f = (x) => x) => `${f(b.metrics[k])} → ${f(r.metrics[k])}`;
       console.log(`Baseline: LCP ${d("lcp", (x) => (x == null ? "n/a" : (x / 1000).toFixed(1) + "s"))} · CLS ${d("cls")} · TBT ${d("tbt")} ms · weight ${Math.round(b.weightBytes / 1024)} → ${Math.round(r.weightBytes / 1024)} KB · requests ${b.requests} → ${r.requests}`);
     }
-    if (flags.json) writeFileSync(flags.json === true ? "perf.json" : flags.json, JSON.stringify(r, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "perf.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") ? 1 : 0);
   } catch (e) {
     console.error(e.message);

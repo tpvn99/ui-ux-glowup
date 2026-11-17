@@ -9,6 +9,7 @@
 
 import { writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectA11y, describeFocus, a11yFindings, formatA11y, MAX_TABS } from "./lib/a11y.mjs";
 
 export { a11yFindings, formatA11y };
@@ -56,7 +57,7 @@ if (isMain(import.meta.url)) {
   try {
     const r = await a11y(target, commonOptions(flags));
     console.log(formatA11y(r.findings) + `\n(${r.tabs} focus stops visited by keyboard)`);
-    if (flags.json) writeFileSync(flags.json === true ? "a11y.json" : flags.json, JSON.stringify(r, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "a11y.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") ? 1 : 0);
   } catch (e) {
     console.error(e.message);

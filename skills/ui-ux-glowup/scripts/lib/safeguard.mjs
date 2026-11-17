@@ -16,7 +16,7 @@ export function isSensitivePath(path) {
   return SENSITIVE_PATH.some((re) => re.test(path.replace(/\\/g, "/")));
 }
 
-const SECRET_PATTERNS = [
+export const SECRET_PATTERNS = [
   ["AWS access key", /\bAKIA[0-9A-Z]{16}\b/],
   ["GitHub token", /\bgh[pousr]_[A-Za-z0-9]{36,}\b/],
   ["API key (sk-)", /\bsk-[A-Za-z0-9_-]{20,}\b/],
@@ -26,7 +26,7 @@ const SECRET_PATTERNS = [
   ["Private key", /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/],
   ["Hardcoded secret", /\b(?:api[_-]?key|secret|token|passw(?:or)?d|client[_-]?secret)["']?\s*[:=]\s*["']([^"'\s]{12,})["']/i],
 ];
-const PLACEHOLDER = /your[-_ ]|example|placeholder|changeme|xxxx|<[^>]+>|\$\{|process\.env|import\.meta|\[.*\]|\*{4}/i;
+export const PLACEHOLDER = /your[-_ ]|example|placeholder|changeme|xxxx|<[^>]+>|\$\{|process\.env|import\.meta|\[.*\]|\*{4}/i;
 
 const mask = (s) => (s.length <= 8 ? "****" : s.slice(0, 4) + "…" + `(${s.length} chars)`);
 

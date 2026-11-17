@@ -5,7 +5,8 @@ UI/UX Glowup is a **skill for an AI coding agent** (Claude Code, Codex, Cursor, 
 ## 1. What you need
 
 - An AI agent that supports skills, and a project or a web page to work on.
-- **Node.js 18 or newer** (`node --version`) for the checks. Without it the skill still works, the agent just reviews the code instead of running tests.
+- **Node.js 20 or newer** (`node --version`) for every check that opens a browser (Playwright requires it). Node 18 still runs the scripts that need no browser (`stack`, `safeguard`, `brand-guard`, `doctor`). Without Node the skill still works: the agent reviews the code instead of running tests.
+- Run `node <skill-dir>/scripts/doctor.mjs` at any time: it lists what is missing and the exact command to fix it.
 
 ## 2. Install the skill
 

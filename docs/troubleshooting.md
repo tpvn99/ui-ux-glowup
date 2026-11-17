@@ -2,10 +2,11 @@
 
 | Symptom | Cause and fix |
 |---|---|
+| `Playwright requires Node.js 20 or higher` | Upgrade Node to 20+ (`node --version`). Node 18 only runs the scripts that need no browser. `node <skill-dir>/scripts/doctor.mjs` checks everything. |
 | `Playwright not found` | In your project: `npm i -D playwright && npx playwright install chromium`. The scripts look in the folder where you run them first. |
 | `firefox is not installed` / `webkit is not installed` | `npx playwright install firefox webkit`. `cross-browser.mjs` lists missing engines instead of failing. |
 | `Executable doesn't exist` | A Playwright update needs its browsers again: `npx playwright install`. |
-| The agent only reviews code and runs no checks | Node 18+ or Playwright is missing, or the agent cannot run commands. The skill falls back to a careful code reading. |
+| The agent only reviews code and runs no checks | Node 20+ or Playwright is missing, or the agent cannot run commands. The skill falls back to a careful code reading. |
 | The page behind a login looks empty | `node <skill-dir>/scripts/login.mjs <url>`, log in in the window, press Enter, then add `--storage-state state.json` to the commands. |
 | `state.json` warning: readable by other users | `chmod 600 state.json`. `login.mjs` already does this; the warning means the file came from elsewhere. |
 | A cookie banner hides the page | The scripts close explicit "close / decline" buttons. Use `--no-dismiss` to turn that off, or `--wait-for "<css>"` to wait for the real content. |

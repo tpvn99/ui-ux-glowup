@@ -1,0 +1,87 @@
+name: Compatibility
+
+# Does the skill work where people will install it?
+#  - Node 20, 22, 24 on Linux, Node 22 on macOS: the full suite, every browser engine on Linux
+#  - Node 18: only the scripts that need no browser (Playwright itself requires Node 20)
+#  - a clean install: copied folder and symlinked folder, then doctor, stack, audit
+# Also runs every Monday: a new Playwright or Node release can break things without any commit here.
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: compat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  full:
+    name: Full suite · Node ${{ matrix.node }} · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, node: 20 }
+          - { os: ubuntu-latest, node: 22 }
+          - { os: ubuntu-latest, node: 24 }
+          - { os: macos-latest, node: 22 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies and browsers
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium firefox webkit
+      - name: Validate
+        run: ./validate-skills.sh
+      - name: Tests
+        run: |
+          # pdf.test.mjs checks which fonts the system falls back to, so it only means something on Linux
+          if [ "$RUNNER_OS" = "macOS" ]; then node --test $(ls tests/*.test.mjs | grep -v pdf.test.mjs); else npm test; fi
+        env:
+          CI: true
+
+  node18:
+    name: Scripts without a browser · Node 18
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Tests that need no browser
+        run: node --test tests/stack.test.mjs tests/safeguard.test.mjs tests/session.test.mjs tests/brandguard.test.mjs tests/reliability.test.mjs tests/versions.test.mjs tests/symlink.test.mjs tests/color.test.mjs tests/analyze.test.mjs tests/tools.test.mjs
+
+  install:
+    name: Clean install · copied and symlinked
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install into a fresh project, as a copy and as a symlink
+        run: |
+          set -e
+          WORK="$(mktemp -d)"
+          mkdir -p "$WORK/project/.agents/skills" "$WORK/linked/.claude"
+          cp -r skills/ui-ux-glowup "$WORK/project/.agents/skills/ui-ux-glowup"
+          ln -s "$PWD/skills/ui-ux-glowup" "$WORK/linked/.claude/skills"
+          cp skills/ui-ux-glowup/assets/examples/clinic.html "$WORK/project/index.html"
+          cd "$WORK/project"
+          npm init -y >/dev/null
+          npm i -D playwright >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          S=.agents/skills/ui-ux-glowup/scripts
+          node $S/doctor.mjs --offline
+          node $S/stack.mjs .
+          node $S/audit.mjs index.html --fast --brief
+          cd "$WORK/linked"
+          node .claude/skills/scripts/stack.mjs . 
+          node .claude/skills/scripts/doctor.mjs --offline | head -3

@@ -139,7 +139,7 @@ Compressez le dossier `skills/ui-ux-glowup` en zip et importez-le depuis la sect
 
 ### Recommandé : activer la vérification visuelle
 
-L'étape de capture d'écran a besoin de Node 18+ et de Playwright dans le projet où l'agent travaille :
+Les vérifications qui ouvrent un navigateur (audit, captures, tests) ont besoin de **Node 20+** et de Playwright dans le projet où l'agent travaille (Node 18 ne fait tourner que les scripts sans navigateur) ; `node <skill-dir>/scripts/doctor.mjs` indique ce qui manque :
 
 ```bash
 npm i -D playwright && npx playwright install chromium

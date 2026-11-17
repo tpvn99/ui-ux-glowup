@@ -10,6 +10,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectControls, classifyEffect, unsafeLabel, smokeFindings, diffSmoke, formatSmoke } from "./lib/smoke.mjs";
 
 export { diffSmoke, smokeFindings, formatSmoke };
@@ -90,7 +91,7 @@ if (isMain(import.meta.url)) {
     const diff = typeof flags.baseline === "string" ? diffSmoke(JSON.parse(readFileSync(flags.baseline, "utf8")), snap) : null;
     const findings = smokeFindings(snap);
     console.log(formatSmoke(snap, findings, diff));
-    if (flags.json) writeFileSync(flags.json === true ? "smoke.json" : flags.json, JSON.stringify(snap, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "smoke.json" : flags.json, snap);
     const bad = [...(diff || []), ...findings].some((f) => f.severity === "error");
     process.exit(bad ? 1 : 0);
   } catch (e) {

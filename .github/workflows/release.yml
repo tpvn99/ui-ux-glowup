@@ -33,6 +33,10 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Refuse to release an inconsistent commit
+        if: steps.ver.outputs.exists == 'false'
+        run: ./validate-skills.sh
+
       - name: Extract release notes
         if: steps.ver.outputs.exists == 'false'
         run: |
@@ -42,7 +46,9 @@ jobs:
           text = open("VERSIONS.md").read()
           parts = re.split(r"\n### (\d+\.\d+\.\d+) \([^)]*\)\n", text)
           blocks = {parts[i]: parts[i + 1].split("\n### ")[0].strip() for i in range(1, len(parts), 2)}
-          open("release-notes.md", "w").write(blocks.get(v, f"Release {v}") + "\n")
+          if v not in blocks:
+              sys.exit(f"VERSIONS.md has no '### {v} (date)' block: write the release notes first")
+          open("release-notes.md", "w").write(blocks[v] + "\n")
           PY
 
       - name: Create tag + release

@@ -10,6 +10,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { validateScenarios, describeStep, effort, compareScenarios, formatScenarios } from "./lib/scenario.mjs";
 
 export { validateScenarios, compareScenarios, formatScenarios };
@@ -94,7 +95,7 @@ if (isMain(import.meta.url)) {
     const report = await runScenarios(target, JSON.parse(readFileSync(file, "utf8")), { ...commonOptions(flags), viewport: flags.only === "mobile" ? "mobile" : "desktop" });
     const reg = typeof flags.baseline === "string" ? compareScenarios(JSON.parse(readFileSync(flags.baseline, "utf8")), report) : [];
     console.log(formatScenarios(report, reg));
-    if (flags.json) writeFileSync(flags.json === true ? "scenarios-result.json" : flags.json, JSON.stringify(report, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "scenarios-result.json" : flags.json, report);
     process.exit(report.results.some((r) => !r.passed) || reg.length ? 1 : 0);
   } catch (e) {
     console.error(e.message);

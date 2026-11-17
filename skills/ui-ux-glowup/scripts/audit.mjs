@@ -24,6 +24,7 @@
 
 import { writeFileSync, readFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectPageData, collectSnapshot } from "./lib/probe.mjs";
 import { analyze, score, summarizeTokens } from "./lib/analyze.mjs";
 import { formatReport, formatDelta } from "./lib/report.mjs";
@@ -81,7 +82,7 @@ if (isMain(import.meta.url)) {
     const maxItems = flags["max-items"] ? Number(flags["max-items"]) : undefined;
     if (baseline) console.log(formatDelta(baseline, result, maxItems ? { maxItems } : {}));
     else console.log(formatReport(result, { brief: Boolean(flags.brief), ...(maxItems ? { maxItems } : {}) }));
-    if (flags.json) writeFileSync(flags.json === true ? "audit.json" : flags.json, JSON.stringify(result, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "audit.json" : flags.json, result);
     if (flags["fail-under"] && result.total < Number(flags["fail-under"])) process.exit(2);
   } catch (e) {
     console.error(e.message);
