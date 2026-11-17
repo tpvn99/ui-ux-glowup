@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>A11y good</title>
+<style>.skip{position:absolute;left:-999px;top:0;z-index:20;background:#fff}.skip:focus{left:0}header{position:sticky;top:0;background:#222;height:60px}html{scroll-padding-top:70px}body{margin:0}.box{max-width:100%}</style></head><body>
+<a href="#main" class="skip">Skip to content</a>
+<header><nav><a href="/a" style="color:#fff">A</a> <a href="/b" style="color:#fff">B</a></nav></header>
+<main id="main"><h1>Page</h1>
+<button type="button" aria-labelledby="t">Open</button><span id="t">Open settings</span>
+<div role="dialog" aria-label="Settings" hidden></div>
+<label>Password <input type="password" name="pw" autocomplete="current-password"></label>
+<table><tr><th>Name</th><th>Plan</th></tr><tr><td>Ada</td><td>Pro</td></tr></table>
+<div class="box">Content</div><div style="height:1200px"></div><a href="/z">End</a></main></body></html>
