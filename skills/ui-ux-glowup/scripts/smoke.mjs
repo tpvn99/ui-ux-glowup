@@ -9,24 +9,28 @@
 //   Options: --max 40 (controls clicked) · --storage-state state.json · --wait-for "<css>"
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { collectControls, classifyEffect, unsafeLabel, smokeFindings, diffSmoke, formatSmoke } from "./lib/smoke.mjs";
 
 export { diffSmoke, smokeFindings, formatSmoke };
 
 const state = (page) =>
-  page.evaluate(() => ({
+  page.evaluate(() => {
+    const fnv = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    return {
     url: location.href,
-    html: document.body.innerHTML.length,
-    text: document.body.innerText.length,
+    html: fnv(document.body.innerHTML),
+    text: fnv(document.body.innerText),
+    sort: [...document.querySelectorAll("[aria-sort]")].map((e) => e.getAttribute("aria-sort")).join(),
     expanded: document.querySelectorAll('[aria-expanded="true"], details[open]').length,
     dialogs: document.querySelectorAll('dialog[open], [role="dialog"], [aria-modal="true"]').length,
     selected: document.querySelectorAll('[aria-selected="true"], [aria-pressed="true"], [aria-current]').length,
-  }));
+    };
+  });
 
 export async function smoke(target, { route, max = 40, viewport = "desktop", ...options } = {}) {
-  const { chromium } = await loadPlaywright();
-  const browser = await chromium.launch();
+  const pw = await loadPlaywright();
+  const browser = await launchBrowser(pw, options.browser);
   const url = resolveTarget(target).url;
   const errors = new Set();
   const failedRequests = new Set();
@@ -43,7 +47,7 @@ export async function smoke(target, { route, max = 40, viewport = "desktop", ...
     const results = [];
     let clicked = 0;
     for (const c of base.controls) {
-      const skip = c.external || c.isSubmit || unsafeLabel(c.label) || clicked >= max;
+      const skip = c.external || c.isSubmit || c.offscreen || unsafeLabel(c.label) || clicked >= max;
       if (skip || c.disabled) {
         results.push({ ...c, effect: "none", skipped: true });
         continue;

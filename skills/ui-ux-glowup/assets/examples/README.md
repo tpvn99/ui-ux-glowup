@@ -18,6 +18,8 @@ Complete code, checked at desktop (1440px) and mobile (390px). Read the matching
 | `article.html` | Editorial article: serif body at 68ch, sticky contents, pull quote, data table, author, related reads, newsletter | Stripe Press, Linear Method | Blog, docs, case studies, news |
 | `auth.html` | Sign-in screen: SSO + email, inline error, password reveal, quiet proof panel | Linear, Vercel, Clerk | Login, sign-up, onboarding step |
 | `settings.html` | Settings: section nav (scrolling row on mobile), cards with their own save, switches, members list, isolated delete | Linear, Stripe, GitHub | Account, workspace, admin screens |
+| `clinic.html` | Sober health practice: booking and phone always reachable, hours and address in the first screen, plain treatments list, first-visit steps, named practitioners, prices as marked placeholders | Zocdoc, One Medical, NHS | Clinics, health practices, care |
+| `data-table.html` | Sober back-office list: search + status filter, sortable headers (`aria-sort`), row selection and bulk bar, announced result count, real empty state, key columns stay visible on phones, works with JavaScript off | GitHub, Stripe Dashboard, Linear | Customers, orders, tickets, any admin list |
 | `smb-light.html` | Warm light theme: tinted background, hero with one field + button, product demo in tabs, full-width color band, comparison `<table>`, `<details>` FAQ mirrored in FAQPage JSON-LD | Warm light B2B sites | Small-business software, B2B services |
 | `react/DashboardShell.tsx` | Same dashboard split into typed components | — | React projects |
 

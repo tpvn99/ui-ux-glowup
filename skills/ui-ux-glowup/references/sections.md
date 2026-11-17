@@ -62,10 +62,11 @@ Forbidden: three identical icon + title + text cards as the only features sectio
 - **Layout** (Linear, Vercel): 240px sidebar with workspace switcher on top, grouped navigation, user at the bottom; content with a page header (title + actions on the right). → `dashboard-shell.html`
 - **KPIs**: 3–4 cards, large value, change with arrow + period, optional sparkline. Pick a design per metric (hero KPI with area sparkline, donut with center value, goal ring, 7-day bars, compact tiles, status KPI) → `kpi-cards.html`, table in `references/visuals.md`.
 - **Charts**: interactive SVG (Recharts / Chart.js / inline SVG), one accent series, direct labels, tooltips on hover and tap, colors from CSS variables so dark mode works. → `kpi-cards.html`
+- **Sober list** (GitHub, Stripe): search + one filter, sortable headers, selection with a bulk bar. → `data-table.html`
 - **Tables** (Stripe Dashboard): pill filters, search, sortable columns, actions on hover, sober pagination. On mobile, keep the key column visible and move secondary ones under the row title (→ `dashboard-shell.html`, `dashboard-dark.html`).
 - **Dark dashboards**: surfaces one step lighter than the background, hairline `white/8` borders, muted text ≥ 4.5:1 (zinc-400 on near-black, not zinc-500), semantic green/red only for deltas. → `dashboard-dark.html`
 - **Settings** (Vercel, GitHub): 2-column sections (title + description | fields), a "Save" button per section.
-- **Empty states** (Linear): sober icon, title, one sentence, primary action.
+- **Empty states** (Linear): sober icon, title, one sentence, primary action. → `data-table.html` (filters that match nothing, with a Clear button)
 - **Command palette** `⌘K` for rich apps.
 
 ## Stats & figures (marketing pages)

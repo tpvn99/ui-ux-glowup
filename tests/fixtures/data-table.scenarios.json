@@ -1,0 +1,7 @@
+{ "scenarios": [
+  { "name": "Search narrows the list and announces it", "steps": [ { "fill": ["#q", "fjord"] }, { "expect": { "text": ["#count", "1 customer"] } }, { "expect": { "count": ["#rows tr:visible", 1] } } ] },
+  { "name": "No result shows the empty state, Clear restores", "steps": [ { "fill": ["#q", "zzz"] }, { "expect": { "visible": "#empty" } }, { "expect": { "text": ["#count", "No customers"] } }, { "click": "#clear" }, { "expect": { "hidden": "#empty" } }, { "expect": { "count": ["#rows tr:visible", 6] } }, { "expect": { "focusWithin": "#filters" } } ] },
+  { "name": "Status filter", "steps": [ { "select": ["#status", "Overdue"] }, { "expect": { "count": ["#rows tr:visible", 2] } } ] },
+  { "name": "Sort by balance", "steps": [ { "click": "[data-sort='2']" }, { "expect": { "attr": ["th:has([data-sort='2'])", "aria-sort", "ascending"] } }, { "click": "[data-sort='2']" }, { "expect": { "attr": ["th:has([data-sort='2'])", "aria-sort", "descending"] } }, { "expect": { "text": ["#rows tr:first-child", "Fjord"] } } ] },
+  { "name": "Selecting rows shows the bulk bar", "steps": [ { "expect": { "hidden": "#bulk" } }, { "click": "#all" }, { "expect": { "visible": "#bulk" } }, { "expect": { "text": ["#selected", "6 selected"] } }, { "click": "#all" }, { "expect": { "hidden": "#bulk" } } ] }
+] }

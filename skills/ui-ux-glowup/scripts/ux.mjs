@@ -7,14 +7,14 @@
 //   node ux.mjs <page | url> [--only mobile] [--json out.json] [--storage-state state.json] [--wait-for "<css>"]
 
 import { writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { collectUx, uxFindings, formatUx } from "./lib/ux.mjs";
 
 export { uxFindings, formatUx };
 
 export async function ux(target, { route, viewport = "desktop", ...options } = {}) {
-  const { chromium } = await loadPlaywright();
-  const browser = await chromium.launch();
+  const pw = await loadPlaywright();
+  const browser = await launchBrowser(pw, options.browser);
   try {
     const { page, close } = await openPage(browser, resolveTarget(target).url, VIEWPORTS[viewport], { route, ...options });
     const data = await page.evaluate(collectUx);

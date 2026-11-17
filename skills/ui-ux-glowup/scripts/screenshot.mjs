@@ -15,14 +15,14 @@
 
 import { resolve } from "node:path";
 import { mkdirSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 
 /** Capture desktop + mobile screenshots. Returns [{ label, file, overflow }]. */
 export async function capture(target, outDir = "screenshots", { fold = false, selector, only, maxHeight, route, ...options } = {}) {
-  const { chromium } = await loadPlaywright();
+  const pw = await loadPlaywright();
   const { url, name } = resolveTarget(target);
   mkdirSync(outDir, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await launchBrowser(pw, options.browser);
   const results = [];
   try {
     for (const vp of [VIEWPORTS.desktop, VIEWPORTS.mobile].filter((v) => !only || v.label === only)) {

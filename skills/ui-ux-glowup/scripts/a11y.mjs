@@ -8,14 +8,14 @@
 //   node a11y.mjs <page | url> [--json out.json] [--storage-state state.json] [--wait-for "<css>"]
 
 import { writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { collectA11y, describeFocus, a11yFindings, formatA11y, MAX_TABS } from "./lib/a11y.mjs";
 
 export { a11yFindings, formatA11y };
 
 export async function a11y(target, { route, ...options } = {}) {
-  const { chromium } = await loadPlaywright();
-  const browser = await chromium.launch();
+  const pw = await loadPlaywright();
+  const browser = await launchBrowser(pw, options.browser);
   const url = resolveTarget(target).url;
   try {
     const { page, close } = await openPage(browser, url, VIEWPORTS.desktop, { route, ...options, scroll: false });

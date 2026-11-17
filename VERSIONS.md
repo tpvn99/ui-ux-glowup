@@ -4,9 +4,39 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.9.0 | 2026-11-17 |
+| ui-ux-glowup | 1.12.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.12.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.11.0 → 1.12.0): art direction by sector, brand guard, responsive sweep, consistency across pages, two sober examples (roadmap phase 3).
+  - `references/sectors.md`: health, public sector and non-profits, banking and insurance, real estate, travel, education, fashion, media, professional services, food, events; a **variety check** (the dark hairline "Linear" look is only for developer tools), a style spectrum (sober to expressive), sector to example table. `sites.md` and `direction.md` point to it.
+  - `scripts/brand-guard.mjs` (+ `lib/brandguard.mjs`): compares the project (untracked files included) with the latest `safeguard` backup, a backup id or a git ref: `brand-color-changed` (error: one of the 3 most used non-neutral colors disappeared), `font-changed` (error), `ui-dependency-added` / `ui-dependency-removed` (error), `color-removed`, `palette-growth`, `font-added`. `--allow color,font,dependency` when the user asked.
+  - `scripts/responsive.mjs` (+ `lib/responsive.mjs`): 14 sizes (320 to 1920, two tablets, phone and tablet landscape); `overflow-x`, `text-clipped`, `text-too-small`, `h1-wraps`, `line-too-long`, `fixed-covers-screen`, `target-small`; `--stress long` (+50% words, 34-letter word in headings, numbers untouched) and `--stress rtl`.
+  - `scripts/consistency.mjs` (+ `lib/consistency.mjs`): several pages or `--site`; fonts, heading scale, header and footer links, primary button color / radius / height, palette, card radius, content width, header height, background, title pattern, language, favicon; values and pages named.
+  - **Examples**: `clinic.html` (sober health practice) and `data-table.html` (sober back-office list; its 5 interaction scenarios are a test). All 13 existing examples now carry `h1, h2, h3 { overflow-wrap: anywhere; }` (a 34-letter heading word overflowed 11 of them).
+  - Tool fixes found while building them: the audit no longer counts a visually hidden skip link as a small touch target; `smoke.mjs` sees a sort that only reorders rows (hashes instead of lengths, reads `aria-sort`) and skips visually hidden links; `responsive.mjs` counts stuck bars only, not sticky table cells.
+  - Known stress findings left as they are (stress is a "what breaks first" tool, not a pass criterion): `dashboard-dark.html` header and `kpi-cards.html` labels at +50% text.
+  - Tests: 31 new (`brandguard`, `responsive`, `consistency`, `v112`; fixtures `resp-*.html`, `site-pages/`, `skiplink.html`, `data-table.scenarios.json`).
+
+### 1.11.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.10.0 → 1.11.0): stack detection, other browsers, safer sessions (roadmap phase 2, steps 3–5).
+  - `scripts/stack.mjs` (+ `lib/stack.mjs`): detects Next (app / pages router), Nuxt, Vue, SvelteKit, Svelte, Astro, Remix, Angular, Solid, React + Vite, WordPress (classic, block theme, Elementor / Divi / Bricks / Beaver / Oxygen / WPBakery), plain HTML; Tailwind v3 vs v4, shadcn, MUI, Chakra, Mantine, Ant, Vuetify, Angular Material, Bootstrap, styled-components, Emotion, CSS Modules; where the design tokens live; package manager, tests, scripts. `references/frameworks.md`: per-stack rules (keep the stack, tokens first, no new library, where WordPress changes belong, staging and database backup).
+  - `scripts/cross-browser.mjs` (+ `lib/crossbrowser.mjs`): Chromium (reference), Firefox, WebKit at desktop and phone width: `engine-js-error`, `engine-overflow`, `engine-height-differs`, `engine-h1-wraps`, `engine-broken-images`, `engine-unsupported-css` (13 CSS features checked against what the page's stylesheets use); one screenshot per engine and width; missing engines listed with the install command. `--browser chromium|firefox|webkit` on `audit`, `screenshot`, `smoke`, `scenario`, `ux`, `a11y`. `openPage` no longer passes `isMobile` to Firefox (unsupported).
+  - **Sessions**: `login.mjs` locks `state.json` (600), adds it to `.gitignore` in a git repo, prints a summary (cookie count, domains, nearest expiry) and never a value; `login.mjs --clear` deletes it; every script warns once when a session file is readable by other users (`lib/session.mjs`).
+  - Fix found by WebKit: `no-primary-action` ignored buttons under 30px; threshold lowered to 24px (the WCAG minimum).
+  - Tests: 17 new (`stack`, `crossbrowser`, `session`; fixture `engine-diff.html`).
+
+### 1.10.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.9.0 → 1.10.0): performance audit (roadmap phase 2, step 2).
+  - `scripts/perf.mjs` (+ `lib/perf.mjs`): real Chromium measurements: LCP (element and image), CLS (across a scroll), TBT from long tasks, FCP, TTFB, weight and requests by type. Profiles: `phone` (default for URLs: 390px, CPU 4× slower, 1.6 Mbps / 150 ms), `desktop`, `fast` (no throttling; default for local files). `--json` saves a run, `--baseline` prints LCP / CLS / TBT / weight before → after. Exit 1 on errors.
+  - Rules: `lcp-slow`, `cls-high`, `tbt-high`, `fcp-slow`, `ttfb-slow`, `page-heavy`, `too-many-requests`, `js-heavy`, `heavy-library` (jQuery, Moment, full lodash, three.js, Chart.js, Bootstrap JS, Font Awesome, Tailwind compiled in the browser), `third-party-heavy`, `fonts-heavy`, `font-display-missing`, `render-blocking-script`, `costly-effects`, `image-oversized`, `image-heavy`, `below-fold-not-lazy`, `lcp-lazy` (error), `lcp-no-priority`. A fix per finding. Existing `image-format`, `image-dimensions`, `scroll-cls` stay in `audit.mjs`.
+  - `references/performance.md`: thresholds, fix order, what lab numbers cannot tell (field data, INP on real interactions, real devices).
+  - `openPage` awaits `onPage` (needed to set throttling before navigation). The script table moved from `SKILL.md` to `references/scripts.md` (SKILL.md back to ~9.9 KB).
+  - Tests: 6 new (`tests/perf.test.mjs`: pure rules, and a local HTTP server serving a bad and a clean page).
 
 ### 1.9.0 (2026-11-17)
 
