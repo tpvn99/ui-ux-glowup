@@ -81,6 +81,14 @@ mv=$(python3 -c "import json;print(json.load(open('.claude-plugin/marketplace.js
 if [[ "$pv" != "$mv" ]]; then echo -e "${RED}✗ Version mismatch: plugin.json=$pv marketplace.json=$mv${NC}"; ((ISSUES++)); fi
 grep -q "^### $pv " VERSIONS.md || { echo -e "${YELLOW}! VERSIONS.md has no '### $pv (date)' block${NC}"; ((WARNINGS++)); }
 
+# One release number everywhere: package.json, SKILL.md metadata and the VERSIONS.md table must match plugin.json
+pkgv=$(python3 -c "import json;print(json.load(open('package.json'))['version'])")
+skv=$(awk '/^---$/{c++; next} c==1 && /^[[:space:]]+version:/{gsub(/[[:space:]"]/,"",$2); print $2; exit}' skills/ui-ux-glowup/SKILL.md)
+tbl=$(awk -F'|' '/^\| ui-ux-glowup /{gsub(/[[:space:]]/,"",$3); print $3; exit}' VERSIONS.md)
+[[ "$pkgv" == "$pv" ]] || { echo -e "${RED}✗ Version mismatch: package.json=$pkgv plugin.json=$pv${NC}"; ((ISSUES++)); }
+[[ "$skv" == "$pv" ]] || { echo -e "${RED}✗ Version mismatch: SKILL.md metadata.version=$skv plugin.json=$pv${NC}"; ((ISSUES++)); }
+[[ "$tbl" == "$pv" ]] || { echo -e "${RED}✗ Version mismatch: VERSIONS.md table=$tbl plugin.json=$pv${NC}"; ((ISSUES++)); }
+
 echo "========================================================"
 echo -e "${GREEN}Passed: $PASSED${NC}  ${YELLOW}Warnings: $WARNINGS${NC}  ${RED}Issues: $ISSUES${NC}"
 (( ISSUES == 0 )) && { echo -e "${GREEN}All skills are valid ✓${NC}"; exit 0; } || exit 1
