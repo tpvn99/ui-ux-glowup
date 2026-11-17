@@ -33,6 +33,16 @@ node <skill-dir>/scripts/scenario.mjs <redesign> scenarios.json --baseline befor
 
 Actions: `goto click fill select check uncheck hover press wait`. Expectations: `visible hidden text url count focusWithin focusOutside enabled disabled valid invalid attr`. Selectors: CSS, `text=Label`, `role=button[name=Save]`.
 
+## 3. Other browsers
+
+```bash
+npx playwright install firefox webkit                          # once
+node <skill-dir>/scripts/cross-browser.mjs <page> [--out shots]
+node <skill-dir>/scripts/smoke.mjs <page> --browser webkit     # same flag on audit, ux, a11y, scenario, screenshot
+```
+
+`cross-browser.mjs` opens the page in Chromium (reference), Firefox and WebKit (Safari's engine) at desktop and phone width, and reports what differs: JS errors, horizontal scroll, page height, heading wrapping, broken images, and CSS the engine doesn't support (`backdrop-filter`, container queries, `:has()`, `oklch()`, `text-wrap`, `dvh`, subgrid…). One screenshot per engine and width. Engines not installed are listed, not failed. It checks rendering engines, not real devices: test the primary journey on a real iPhone and Android phone when the product matters.
+
 ## Which journeys to write
 
 Pick from what the product does, most valuable first: the primary action (sign-up, checkout, save) · each form's validation (`invalid` then `valid`) · each modal / drawer / menu (opens, focus inside, closes with Escape) · each filter, search, tab, sort · login and logout (log in with `login.mjs` and `--storage-state`; never write credentials in a scenario file).

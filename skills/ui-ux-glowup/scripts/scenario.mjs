@@ -9,7 +9,7 @@
 //   Options: --only mobile · --storage-state state.json · --wait-for "<css>"
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { validateScenarios, describeStep, effort, compareScenarios, formatScenarios } from "./lib/scenario.mjs";
 
 export { validateScenarios, compareScenarios, formatScenarios };
@@ -55,8 +55,8 @@ async function runStep(page, st, baseUrl) {
 export async function runScenarios(target, doc, { route, viewport = "desktop", ...options } = {}) {
   const problems = validateScenarios(doc);
   if (problems.length) throw new Error("Invalid scenario file:\n  " + problems.join("\n  "));
-  const { chromium } = await loadPlaywright();
-  const browser = await chromium.launch();
+  const pw = await loadPlaywright();
+  const browser = await launchBrowser(pw, options.browser);
   const url = resolveTarget(target).url;
   const errors = new Set();
   const results = [];

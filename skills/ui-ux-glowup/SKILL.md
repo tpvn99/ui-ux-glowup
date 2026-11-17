@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.10.0
+  version: 1.11.0
 ---
 
 # UI/UX Glowup
@@ -57,7 +57,7 @@ Match the work — and the tokens you spend — to the request. Say which level 
 | Motion: one load moment, tabs, FAQ | `references/motion.md` |
 | Make it distinctive: tokens, check vs defaults | `references/direction.md` (Standard, Full) |
 | Looks AI-generated | `references/anti-ai.md` |
-| Changing a real codebase / handing off to a coding agent | `references/implement.md` |
+| Changing a real codebase / handing off to a coding agent | `references/implement.md`, `references/frameworks.md` (only your stack) |
 | UX (main action, forms, states, nav, journey length) | `references/ux.md` |
 | Accessibility WCAG 2.2 AA: keyboard, focus, ARIA, reflow | `references/a11y.md` |
 | Performance: LCP, CLS, weight, images, scripts | `references/performance.md` |
@@ -68,7 +68,7 @@ Match the work — and the tokens you spend — to the request. Say which level 
 
 ## Workflow
 
-**Context first.** Reuse the project's design system (`tailwind.config.*`, `@theme`, CSS variables, `components/ui/`) and stack; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → `safeguard.mjs check` + `backup` first, then change the real components (`implement.md` §5: ask before structural changes). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
+**Context first.** `scripts/stack.mjs` names the stack and where its tokens live (`frameworks.md`). Reuse the project's design system and libraries; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → `safeguard.mjs check` + `backup` first, then change the real components (`implement.md` §5: ask before structural changes). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
 
 **Login pages**: `scripts/login.mjs <url>` (the user logs in), then `--storage-state state.json` on every script, or paste `scripts/audit.browser.js` in the logged-in tab. Never ask for passwords.
 

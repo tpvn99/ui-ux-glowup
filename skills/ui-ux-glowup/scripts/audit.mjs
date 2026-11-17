@@ -23,7 +23,7 @@
 // only partly measurable: complete them with your own visual review of the screenshots.
 
 import { writeFileSync, readFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { collectPageData, collectSnapshot } from "./lib/probe.mjs";
 import { analyze, score, summarizeTokens } from "./lib/analyze.mjs";
 import { formatReport, formatDelta } from "./lib/report.mjs";
@@ -59,9 +59,9 @@ export function auditOptions(flags, baseline) {
 
 /** Run the audit and return { target, findings, scores, total, max, tokens }. */
 export async function audit(target, options = {}) {
-  const { chromium } = await loadPlaywright();
+  const pw = await loadPlaywright();
   const { url } = resolveTarget(target);
-  const browser = await chromium.launch();
+  const browser = await launchBrowser(pw, options.browser);
   try {
     return await auditPage(browser, url, { ...options, target });
   } finally {

@@ -8,12 +8,14 @@
 // to audit, then press Enter in the terminal. Cookies + localStorage are saved to state.json.
 // Then:  node audit.mjs <url> --storage-state state.json   (same flag for screenshot, compare…)
 //
-// state.json contains live session tokens: keep it out of git (it's in .gitignore) and delete it
-// when you're done.
+// state.json contains live session tokens. The script locks it (chmod 600), adds it to .gitignore
+// when in a git repo, and summarises it without printing any value. Delete it when you're done:
+//   node login.mjs --clear state.json
 
 import { resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { loadPlaywright, parseArgs, isMain } from "./lib/browser.mjs";
+import { protectSession, formatSession, clearSession } from "./lib/session.mjs";
 
 export async function login(url, out = "state.json") {
   const { chromium } = await loadPlaywright();
@@ -34,14 +36,19 @@ export async function login(url, out = "state.json") {
 }
 
 if (isMain(import.meta.url)) {
-  const { _: [url, out = "state.json"] } = parseArgs(process.argv.slice(2));
+  const { _: [url, out = "state.json"], flags } = parseArgs(process.argv.slice(2));
+  if (flags.clear) {
+    const f = typeof flags.clear === "string" ? flags.clear : url || "state.json";
+    console.log(clearSession(f) ? `Deleted ${f}` : `${f} not found`);
+    process.exit(0);
+  }
   if (!url) {
-    console.error("Usage: node login.mjs <url> [state.json]");
+    console.error("Usage: node login.mjs <url> [state.json]   |   node login.mjs --clear [state.json]");
     process.exit(1);
   }
   try {
     const { file, url: last } = await login(url, out);
-    console.log(`Session saved to ${file}`);
+    console.log(formatSession(protectSession(file)));
     console.log(`Next: node audit.mjs ${last} --storage-state ${out}`);
   } catch (e) {
     console.error(e.message);

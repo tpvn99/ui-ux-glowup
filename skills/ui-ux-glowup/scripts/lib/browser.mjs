@@ -3,6 +3,7 @@ import { resolve, basename, extname } from "node:path";
 import { pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import { execSync } from "node:child_process";
+import { warnIfOpen } from "./session.mjs";
 
 export const VIEWPORTS = {
   desktop: { label: "desktop", width: 1440, height: 900, isMobile: false, deviceScaleFactor: 1 },
@@ -30,6 +31,19 @@ export async function loadPlaywright() {
   );
 }
 
+export const ENGINES = ["chromium", "firefox", "webkit"];
+
+/** Launch chromium (default), firefox or webkit, with a clear message when the engine is not installed. */
+export async function launchBrowser(pw, name = "chromium", launchOptions = {}) {
+  if (!ENGINES.includes(name)) throw new Error(`Unknown browser "${name}". Use ${ENGINES.join(", ")}.`);
+  try {
+    return await pw[name].launch(launchOptions);
+  } catch (e) {
+    if (/Executable doesn't exist|install/i.test(e.message)) throw new Error(`${name} is not installed. Run: npx playwright install ${name}`);
+    throw e;
+  }
+}
+
 /** Turn a file path or URL into { url, name } where name is safe for file names. */
 export function resolveTarget(target) {
   if (/^https?:\/\//.test(target)) {
@@ -46,14 +60,16 @@ export function resolveTarget(target) {
  * options.scroll: scroll through the page to trigger lazy content (default true).
  * options.onPage: (page) => void, called before navigation, awaited (listen for errors, set throttling).
  * options.javaScript: false loads the page with JavaScript disabled (what many crawlers see).
+ * options.browser is read by the scripts that launch the browser (chromium, firefox, webkit).
  * options.storageState: path to a Playwright storage state (cookies + localStorage) saved by
  *   login.mjs, to audit pages behind a login. Defaults to $GLOWUP_STORAGE_STATE when set.
  */
 export async function openPage(browser, url, viewport, options = {}) {
   const storageState = options.storageState ?? process.env.GLOWUP_STORAGE_STATE ?? undefined;
+  warnIfOpen(storageState);
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
-    isMobile: viewport.isMobile,
+    ...(viewport.isMobile && browser.browserType().name() !== "firefox" ? { isMobile: true } : {}),
     deviceScaleFactor: viewport.deviceScaleFactor,
     reducedMotion: "reduce",
     javaScriptEnabled: options.javaScript !== false,
@@ -117,6 +133,7 @@ export function commonOptions(flags) {
     storageState: typeof flags["storage-state"] === "string" ? flags["storage-state"] : undefined,
     waitFor: typeof flags["wait-for"] === "string" ? flags["wait-for"] : undefined,
     dismiss: !flags["no-dismiss"],
+    browser: typeof flags.browser === "string" ? flags.browser : undefined,
   };
 }
 

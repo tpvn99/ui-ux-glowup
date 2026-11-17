@@ -24,7 +24,7 @@ export function collectUx() {
   for (const el of document.querySelectorAll('a[href], button, [role="button"], input[type="submit"]')) {
     if (!vis(el)) continue;
     const r = el.getBoundingClientRect();
-    if (r.top >= innerHeight || r.height < 30) continue;
+    if (r.top >= innerHeight || r.height < 24) continue;
     if (alpha(getComputedStyle(el).backgroundColor) >= 0.9) filled.push({ sel: sel(el), label: txt(el) });
   }
   const fields = [];
