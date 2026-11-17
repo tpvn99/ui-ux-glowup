@@ -33,6 +33,15 @@ test("diffSmoke reports missing, broken controls, lost validation and new errors
   assert.deepEqual(diffSmoke(before, before), []);
 });
 
+test("a renamed link with the same target is a warning, not a missing control", () => {
+  const link = (label, href) => ({ key: `a||${label.toLowerCase()}|${href}`, label, tag: "a", href, effect: "navigates" });
+  const d = diffSmoke({ results: [link("Click here", "/pricing")], forms: [], errors: [] }, { results: [link("See pricing", "/pricing")], forms: [], errors: [] });
+  assert.deepEqual(rules(d), ["control-renamed"]);
+  assert.equal(d[0].severity, "warning");
+  const gone = diffSmoke({ results: [link("Click here", "/pricing")], forms: [], errors: [] }, { results: [link("See pricing", "/plans")], forms: [], errors: [] });
+  assert.deepEqual(rules(gone), ["control-missing"]);
+});
+
 test("smokeFindings flags dead controls, empty links and unlabelled fields", () => {
   const snap = {
     results: [{ key: "x", label: "Go", tag: "button", effect: "none" }, { key: "y", label: "Docs", tag: "a", href: "#", effect: "scrolls" }],

@@ -11,6 +11,7 @@ The workflow in `SKILL.md` shows `audit`, `audit-site`, `inventory`, `extract-to
 | `responsive.mjs <page> [--stress long\|rtl]` | 14 sizes (320–1920, tablets, landscape), long words and +50% text, right-to-left |
 | `consistency.mjs <page> <page>…` / `--site <url>` | Fonts, heading scale, header/footer links, buttons, palette, width across pages |
 | `brand-guard.mjs [dir] [--allow color,font,dependency]` | Did the change touch brand colors, fonts or UI dependencies? (vs the last backup) |
+| `verify.mjs snapshot\|check\|report <page>` | Every check in one run: snapshot before, compare after, classified report (`--out report.md` or `.html`), `--fast` skips performance and the size sweep |
 | `stack.mjs [dir]` | Framework, styling, token files, WordPress builders |
 | `ux.mjs <page>` | UX audit, a fix per finding |
 | `a11y.mjs <page>` | WCAG 2.2 AA: Tab walk, ARIA, reflow 320px |

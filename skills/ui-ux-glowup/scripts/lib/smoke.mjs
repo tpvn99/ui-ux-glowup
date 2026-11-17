@@ -84,9 +84,18 @@ export function smokeFindings(snap) {
 export function diffSmoke(before, after) {
   const out = [];
   const post = new Map(after.results.map((c) => [c.key, c]));
+  const before_keys = new Set(before.results.map((c) => c.key));
+  const byHref = new Map(after.results.filter((c) => c.href && !before_keys.has(c.key)).map((c) => [`${c.tag}|${c.href}`, c]));
   for (const c of before.results) {
     if (c.skipped || c.disabled) continue;
-    const now = post.get(c.key);
+    let now = post.get(c.key);
+    if (!now && c.href && byHref.has(`${c.tag}|${c.href}`)) {
+      const renamed = byHref.get(`${c.tag}|${c.href}`);
+      out.push({ rule: "control-renamed", severity: "warning", key: c.key, message: `"${c.label}" is now "${renamed.label}" (same link ${c.href})` });
+      now = renamed;
+      if (c.effect !== "none" && !now.skipped && now.effect === "none") out.push({ rule: "control-broken", severity: "error", key: c.key, message: `"${renamed.label}" used to ${c.effect} and now does nothing` });
+      continue;
+    }
     if (!now) out.push({ rule: "control-missing", severity: "error", key: c.key, message: `"${c.label || c.key}" (${c.tag}) existed before and is gone` });
     else if (c.effect !== "none" && !now.skipped && now.effect === "none") out.push({ rule: "control-broken", severity: "error", key: c.key, message: `"${c.label}" used to ${c.effect} and now does nothing` });
     else if (c.effect !== "none" && now.effect !== c.effect && !now.skipped) out.push({ rule: "control-changed", severity: "warning", key: c.key, message: `"${c.label}" went from ${c.effect} to ${now.effect}` });

@@ -1,5 +1,6 @@
 // Shared browser helpers for the ui-ux-glowup scripts.
 import { resolve, basename, extname } from "node:path";
+import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import { execSync } from "node:child_process";
@@ -154,5 +155,10 @@ export function parseArgs(argv) {
 
 /** True when the module is executed directly (node script.mjs), not imported. */
 export function isMain(importMetaUrl) {
-  return process.argv[1] && importMetaUrl === pathToFileURL(resolve(process.argv[1])).href;
+  if (!process.argv[1]) return false;
+  try {
+    return importMetaUrl === pathToFileURL(realpathSync(resolve(process.argv[1]))).href;
+  } catch {
+    return importMetaUrl === pathToFileURL(resolve(process.argv[1])).href;
+  }
 }

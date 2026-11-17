@@ -170,10 +170,18 @@ skills/ui-ux-glowup/
 ├── SKILL.md                    # Workflow
 ├── references/
 │   ├── intake.md               # Start-of-job questionnaire, modernity levels, brief
-│   ├── sites.md                # Reference sites by category + what to borrow
+│   ├── sites.md                # Reference sites for SaaS and tech + what to borrow
+│   ├── sectors.md              # References by sector (health, finance, real estate, travel…), variety check
 │   ├── sections.md             # Patterns by section (hero, features, pricing, dashboard…)
 │   ├── craft.md                # Finishing details that make it look professional
 │   ├── implement.md            # Code mode: from findings to changes in the real codebase
+│   ├── frameworks.md           # Per-stack rules (Next, Nuxt, Svelte, Angular, WordPress, Tailwind, shadcn, MUI…)
+│   ├── testing.md              # Smoke test, journeys, other browsers, sizes, consistency
+│   ├── ux.md                   # UX audit rules and what a script cannot see
+│   ├── a11y.md                 # WCAG 2.2 AA behaviour checks
+│   ├── performance.md          # LCP, CLS, weight, images, scripts
+│   ├── modes.md                # Audit only / recommend / apply, levels of intervention
+│   ├── scripts.md              # Every script and its use
 │   ├── visuals.md              # 3D, bento, semi-flat, charts, KPI designs, dark mode, WebP/SVG
 │   ├── mobile.md               # Taps, forms, carousels, overlays on phones
 │   ├── seo-readability.md      # Section spacing, readability, on-page SEO, GEO, copy rules
@@ -202,9 +210,28 @@ skills/ui-ux-glowup/
 │   ├── make-favicon.mjs        # favicon.ico/svg, apple-touch, PWA icons, <head> snippet
 │   ├── audit.browser.js        # Paste-in-DevTools audit (generated)
 │   ├── build-browser-audit.mjs # Regenerates audit.browser.js
+│   ├── verify.mjs              # Snapshot before, check after, classified report (md / html)
+│   ├── smoke.mjs, scenario.mjs # Click every safe control; user journeys; regressions vs a saved run
+│   ├── ux.mjs, a11y.mjs        # UX audit; WCAG 2.2 AA behaviour (Tab walk, ARIA, reflow)
+│   ├── perf.mjs                # LCP, CLS, blocking time, weight on a throttled phone
+│   ├── responsive.mjs          # 14 sizes, long text and right-to-left stress
+│   ├── consistency.mjs         # Same fonts, nav, buttons, palette across pages
+│   ├── cross-browser.mjs       # Chromium, Firefox, WebKit compared
+│   ├── brand-guard.mjs         # Brand colors, fonts, UI libraries untouched
+│   ├── safeguard.mjs           # Backup, rollback, secrets and session files check
+│   ├── stack.mjs               # Detect framework, styling, token files, WordPress builders
 │   └── lib/                    # Browser loader, color math, page probe, analysis rules, site files, locate, report
 └── evals/evals.json            # Test prompts with assertions
 ```
+
+## Documentation
+
+- [Getting started](docs/getting-started.md): install, first audit, first improvement
+- [By type of project](docs/by-project-type.md): landing page, app, shop, WordPress, article, back-office, PDF
+- [Levels, modes and limits](docs/levels-and-limits.md): audit only / recommend / apply, light to complete, what is supported, known limits
+- [Tutorials](docs/tutorials.md): three walk-throughs to run in this repository
+- [Example report](docs/example-report.md): a real before/after report
+- [Troubleshooting](docs/troubleshooting.md)
 
 ## Using the scripts directly
 
@@ -214,6 +241,9 @@ They're useful on their own, with or without an agent:
 npm i -D playwright && npx playwright install chromium
 
 node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com
+node skills/ui-ux-glowup/scripts/verify.mjs report https://your-site.com --out report.html    # everything, read-only
+node skills/ui-ux-glowup/scripts/verify.mjs snapshot page.html --dir .glowup/before          # before the change
+node skills/ui-ux-glowup/scripts/verify.mjs check page.html --dir .glowup/before --out report.md   # after
 node skills/ui-ux-glowup/scripts/audit.mjs https://your-site.com --allow ai-hero-pill,ai-caps-label   # brand choices
 node skills/ui-ux-glowup/scripts/extract-tokens.mjs https://stripe.com
 node skills/ui-ux-glowup/scripts/compare.mjs old.png new.html compare.png

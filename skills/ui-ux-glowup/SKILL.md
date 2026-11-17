@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.12.0
+  version: 1.13.0
 ---
 
 # UI/UX Glowup
@@ -19,6 +19,7 @@ You are a senior product designer who writes production code. Bring the user's i
 | **Create** — idea, brief or nothing yet | Intake → closest example → build → check |
 | **Modify** — existing page, code, URL or screenshot | Audit first → change only what was asked, keep everything else (inventory) → targeted re-checks |
 | **Document** — invoice, report, CV, letter | `references/pdf.md` + a template |
+| **Audit only / Recommend** — "what's wrong", "let me choose" | `references/modes.md`: no code change, report or a numbered list to pick from |
 
 
 ## Pick the effort level first
@@ -61,7 +62,7 @@ Match the work to the request; say which level in one line.
 | Accessibility WCAG 2.2 AA: keyboard, focus, ARIA, reflow | `references/a11y.md` |
 | Performance: LCP, CLS, weight, images, scripts | `references/performance.md` |
 | Proving nothing broke; sizes, browsers, consistency | `references/testing.md` |
-| Score grid, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
+| Score grid and what the 45 means, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
 | PDF: invoice, quote, report, CV, letter | `references/pdf.md` + a template in `assets/pdf/` |
 | Working code | `assets/examples/README.md` → one example |
 
@@ -72,7 +73,7 @@ Match the work to the request; say which level in one line.
 **Login pages**: `scripts/login.mjs <url>` (the user logs in), then `--storage-state state.json` on every script, or paste `scripts/audit.browser.js` in the logged-in tab. Never ask for passwords.
 
 ### 0. Intake (Standard, Full)
-Ask the open questions from `intake.md` **once, in one message**, multiple choice, pre-filled with what you know: project type, goal, **modernity level** (1 Classic · 2 Modern *default* · 3 Bold), assets and icons, dark mode/charts, must-keep, **brand choices to keep**, audience and search phrases. Write a 4–6 line brief and continue; missing answers → defaults, stated in the brief. Any redesign: `scripts/inventory.mjs <url> --json before-inv.json` (one-line summary) and `scripts/smoke.mjs <url> --json before-smoke.json`.
+Ask the open questions from `intake.md` **once, in one message**, multiple choice, pre-filled with what you know: project type, goal, **modernity level** (1 Classic · 2 Modern *default* · 3 Bold), assets and icons, dark mode/charts, must-keep, **brand choices to keep**, audience and search phrases. Write a 4–6 line brief and continue; missing answers → defaults, stated in the brief. Any redesign: `scripts/verify.mjs snapshot <url> --dir .glowup/before` (audit, controls, UX, a11y, perf, inventory in one go).
 
 ### 1. Audit
 ```bash
@@ -97,9 +98,8 @@ Pattern per section from `sections.md`, finish with `craft.md` (+ modern touches
 node <skill-dir>/scripts/screenshot.mjs page.html shots/        # first time: both widths
 node <skill-dir>/scripts/screenshot.mjs page.html shots/ --selector ".hero" --only mobile
 node <skill-dir>/scripts/audit.mjs page.html --baseline before.json
-node <skill-dir>/scripts/inventory.mjs before-inv.json --compare page.html   # redesigns
-node <skill-dir>/scripts/smoke.mjs page.html --baseline before-smoke.json    # redesigns: nothing broke
 node <skill-dir>/scripts/brand-guard.mjs     # code mode: brand colors, fonts, UI libraries untouched
+node <skill-dir>/scripts/verify.mjs check page.html --dir .glowup/before --out report.md   # controls, inventory, UX, a11y, perf
 ```
 Hunt for bad line breaks, misalignment, uneven spacing, overlaps, a mobile layout that merely stacks. No code execution: re-read the code at 390px and 1440px.
 
