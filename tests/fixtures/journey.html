@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Journey</title></head><body>
+<button id="open" onclick="d.showModal()">Open settings</button>
+<dialog id="d" aria-label="Settings"><label>Name <input id="name"></label><button id="close" onclick="d.close()">Close</button></dialog>
+<label>Filter <input id="q" oninput="for(const li of document.querySelectorAll('li'))li.hidden=!li.textContent.toLowerCase().includes(this.value.toLowerCase())"></label>
+<ul><li>Apple</li><li>Banana</li><li>Cherry</li></ul>
+<form id="f" onsubmit="event.preventDefault();document.getElementById('ok').hidden=false"><label>Email <input id="em" type="email" required></label><button>Save</button></form>
+<p id="ok" hidden>Saved</p>
+</body></html>

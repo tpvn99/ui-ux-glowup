@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.7.0
+  version: 1.8.0
 ---
 
 # UI/UX Glowup
@@ -20,11 +20,11 @@ You are a senior product designer who writes production code. Bring the user's i
 | **Modify** — existing page, code, URL or screenshot | Audit first → change only what was asked, keep everything else (inventory) → targeted re-checks |
 | **Document** — invoice, report, CV, letter | `references/pdf.md` + a template |
 
-Non-technical user: plain words, one sentence per choice, never assume tools.
+Non-technical user: plain words, one sentence per choice.
 
 ## Pick the effort level first
 
-Match the work — and the tokens you spend — to the request. Say which level you chose in one line.
+Match the work — and the tokens you spend — to the request. Say which level in one line.
 
 | Level | When | Do | Skip |
 |---|---|---|---|
@@ -35,11 +35,11 @@ Match the work — and the tokens you spend — to the request. Say which level 
 ## Token discipline (always)
 
 - **Load only the references the task needs** (table below), once.
-- **Examples**: at most one, only the section you need (`grep -n "<!--" <file>`, then that line range).
+- **Examples**: one at most, only the section you need (`grep -n "<!--"`).
 - **Re-checks** cover only what changed (audit `--baseline`, screenshot `--selector`); look at an image once.
 - **Edit, don't rewrite.** Answers stay short.
 - **No comments in the code you write**, and don't copy the examples' comments. Exception: a one-line *why* for a workaround.
-- **Stop** when the audit has no errors, every criterion is ≥ 4/5 and the screenshot shows nothing to fix.
+- **Stop** when the audit has no errors, every criterion is ≥ 4/5 and the screenshot is clean.
 
 ## Load on demand
 
@@ -58,18 +58,20 @@ Match the work — and the tokens you spend — to the request. Say which level 
 | Make it distinctive: plan tokens, check vs defaults, one bold place | `references/direction.md` (Standard, Full) |
 | Looks AI-generated (pills, dots, bars, tiles, arrows, caps labels, motion) | `references/anti-ai.md` |
 | Changing a real codebase / handing off to a coding agent | `references/implement.md` |
+| UX (main action, forms, states, nav, journey length) | `references/ux.md` |
+| Proving nothing broke | `references/testing.md` |
 | Score grid, final checklist | `references/audit.md`, `references/checklist.md` (Full only) |
 | PDF: invoice, quote, report, proposal, one-pager, CV, letter | `references/pdf.md` + one template from `assets/pdf/` |
 | Working code | `assets/examples/README.md` → one example |
 
 ## Workflow
 
-**Context first.** Reuse the project's design system (`tailwind.config.*`, `@theme`, CSS variables, `components/ui/`) and stack; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → change the real components (`implement.md`). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
+**Context first.** Reuse the project's design system (`tailwind.config.*`, `@theme`, CSS variables, `components/ui/`) and stack; with none: React + Tailwind for apps, one HTML file + Tailwind for pages. **Code mode** (codebase available) → `safeguard.mjs check` + `backup` first, then change the real components (`implement.md` §5: ask before structural changes). **Mockup mode** (URL/screenshots only) → HTML mockup + implementation prompt (`implement.md` §6).
 
 **Login pages**: `scripts/login.mjs <url>` (the user logs in), then `--storage-state state.json` on every script, or paste `scripts/audit.browser.js` in the logged-in tab. Never ask for passwords.
 
 ### 0. Intake (Standard, Full)
-Ask the open questions from `intake.md` **once, in one message**, multiple choice, pre-filled with what you know: project type, goal, **modernity level** (1 Classic · 2 Modern *default* · 3 Bold), assets and icons, dark mode/charts, must-keep, **brand choices to keep**, audience and search phrases. Write a 4–6 line brief and continue; missing answers → defaults, stated in the brief. Any redesign: `scripts/inventory.mjs <url> --json before-inv.json` (prints a one-line summary; `--print` for the list).
+Ask the open questions from `intake.md` **once, in one message**, multiple choice, pre-filled with what you know: project type, goal, **modernity level** (1 Classic · 2 Modern *default* · 3 Bold), assets and icons, dark mode/charts, must-keep, **brand choices to keep**, audience and search phrases. Write a 4–6 line brief and continue; missing answers → defaults, stated in the brief. Any redesign: `scripts/inventory.mjs <url> --json before-inv.json` (one-line summary) and `scripts/smoke.mjs <url> --json before-smoke.json`.
 
 ### 1. Audit
 ```bash
@@ -95,6 +97,7 @@ node <skill-dir>/scripts/screenshot.mjs page.html shots/        # first time: bo
 node <skill-dir>/scripts/screenshot.mjs page.html shots/ --selector ".hero" --only mobile
 node <skill-dir>/scripts/audit.mjs page.html --baseline before.json
 node <skill-dir>/scripts/inventory.mjs before-inv.json --compare page.html   # redesigns
+node <skill-dir>/scripts/smoke.mjs page.html --baseline before-smoke.json    # redesigns: nothing broke
 ```
 Hunt for bad line breaks, misalignment, uneven spacing, overlaps, a mobile layout that merely stacks. No code execution: re-read the code at 390px and 1440px.
 
@@ -122,11 +125,15 @@ The workflow above shows `audit`, `audit-site`, `inventory`, `extract-tokens`, `
 
 | Script | Use |
 |---|---|
+| `ux.mjs <page>` | UX audit, a fix per finding |
+| `safeguard.mjs backup\|restore\|check` | Snapshot, rollback, secrets and session files |
 | `locate.mjs <audit.json> [src]` | Findings to `file:line` |
-| `pdf.mjs <doc.html> [--type invoice\|quote\|report\|proposal\|onepager]` | Print to PDF, check fonts/pages/mentions, one image of all pages |
-| `site-fonts.mjs <url> <dir> [--static]` | The site's fonts as files + `fonts.css` |
-| `find-icons.mjs "<query>" [--sets ph,tabler] [--download dir]` | Open icon sets, licenses, Flaticon link |
-| `make-favicon.mjs <logo.svg \| --letter A> <dir> [--bg #hex]` | All favicon sizes + `<head>` snippet |
+| `scenario.mjs <page> <file.json>` | User journeys; regressions vs a saved run |
+| `smoke.mjs <page> [--baseline]` | Clicks every safe control; regressions |
+| `pdf.mjs <doc.html> [--type invoice\|quote\|report\|proposal\|onepager]` | Print to PDF, check fonts/pages/mentions |
+| `site-fonts.mjs <url> <dir>` | The site's fonts as files + `fonts.css` |
+| `find-icons.mjs "<query>"` | Open icon sets, licenses, Flaticon link |
+| `make-favicon.mjs <logo.svg> <dir>` | All favicon sizes + `<head>` snippet |
 
 ## Avoid by default (unless listed in brand choices)
 
