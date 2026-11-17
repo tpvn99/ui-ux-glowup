@@ -1,0 +1,10 @@
+{ "scenarios": [
+  { "name": "Settings dialog opens and traps focus", "steps": [
+    { "click": "#open" }, { "expect": { "visible": "#d" } }, { "press": "Tab" }, { "expect": { "focusWithin": "#d" } },
+    { "click": "#close" }, { "expect": { "hidden": "#d" } } ] },
+  { "name": "Filter narrows the list", "steps": [
+    { "fill": ["#q", "an"] }, { "expect": { "count": ["li:visible", 1] } }, { "expect": { "text": ["ul", "banana"] } } ] },
+  { "name": "Form validates then saves", "steps": [
+    { "expect": { "invalid": "#em" } }, { "fill": ["#em", "a@b.co"] }, { "expect": { "valid": "#em" } },
+    { "click": "text=Save" }, { "expect": { "visible": "#ok" } } ] }
+] }

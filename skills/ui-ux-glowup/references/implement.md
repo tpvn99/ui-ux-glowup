@@ -81,3 +81,18 @@ Reference mockup: <path or link to the HTML mockup>. Before/after: <compare.png>
 ```
 
 Fill every `<…>` with specifics from the audit, `locate.mjs` output and the mockup. Vague prompts ("make it look like Linear") produce vague results.
+
+## 5. Protect the project
+
+Before the first edit in a real codebase:
+
+```bash
+node <skill-dir>/scripts/safeguard.mjs check              # secrets in code, session files committed or not ignored
+node <skill-dir>/scripts/safeguard.mjs backup --label "before redesign"
+```
+
+`backup` snapshots the project without touching the working tree, the index, the branch or the stash (git: a commit object under `refs/glowup/`, untracked files included; no git: a copy in `.glowup-backup/`). Tell the user the backup id and the rollback command: `safeguard.mjs restore <id> --yes`. A restore takes a new backup first, puts the files back, and lists files created since (`--clean` deletes them).
+
+`check` never prints a secret. When it reports one: say where and what kind, never repeat the value, move it to an environment variable, and tell the user to rotate it. `state.json` files from `login.mjs` hold live sessions: they must be in `.gitignore` (`check --fix` adds the lines) and are never committed, pasted or uploaded.
+
+**Ask before structural changes**, even when they look like design: adding or replacing a dependency or UI library, moving or renaming files, changing routes, the build or the config, touching business logic, auth, payments, tracking or API calls. List them as **Product decisions to confirm** and wait for a yes. Design-only changes (CSS, markup, copy, assets) proceed.

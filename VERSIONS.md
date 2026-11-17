@@ -4,9 +4,22 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.7.0 | 2026-11-16 |
+| ui-ux-glowup | 1.8.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.8.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.7.0 → 1.8.0): functional smoke test, user-journey scenarios, non-regression, UX audit, backup and rollback (roadmap phase 1, steps 1–4).
+  - `scripts/smoke.mjs` (+ `lib/smoke.mjs`): clicks every visible, safe control (one fresh page per control) and records its effect (`navigates`, `scrolls`, `toggles`, `changes-ui`, `none`); records forms, required fields, labels and whether an empty submission is blocked; collects JS errors and failed same-origin requests. Never submits forms, leaves the site, or clicks delete / logout / pay style controls (listed as skipped).
+  - `--json` saves a run; `--baseline before.json` reports regressions (`control-missing`, `control-broken`, `control-changed`, `link-changed`, `form-missing`, `field-missing`, `validation-lost`, `field-type-changed`, `new-js-error`) and exits 1 on errors. Alone it flags `dead-control`, `empty-link`, `field-unlabelled`, `js-error`, `request-failed`.
+  - `scripts/scenario.mjs` (+ `lib/scenario.mjs`): user journeys in a JSON file (click, fill, select, check, press, hover, expect visible / hidden / text / url / count / focusWithin / focusOutside / valid / invalid / attr). Each scenario starts on a fresh page; the file is validated first with precise messages; `--baseline` lists scenarios that passed before and fail now; exit 1 on failure. `--only mobile` supported.
+  - `scripts/ux.mjs` (+ `lib/ux.mjs`): read-only UX audit, a concrete fix per finding. Rules: `no-primary-action`, `competing-primary-actions`, `placeholder-as-label` (error), `missing-autocomplete`, `wrong-input-type`, `long-form`, `errors-unsupported`, `empty-state-missing`, `nav-no-current`, `nav-too-many`, `no-home-link`. `scenario.mjs` now reports actions per scenario and flags journeys over 6 (`LONG_JOURNEY`).
+  - `scripts/safeguard.mjs` (+ `lib/safeguard.mjs`): `backup` (git: commit object under `refs/glowup/`, untracked files included, working tree/index/branch/stash untouched; no git: copy in `.glowup-backup/`), `list`, `restore <id|latest> --yes [--clean]` (takes a backup first, lists files created since, deletes them only with `--clean`), `check` (`sensitive-tracked`, `sensitive-not-ignored`, `secret-in-code`, `gitignore-gaps`; never prints a secret; `--fix` appends the missing `.gitignore` lines). `implement.md` §5: protect first, ask before structural changes (dependencies, file moves, routes, build, business logic, auth, payments, tracking).
+  - `references/ux.md`: rule table, and the checks a script can't make (loading/error states, confirmations, findability).
+  - `references/testing.md`: smoke test + scenarios workflow, which journeys to write, how to report what was not tested.
+  - `openPage` accepts `onPage` to listen for errors raised during load.
+  - Tests: 22 new (`smoke`, `scenario`, `ux`, `safeguard`; fixtures `smoke-*.html`, `journey*.html`, `journey.json`, `ux-bad.html`, `ux-good.html`).
 
 ### 1.7.0 (2026-11-16)
 

@@ -30,3 +30,6 @@ shots/
 # Saved login sessions (login.mjs) — contain live tokens
 state.json
 *.state.json
+
+# Backups made by scripts/safeguard.mjs (no git)
+.glowup-backup/
