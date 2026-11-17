@@ -4,9 +4,18 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.9.0 | 2026-11-17 |
+| ui-ux-glowup | 1.10.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.10.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.9.0 → 1.10.0): performance audit (roadmap phase 2, step 2).
+  - `scripts/perf.mjs` (+ `lib/perf.mjs`): real Chromium measurements: LCP (element and image), CLS (across a scroll), TBT from long tasks, FCP, TTFB, weight and requests by type. Profiles: `phone` (default for URLs: 390px, CPU 4× slower, 1.6 Mbps / 150 ms), `desktop`, `fast` (no throttling; default for local files). `--json` saves a run, `--baseline` prints LCP / CLS / TBT / weight before → after. Exit 1 on errors.
+  - Rules: `lcp-slow`, `cls-high`, `tbt-high`, `fcp-slow`, `ttfb-slow`, `page-heavy`, `too-many-requests`, `js-heavy`, `heavy-library` (jQuery, Moment, full lodash, three.js, Chart.js, Bootstrap JS, Font Awesome, Tailwind compiled in the browser), `third-party-heavy`, `fonts-heavy`, `font-display-missing`, `render-blocking-script`, `costly-effects`, `image-oversized`, `image-heavy`, `below-fold-not-lazy`, `lcp-lazy` (error), `lcp-no-priority`. A fix per finding. Existing `image-format`, `image-dimensions`, `scroll-cls` stay in `audit.mjs`.
+  - `references/performance.md`: thresholds, fix order, what lab numbers cannot tell (field data, INP on real interactions, real devices).
+  - `openPage` awaits `onPage` (needed to set throttling before navigation). The script table moved from `SKILL.md` to `references/scripts.md` (SKILL.md back to ~9.9 KB).
+  - Tests: 6 new (`tests/perf.test.mjs`: pure rules, and a local HTTP server serving a bad and a clean page).
 
 ### 1.9.0 (2026-11-17)
 
