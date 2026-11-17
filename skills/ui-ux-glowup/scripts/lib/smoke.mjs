@@ -22,6 +22,8 @@ export function collectControls() {
     const n = (seen.get(key) || 0) + 1;
     seen.set(key, n);
     if (n > 1) key += "#" + n;
+    const rect = el.getBoundingClientRect();
+    const offscreen = rect.width <= 2 || rect.height <= 2;
     const inForm = !!el.closest("form");
     const isSubmit = (tag === "button" && (el.type || "submit") === "submit" && inForm) || (tag === "input" && el.type === "submit");
     const external = tag === "a" && el.origin && el.origin !== location.origin;
@@ -29,7 +31,7 @@ export function collectControls() {
     controls.push({
       key, tag, label, href, role: el.getAttribute("role") || "",
       disabled: el.disabled === true || el.getAttribute("aria-disabled") === "true",
-      isSubmit, external, anchor,
+      isSubmit, external, anchor, offscreen,
     });
   }
   const forms = [...document.forms].filter(visible).map((f, i) => ({
@@ -52,7 +54,7 @@ export function unsafeLabel(label) {
 /** What a click changed, from before/after page states measured by the runner. */
 export function classifyEffect(b, a) {
   if (a.url !== b.url) return a.url.split("#")[0] === b.url.split("#")[0] && a.url.includes("#") ? "scrolls" : "navigates";
-  if (a.expanded !== b.expanded || a.dialogs !== b.dialogs || a.selected !== b.selected) return "toggles";
+  if (a.expanded !== b.expanded || a.dialogs !== b.dialogs || a.selected !== b.selected || a.sort !== b.sort) return "toggles";
   if (a.html !== b.html || a.text !== b.text) return "changes-ui";
   return "none";
 }

@@ -4,9 +4,21 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.11.0 | 2026-11-17 |
+| ui-ux-glowup | 1.12.0 | 2026-11-17 |
 
 ## Recent Changes
+
+### 1.12.0 (2026-11-17)
+
+- **ui-ux-glowup** (1.11.0 → 1.12.0): art direction by sector, brand guard, responsive sweep, consistency across pages, two sober examples (roadmap phase 3).
+  - `references/sectors.md`: health, public sector and non-profits, banking and insurance, real estate, travel, education, fashion, media, professional services, food, events; a **variety check** (the dark hairline "Linear" look is only for developer tools), a style spectrum (sober to expressive), sector to example table. `sites.md` and `direction.md` point to it.
+  - `scripts/brand-guard.mjs` (+ `lib/brandguard.mjs`): compares the project (untracked files included) with the latest `safeguard` backup, a backup id or a git ref: `brand-color-changed` (error: one of the 3 most used non-neutral colors disappeared), `font-changed` (error), `ui-dependency-added` / `ui-dependency-removed` (error), `color-removed`, `palette-growth`, `font-added`. `--allow color,font,dependency` when the user asked.
+  - `scripts/responsive.mjs` (+ `lib/responsive.mjs`): 14 sizes (320 to 1920, two tablets, phone and tablet landscape); `overflow-x`, `text-clipped`, `text-too-small`, `h1-wraps`, `line-too-long`, `fixed-covers-screen`, `target-small`; `--stress long` (+50% words, 34-letter word in headings, numbers untouched) and `--stress rtl`.
+  - `scripts/consistency.mjs` (+ `lib/consistency.mjs`): several pages or `--site`; fonts, heading scale, header and footer links, primary button color / radius / height, palette, card radius, content width, header height, background, title pattern, language, favicon; values and pages named.
+  - **Examples**: `clinic.html` (sober health practice) and `data-table.html` (sober back-office list; its 5 interaction scenarios are a test). All 13 existing examples now carry `h1, h2, h3 { overflow-wrap: anywhere; }` (a 34-letter heading word overflowed 11 of them).
+  - Tool fixes found while building them: the audit no longer counts a visually hidden skip link as a small touch target; `smoke.mjs` sees a sort that only reorders rows (hashes instead of lengths, reads `aria-sort`) and skips visually hidden links; `responsive.mjs` counts stuck bars only, not sticky table cells.
+  - Known stress findings left as they are (stress is a "what breaks first" tool, not a pass criterion): `dashboard-dark.html` header and `kpi-cards.html` labels at +50% text.
+  - Tests: 31 new (`brandguard`, `responsive`, `consistency`, `v112`; fixtures `resp-*.html`, `site-pages/`, `skiplink.html`, `data-table.scenarios.json`).
 
 ### 1.11.0 (2026-11-17)
 

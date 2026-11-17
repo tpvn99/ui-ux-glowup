@@ -356,7 +356,7 @@ export function analyze(desktop, mobile, { allow = [] } = {}) {
   // ---------- Responsive ----------
   if (!m.hasViewportMeta) add("Responsive", "error", "viewport-meta", 'Missing <meta name="viewport">.');
   if (m.overflowX > 1) add("Responsive", "error", "overflow", `Horizontal overflow of ${m.overflowX}px on mobile.`);
-  const targets = m.interactive.filter((i) => !i.inline && i.width > 0);
+  const targets = m.interactive.filter((i) => !i.inline && i.width > 0 && !(i.width <= 2 && i.height <= 2));
   const isControl = (i) => i.tag !== "a";
   const tiny = targets.filter((i) => (i.width < 24 || i.height < 24) && isControl(i));
   if (tiny.length) add("Responsive", "error", "tap-target-min", "Controls under 24px (WCAG 2.2 target size minimum).", tiny.map((i) => `${i.sel} ${i.width}×${i.height}`));

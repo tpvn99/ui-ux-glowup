@@ -1,5 +1,7 @@
 # Reference Library
 
+This file leans toward SaaS and tech. For health, public services, finance, real estate, travel, education, fashion, media, professional services and food, start with `sectors.md` and run its variety check.
+
 The sites below are widely recognized for the quality of their design. For each: why it's a reference and **the mechanics to borrow**. Sites evolve — check them live when you have web access.
 
 ## SaaS, tools, tech products
