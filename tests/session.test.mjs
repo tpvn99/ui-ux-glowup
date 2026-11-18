@@ -21,7 +21,7 @@ test("describeSession counts and dates the session without exposing any value", 
   assert.ok(!JSON.stringify(info).includes(SECRET));
 });
 
-test("protectSession locks the file and adds it to .gitignore in a repo, once", () => {
+test("protectSession locks the file and adds it to .gitignore in a repo, once", { skip: process.platform === "win32" }, () => {
   const d = repo();
   const f = state(d);
   chmodSync(f, 0o644);

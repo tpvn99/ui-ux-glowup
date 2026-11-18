@@ -2,6 +2,10 @@
 
 A mockup proves the direction; the job is done when the real product changes. Use this when the user has an existing app or site (React, Vue, Svelte, Astro, WordPress theme…).
 
+## Before auditing a live site
+
+Loading a live page counts as a visit. Known analytics hosts are blocked by default; the site's **own** event and A/B endpoints are not (pass `--block <host>`), and a real audit opens dozens of fresh browsers, each a new visitor. Tell the owner, prefer a staging copy, and say in the report which requests were blocked.
+
 ## 0. Know the stack
 
 ```bash

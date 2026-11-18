@@ -1,4 +1,5 @@
 import { test, after } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
@@ -110,9 +111,9 @@ test("resilience: a page that throws or empties when requests are lost is report
 });
 
 test("real pages: layout animation found, calm animation clean; the flaky profile loses the same requests every run and flags a fragile page", { skip }, async () => {
-  const bad = await perf(new URL("./fixtures/anim-bad.html", import.meta.url).pathname, { profile: "fast" });
+  const bad = await perf(fileURLToPath(new URL("./fixtures/anim-bad.html", import.meta.url)), { profile: "fast" });
   assert.ok(rules(bad.findings).includes("animates-layout") && rules(bad.findings).includes("many-animations"), rules(bad.findings).join());
-  assert.deepEqual(rules((await perf(new URL("./fixtures/anim-good.html", import.meta.url).pathname, { profile: "fast" })).findings), []);
+  assert.deepEqual(rules((await perf(fileURLToPath(new URL("./fixtures/anim-good.html", import.meta.url)), { profile: "fast" })).findings), []);
   const runs = [];
   for (let i = 0; i < 2; i++) runs.push(await perf(`${base}/fragile.html`, { profile: "flaky" }));
   assert.ok(runs.every((r) => rules(r.findings).includes("breaks-on-failed-requests")), runs.map((r) => rules(r.findings).join()).join(" | "));

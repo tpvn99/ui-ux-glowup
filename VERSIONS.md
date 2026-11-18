@@ -10,11 +10,19 @@ Current versions of all skills. Agents can compare against local versions to che
 
 ### 1.15.0 (2026-11-18)
 
-- **ui-ux-glowup** (1.14.1 → 1.15.0): two new audit rules and two new benchmark defect families.
+- **ui-ux-glowup** (1.14.2 → 1.15.0): two new audit rules and two new benchmark defect families.
   - `lang-mismatch` (warning): `<html lang>` disagrees with the language of the visible text (guessed from common words in en, fr, es, de, it, pt; silent on short or unclear text).
   - `rtl-direction` (error): the text is mostly Arabic or Hebrew but the page direction is `ltr` (no `dir="rtl"`).
   - Benchmark: `lang-wrong` and `rtl-not-mirrored` seeded in every project; recall 100 %, no new finding on the clean pages.
   - Tests: 3 new (good and bad fixtures for each rule).
+
+### 1.14.2 (2026-11-18)
+
+- **ui-ux-glowup** (1.14.1 → 1.14.2): an audit of a live site no longer counts as a visit.
+  - **Found by a real audit**: auditing a live site loaded its analytics and tag-manager scripts and, with each fresh browser, triggered its A/B test: dozens of phantom visitors in one audit.
+  - Every browser script now **blocks known analytics, tag-manager and session-recording hosts by default** (`TRACKING_HOSTS` in `lib/browser.mjs`: Google Tag Manager / Analytics, Umami, Plausible, PostHog, Segment, Mixpanel, Hotjar, Clarity, Meta and TikTok pixels, Sentry, …) and reports how many requests were blocked (`perf.mjs`, the `verify` report). `--allow-tracking` loads them; `--block host,host` adds the site's own stats or experiment endpoint, which cannot be known in advance.
+  - `docs/faq.md`, `docs/troubleshooting.md`, `references/implement.md` ("Before auditing a live site"), `references/scripts.md`.
+  - Tests: 1 new (blocked by default, `--allow-tracking`, `--block`, no false match on look-alike hosts).
 
 ### 1.14.1 (2026-11-18)
 

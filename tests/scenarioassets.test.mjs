@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { validateScenarios } from "../skills/ui-ux-glowup/scripts/lib/scenario.mjs";
@@ -9,7 +10,7 @@ let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
 const dir = new URL("../skills/ui-ux-glowup/assets/scenarios/", import.meta.url);
-const ex = (n) => new URL(`../skills/ui-ux-glowup/assets/examples/${n}`, import.meta.url).pathname;
+const ex = (n) => fileURLToPath(new URL(`../skills/ui-ux-glowup/assets/examples/${n}`, import.meta.url));
 const load = (f) => JSON.parse(readFileSync(new URL(f, dir), "utf8"));
 
 test("every shipped scenario file is valid, and every template says what to replace", () => {

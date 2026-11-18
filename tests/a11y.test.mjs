@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { traversalFindings, a11yFindings } from "../skills/ui-ux-glowup/scripts/lib/a11y.mjs";
 import { a11y } from "../skills/ui-ux-glowup/scripts/a11y.mjs";
@@ -7,7 +8,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 const stop = (o) => ({ sel: "a", label: "x", top: 0, left: 0, w: 50, h: 20, obscuredBy: null, inDialog: false, ...o });
 const rules = (l) => l.map((f) => f.rule).sort();
 const S = (o = {}) => ({ invalidRoles: [], brokenRefs: [], hiddenFocusable: [], roleNotFocusable: [], duplicateIds: [], positiveTabindex: [], dialogsUnnamed: [], hasMain: true, hasSkipLink: true, linksBeforeMain: 0, authFields: [], autoplay: [], tables: [], ...o });

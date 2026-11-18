@@ -1,5 +1,6 @@
 // Runs the real scripts in a headless browser. Skipped when Playwright isn't installed.
 // The examples suite needs network (Tailwind CDN, fonts, Unsplash) and only runs in CI.
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, existsSync, mkdtempSync } from "node:fs";
@@ -16,8 +17,8 @@ try {
 } catch {
   hasPlaywright = false;
 }
-const EXAMPLES = new URL("../skills/ui-ux-glowup/assets/examples/", import.meta.url).pathname;
-const FIXTURE = new URL("./fixtures/before.html", import.meta.url).pathname;
+const EXAMPLES = fileURLToPath(new URL("../skills/ui-ux-glowup/assets/examples/", import.meta.url));
+const FIXTURE = fileURLToPath(new URL("./fixtures/before.html", import.meta.url));
 
 test("audit flags a bad page", { skip: !hasPlaywright && "playwright not installed" }, async () => {
   const r = await audit(FIXTURE);
@@ -47,8 +48,8 @@ test("every example scores at least max − 2 with no errors", { skip: (!hasPlay
   }
 });
 
-const BUGS = new URL("./fixtures/mobile-bugs.html", import.meta.url).pathname;
-const SITE = new URL("./fixtures/index.html", import.meta.url).pathname;
+const BUGS = fileURLToPath(new URL("./fixtures/mobile-bugs.html", import.meta.url));
+const SITE = fileURLToPath(new URL("./fixtures/index.html", import.meta.url));
 
 test("audit catches mobile wraps, hidden columns, clipping and root font-size", { skip: !hasPlaywright && "playwright not installed" }, async () => {
   const rules = new Set((await audit(BUGS)).findings.map((f) => f.rule));
@@ -78,7 +79,7 @@ test("site audit crawls local pages, skips logout, finds recurring issues", { sk
   assert.ok(site.recurring.some((r) => r.rule === "root-font-size"));
 });
 
-const INTERACTIONS = new URL("./fixtures/mobile-interactions.html", import.meta.url).pathname;
+const INTERACTIONS = fileURLToPath(new URL("./fixtures/mobile-interactions.html", import.meta.url));
 
 test("audit catches phone bugs, tight sections, readability, SEO and AI tells on a real page (v1.3)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
   const r = await audit(INTERACTIONS);
@@ -88,7 +89,7 @@ test("audit catches phone bugs, tight sections, readability, SEO and AI tells on
   }
 });
 
-const AI_TELLS = new URL("./fixtures/ai-tells.html", import.meta.url).pathname;
+const AI_TELLS = fileURLToPath(new URL("./fixtures/ai-tells.html", import.meta.url));
 
 test("audit flags the AI-template tells that make a site look generated (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
   const r = await audit(AI_TELLS);
@@ -99,19 +100,19 @@ test("audit flags the AI-template tells that make a site look generated (v1.6)",
 });
 
 test("audit finds removed focus rings and animations without a reduced-motion rule (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
-  const r = await audit(new URL("./fixtures/a11y-bugs.html", import.meta.url).pathname);
+  const r = await audit(fileURLToPath(new URL("./fixtures/a11y-bugs.html", import.meta.url)));
   const rules = new Set(r.findings.map((f) => f.rule));
   assert.ok(rules.has("focus-invisible"), "focus-invisible");
   assert.ok(rules.has("reduced-motion"), "reduced-motion");
 });
 
 test("closed accordions do not count as section content (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
-  const r = await audit(new URL("./fixtures/accordion.html", import.meta.url).pathname);
+  const r = await audit(fileURLToPath(new URL("./fixtures/accordion.html", import.meta.url)));
   assert.ok(!r.findings.some((f) => f.rule.startsWith("section-gap")), "no false section-gap on closed details");
 });
 
 test("audit finds template chrome and ignores real counters and sequences (v1.6)", { skip: !hasPlaywright && "playwright not installed" }, async () => {
-  const r = await audit(new URL("./fixtures/ai-chrome.html", import.meta.url).pathname);
+  const r = await audit(fileURLToPath(new URL("./fixtures/ai-chrome.html", import.meta.url)));
   const rules = new Set(r.findings.map((f) => f.rule));
   for (const rule of ["ai-arrow-cta", "ai-caps-label", "ai-numbered-markers", "ai-accent-word", "ai-middot-meta"]) assert.ok(rules.has(rule), `expected ${rule}`);
   const numbered = r.findings.find((f) => f.rule === "ai-numbered-markers");
