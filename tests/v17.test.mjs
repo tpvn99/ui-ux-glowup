@@ -222,3 +222,9 @@ test("a hidden short heading is reported (a title is never too short to matter);
   const ok = await audit(fixture("hidden-counter.html"), { fast: true });
   assert.equal(ok.findings.some((x) => x.rule === "hidden-until-animated"), false);
 });
+
+test("false positives found on a real site: arrows are not emojis, a heading link may wrap, a scrolling nav is not a carousel", { skip }, async () => {
+  const a = await audit(fixture("real-world.html"), { fast: true });
+  const rules = a.findings.map((f) => f.rule);
+  for (const bad of ["ai-emoji", "wrapped-control", "carousel-snap"]) assert.equal(rules.includes(bad), false, `${bad} in ${rules}`);
+});

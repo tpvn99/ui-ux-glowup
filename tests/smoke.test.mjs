@@ -86,3 +86,20 @@ test("an already-active toggle (aria-pressed, aria-selected, aria-current) that 
   assert.deepEqual(smokeFindings(snap(true)).map((f) => f.rule), []);
   assert.deepEqual(smokeFindings(snap(false)).map((f) => f.rule), ["dead-control"]);
 });
+
+test("a link to the page you are already on is not dead, and an image-only link is named by its alt text", { skip }, async () => {
+  const s = await smoke(new URL("./fixtures/real-world.html", import.meta.url).pathname);
+  const home = s.results.find((c) => c.href && /real-world\.html$/.test(c.href));
+  assert.equal(home.label, "Accueil"); assert.equal(home.skipped, true);
+  assert.equal(s.results.filter((c) => c.effect === "none" && !c.skipped && !c.disabled && c.tag !== "input" && !c.href?.startsWith("#")).length, 0);
+  const { mkdtempSync, writeFileSync } = await import("node:fs"); const { join } = await import("node:path"); const { tmpdir } = await import("node:os");
+  const d = mkdtempSync(join(tmpdir(), "glowup-alt-")); writeFileSync(join(d, "p.html"), '<!doctype html><html lang="en"><head><title>t</title></head><body><a href="q.html" style="display:block;padding:10px"><img alt="Red sneakers, size 42" width="40" height="40" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></a></body></html>');
+  assert.equal((await smoke(join(d, "p.html"))).results[0].label, "Red sneakers, size 42");
+});
+
+test("a control that cannot be clicked (covered, moving) is reported as such, never as a dead control", { skip }, async () => {
+  const s = await smoke(new URL("./fixtures/covered.html", import.meta.url).pathname);
+  assert.deepEqual(s.results.filter((c) => c.effect === "none" && !c.skipped && !c.disabled && c.tag !== "input"), []);
+  assert.ok(s.results.some((c) => c.why), JSON.stringify(s.results.map((c) => [c.label, c.effect, c.why])));
+  assert.ok(s.results.every((c) => !c.why || c.skipped));
+});

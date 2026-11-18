@@ -4,9 +4,17 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.14.0 | 2026-11-17 |
+| ui-ux-glowup | 1.14.1 | 2026-11-18 |
 
 ## Recent Changes
+
+### 1.14.1 (2026-11-18)
+
+- **ui-ux-glowup** (1.14.0 → 1.14.1): six false positives found by running the tools on two real, live sites (read-only audit), fixed with tests.
+  - `smoke.mjs`: a link to the page you are already on (the logo link `href="/"` on the home page) is skipped, not reported as a dead control; a control that cannot be clicked (covered, moving, hidden) is reported as "could not be clicked" with the reason instead of "does nothing"; controls are found again through a marker attribute rather than by index (an index could land on a neighbour on pages with carousels or lazy content); an image-only link is named by its `alt`.
+  - Audit: arrows such as ↗ are no longer counted as emojis (`ai-emoji` needs an emoji presentation); a link inside a heading may wrap onto two lines (`wrapped-control`); a horizontally scrolling navigation is not a carousel (`carousel-snap`, `carousel-affordance`).
+  - Effect on one of the sites: audit 39.5 → 41/45 with no real problem hidden; 0 false dead controls. The real findings on both sites (content invisible without JavaScript, 320px overflow, low contrast, an unnamed button, a glued H1) were checked by hand and kept.
+  - Tests: 6 new (`tests/fixtures/real-world.html`, `covered.html`).
 
 ### 1.14.0 (2026-11-17)
 
