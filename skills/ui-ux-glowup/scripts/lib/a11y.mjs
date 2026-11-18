@@ -58,6 +58,7 @@ export function collectA11y() {
 
   return {
     invalidRoles, brokenRefs, hiddenFocusable, roleNotFocusable, duplicateIds, positiveTabindex, dialogsUnnamed,
+    fieldsetsNoLegend: [...document.querySelectorAll("fieldset")].filter((f) => vis(f) && !f.querySelector(":scope > legend")).map(sel),
     hasMain: !!mainEl, hasSkipLink: !!skipTarget, linksBeforeMain: beforeMain, authFields, autoplay, tables,
   };
 }
@@ -105,8 +106,8 @@ export function traversalFindings(stops) {
   return out;
 }
 
-export function a11yFindings({ statics: s, stops, reflow }) {
-  const out = traversalFindings(stops);
+export function a11yFindings({ statics: s, stops, reflow, zoom200 = null, zoom400 = null, components = [] }) {
+  const out = [...traversalFindings(stops), ...components];
   const add = (rule, severity, message, items, fix) => out.push({ rule, severity, message, items: (items || []).slice(0, 4), fix });
   if (s.invalidRoles.length) add("aria-invalid-role", "error", "ARIA role that does not exist.", s.invalidRoles, "Use a valid role, or a native element.");
   if (s.brokenRefs.length) add("aria-broken-reference", "error", "aria-labelledby / aria-describedby point to an id that does not exist.", s.brokenRefs, "Fix the id or remove the attribute; a broken reference gives no name at all.");
@@ -120,6 +121,10 @@ export function a11yFindings({ statics: s, stops, reflow }) {
   if (s.authFields.length) add("auth-paste-blocked", "error", "Password / code fields block autofill or paste (WCAG 3.3.8, accessible authentication).", s.authFields, 'Use autocomplete="current-password" / "new-password" / "one-time-code" and remove onpaste handlers.');
   if (s.autoplay.length) add("autoplay-no-pause", "warning", "Autoplaying video with no controls: moving content longer than 5s needs a pause button (WCAG 2.2.2).", s.autoplay, "Add a visible pause control, or stop after 5s; honour prefers-reduced-motion.");
   if (s.tables.length) add("table-no-headers", "warning", "Data tables without <th> header cells.", s.tables, 'Use <th scope="col"> / <th scope="row">.');
+  if (s.fieldsetsNoLegend && s.fieldsetsNoLegend.length) add("fieldset-no-legend", "warning", "A fieldset without a legend: the group has no name for screen reader users.", s.fieldsetsNoLegend, "Add <legend> as the first child of the fieldset, with the question or group name.");
+  if (zoom200 && zoom200.overflow > 2) add("zoom-200-overflow", "error", `Horizontal scrolling at 200% zoom (${zoom200.overflow}px too wide, WCAG 1.4.4 / 1.4.10).`, zoom200.offenders, "Use relative widths and wrapping so the page works at 640 CSS px wide.");
+  if (zoom200 && zoom200.clipped.length) add("zoom-200-clipped", "error", "Text is cut off at 200% zoom (WCAG 1.4.4).", zoom200.clipped, "Remove fixed heights and overflow: hidden around text; let containers grow.");
+  if ((zoom200 && zoom200.fixedShare > 50) || (zoom400 && zoom400.fixedShare > 50)) add("zoom-fixed-covers", "warning", "Fixed or sticky bars take more than half of the screen at 200–400% zoom: little room is left for the content.", [], "Let headers scroll away or shrink at small heights; drop sticky bottom bars when the viewport is short.");
   if (reflow && reflow.overflow > 2) add("reflow-320", "error", `Horizontal scrolling at 320px wide (${reflow.overflow}px too wide); content must reflow (WCAG 1.4.10).`, reflow.items, "Let blocks wrap (min-width: 0, max-width: 100%, flex-wrap), no fixed widths over 320px.");
   return out;
 }

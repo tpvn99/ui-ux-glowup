@@ -51,6 +51,10 @@ Rules live in `skills/ui-ux-glowup/scripts/lib/analyze.mjs` (pure functions over
 node skills/ui-ux-glowup/scripts/build-browser-audit.mjs
 ```
 
+## Compatibility and benchmark
+
+CI runs the suite on Node 20, 22 and 24 (Linux), Node 22 (macOS), the scripts that need no browser on Node 18, and a clean install (copied and symlinked). `benchmark.yml` runs the ten-project benchmark weekly and on PRs that touch the scripts or the examples; see `benchmark/README.md`.
+
 ## Before opening a PR
 
 ```bash

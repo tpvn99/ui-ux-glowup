@@ -46,6 +46,6 @@ test("--browser works on the other scripts (firefox and webkit)", { skip }, asyn
   for (const browser of ["firefox", "webkit"]) {
     if (!installed[browser]) continue;
     const r = await ux(fixture("ux-good.html"), { browser });
-    assert.deepEqual(r.findings, [], browser);
+    assert.equal(r.findings.length, 0, browser);
   }
 });

@@ -29,6 +29,9 @@ It **keeps your brand colors** and works on everything else: structure, typograp
 - **Right register for the sector.** `sectors.md` covers health, public services, finance, real estate, travel, education, fashion, media and more, with a variety check against the default tech look.
 - **Brand kept.** `brand-guard.mjs` fails when a change removes a brand color, drops a font or adds a UI library nobody asked for.
 - **Every size, every language.** `responsive.mjs` sweeps 14 sizes and stress-tests long words, +50% text and right-to-left; `consistency.mjs` checks that pages look like one site.
+- **Reachable, even without a mouse.** Journeys state a goal and a budget of actions and can run with the keyboard alone; `ux.mjs` adds the checks of each kind of site (shop, SaaS, local business, dashboard, article) ranked by impact; `a11y.mjs` operates tabs, accordions, dialogs and menus and tests 200% and 400% zoom.
+- **Measured, not just claimed.** `benchmark/` seeds known defects and regressions into ten projects and publishes what is found, what is missed and what is flagged on clean pages (`docs/benchmark.md`, with a before/after gallery).
+- **Safe to run.** Backups leave out `.env` and sessions, outputs mask tokens, a pre-commit hook blocks leaked secrets, and `doctor.mjs` says what is missing and how to fix it.
 - **Your stack, kept.** `stack.mjs` detects Next, Nuxt, Vue, Svelte, Angular, Astro, WordPress (and its page builder), Tailwind, shadcn, MUI, Bootstrap and says where the tokens live; nothing new is added without asking.
 - **Every browser.** `cross-browser.mjs` compares Chromium, Firefox and WebKit; `--browser` works on the other scripts.
 - **Fast.** `perf.mjs` measures LCP, CLS, blocking time and weight on a throttled phone, and names the cause: oversized or lazy hero image, blocking scripts, fonts, heavy libraries.
@@ -139,7 +142,7 @@ Zip the `skills/ui-ux-glowup` folder and upload it from the Skills section of Cl
 
 ### Recommended: enable the visual check
 
-The screenshot step needs Node 18+ and Playwright in the project where the agent works:
+The checks that open a browser (audit, screenshots, tests) need **Node 20+** and Playwright in the project where the agent works (Node 18 only runs the scripts that need no browser); `node <skill-dir>/scripts/doctor.mjs` tells you what is missing:
 
 ```bash
 npm i -D playwright && npx playwright install chromium
@@ -231,7 +234,9 @@ skills/ui-ux-glowup/
 - [Levels, modes and limits](docs/levels-and-limits.md): audit only / recommend / apply, light to complete, what is supported, known limits
 - [Tutorials](docs/tutorials.md): three walk-throughs to run in this repository
 - [Example report](docs/example-report.md): a real before/after report
-- [Troubleshooting](docs/troubleshooting.md)
+- [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Installing for each agent](docs/install-by-agent.md)
+- [Benchmark](docs/benchmark.md): what the tools find and miss on ten projects with known defects
+- [Real device checklist](docs/real-device-checklist.md): what only a real phone or screen reader shows
 
 ## Using the scripts directly
 

@@ -48,7 +48,16 @@ export function collectPage() {
     const s = getComputedStyle(el);
     if ((s.backdropFilter && s.backdropFilter !== "none") || (s.filter && /blur/.test(s.filter))) costly++;
   }
-  return { blockingScripts, fontFaces, fontsNoDisplay: noDisplay, costlyEffects: costly, viewportH: innerHeight };
+  const LAYOUT_PROPS = new Set(["width", "height", "top", "left", "right", "bottom", "margin", "marginTop", "marginRight", "marginBottom", "marginLeft", "padding", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "fontSize", "borderWidth"]);
+  const anims = document.getAnimations ? document.getAnimations().filter((a) => a.playState === "running") : [];
+  const layoutAnims = [];
+  for (const a of anims) {
+    let props = [];
+    try { props = Object.keys((a.effect.getKeyframes()[0]) || {}).filter((k) => !["offset", "easing", "composite", "computedOffset"].includes(k)); } catch {}
+    const hit = props.filter((k) => LAYOUT_PROPS.has(k));
+    if (hit.length) { const t = a.effect && a.effect.target; layoutAnims.push(`${t ? t.tagName.toLowerCase() + (t.id ? "#" + t.id : t.classList && t.classList[0] ? "." + t.classList[0] : "") : "element"} animates ${hit.join(", ")}`); }
+  }
+  return { blockingScripts, fontFaces, fontsNoDisplay: noDisplay, costlyEffects: costly, viewportH: innerHeight, runningAnimations: anims.length, layoutAnims: [...new Set(layoutAnims)].slice(0, 4), bodyText: (document.body.innerText || "").trim().length, hasH1: !!document.querySelector("h1") };
 }
 
 const KB = 1024;
@@ -91,6 +100,9 @@ export function perfFindings(d) {
   if (fontBytes > 300 * KB) add("fonts-heavy", "warning", `${fmt(fontBytes)} of web fonts.`, "Keep 2 families and 3–4 weights, subset to the languages used, prefer one variable font.");
   if (d.page.fontsNoDisplay > 0) add("font-display-missing", "warning", `${d.page.fontsNoDisplay} of ${d.page.fontFaces} @font-face rule(s) have no font-display (text may stay invisible while the font loads).`, "Add font-display: swap (or optional) to each @font-face.");
   if (d.page.blockingScripts.length) add("render-blocking-script", "warning", `${d.page.blockingScripts.length} script(s) in <head> block rendering.`, "Add defer (or async), or move them to the end of <body>.", d.page.blockingScripts);
+  if (d.page.layoutAnims && d.page.layoutAnims.length) add("animates-layout", "warning", `${d.page.layoutAnims.length} running animation(s) change layout properties on every frame (jank on modest phones).`, "Animate transform and opacity instead of width, height, top, left or margins.", d.page.layoutAnims);
+  if (d.page.runningAnimations > 12) add("many-animations", "warning", `${d.page.runningAnimations} animations run at the same time.`, "Run one orchestrated motion at a time; pause off-screen and looping animations.");
+  if (d.resilience && (d.resilience.errors > 0 || d.resilience.bodyText < 150 || !d.resilience.hasH1)) add("breaks-on-failed-requests", "warning", `With ${d.resilience.failed} request(s) randomly lost, the page ${d.resilience.errors > 0 ? `throws ${d.resilience.errors} script error(s)` : d.resilience.bodyText < 150 ? "shows almost no content" : "loses its main heading"}.`, "Keep the content in the HTML, defer non-critical scripts, guard code that depends on a library with a fallback, and give images alt text and a background color.");
   if (d.page.costlyEffects > 6) add("costly-effects", "warning", `${d.page.costlyEffects} elements use backdrop-filter or blur: expensive on modest phones.`, "Keep the effect to one or two surfaces; use a plain translucent color elsewhere.");
 
   const bytesOf = new Map(r.map((x) => [x.url, x.bytes]));

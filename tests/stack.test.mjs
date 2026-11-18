@@ -53,3 +53,18 @@ test("plain HTML, Svelte, Angular and an empty folder", () => {
   assert.equal(detectStack(proj({ "package.json": { dependencies: { "@angular/core": "19", "@angular/material": "19" } } })).styling[0], "angular-material");
   assert.match(formatStack(detectStack(proj({ "notes.txt": "x" }))), /nothing detected/);
 });
+
+test("major versions and what they change", async () => {
+  const { versionInfo } = await import("../skills/ui-ux-glowup/scripts/lib/stack.mjs");
+  const v2 = versionInfo("vue", { vue: "^2.7.16", bootstrap: "^4.6.0" });
+  assert.equal(v2.versions.vue, 2); assert.equal(v2.versions.bootstrap, 4);
+  assert.ok(v2.notes.some((n) => /Vue 2 \(end of life\)/.test(n)) && v2.notes.some((n) => /jQuery/.test(n)));
+  assert.ok(versionInfo("angular", { "@angular/core": "^15.2.0" }).notes[0].includes("standalone"));
+  assert.ok(versionInfo("angular", { "@angular/core": "^18.0.0" }).notes[0].includes("@if"));
+  assert.ok(versionInfo("svelte", { svelte: "^5.1.0" }).notes[0].includes("runes"));
+  assert.ok(versionInfo("next", { next: "12.3.4", react: "17" }).notes.some((n) => /pages router only/.test(n)));
+  assert.deepEqual(versionInfo("react-vite", { react: "^19.0.0", tailwindcss: "^4.0.0" }).notes, []);
+  const d = proj({ "package.json": { dependencies: { vue: "^2.7.0", nuxt: "^2.17.0" } } });
+  const s = detectStack(d);
+  assert.match(formatStack(s), /Versions: nuxt 2 · vue 2[\s\S]*Vue 2 \(end of life\)/);
+});

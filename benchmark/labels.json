@@ -1,0 +1,142 @@
+{
+  "saas-landing:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "saas-landing:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "ecommerce:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "ecommerce:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "dashboard:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "dashboard:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "institutional:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "institutional:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "editorial:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "editorial:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "responsive-app:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "responsive-app:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "multi-journey-app:perf:heavy-library": {
+    "label": "by-design",
+    "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+  },
+  "multi-journey-app:perf:render-blocking-script": {
+    "label": "by-design",
+    "note": "the same Tailwind browser script, in the head"
+  },
+  "saas-landing:a11y:no-skip-link": {
+    "label": "valid",
+    "note": "the example has 6+ links before the content and no skip link"
+  },
+  "dashboard:a11y:no-skip-link": {
+    "label": "valid",
+    "note": "the example has 6+ links before the content and no skip link"
+  },
+  "responsive-app:a11y:no-skip-link": {
+    "label": "valid",
+    "note": "the example has 6+ links before the content and no skip link"
+  },
+  "saas-landing:smoke:empty-link": {
+    "label": "valid",
+    "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+  },
+  "ecommerce:smoke:empty-link": {
+    "label": "valid",
+    "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+  },
+  "dashboard:smoke:empty-link": {
+    "label": "valid",
+    "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+  },
+  "institutional:smoke:empty-link": {
+    "label": "valid",
+    "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+  },
+  "editorial:smoke:empty-link": {
+    "label": "valid",
+    "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+  },
+  "responsive-app:smoke:empty-link": {
+    "label": "valid",
+    "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+  },
+  "ecommerce:smoke:dead-control": {
+    "label": "by-design",
+    "note": "static mockup: its buttons have no behaviour"
+  },
+  "dashboard:smoke:dead-control": {
+    "label": "by-design",
+    "note": "static mockup: its buttons have no behaviour"
+  },
+  "responsive-app:smoke:dead-control": {
+    "label": "by-design",
+    "note": "static mockup: its buttons have no behaviour"
+  },
+  "saas-landing:responsive:text-too-small": {
+    "label": "by-design",
+    "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+  },
+  "dashboard:responsive:text-too-small": {
+    "label": "by-design",
+    "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+  },
+  "ecommerce:perf:third-party-heavy": {
+    "label": "by-design",
+    "note": "placeholder photos from Unsplash and web fonts"
+  },
+  "react-app:audit:no-js-content-missing": {
+    "label": "by-design",
+    "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+  },
+  "vue-app:audit:no-js-content-missing": {
+    "label": "by-design",
+    "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+  },
+  "vue-app:audit:tap-target": {
+    "label": "valid",
+    "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+  },
+  "multi-journey-app:audit:tap-target": {
+    "label": "valid",
+    "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+  },
+  "vue-app:smoke:dead-control": {
+    "label": "false-positive",
+    "note": "the filter already selected: clicking it again changes nothing, which is correct. Fixed in the code (active toggles are not dead); replayed"
+  },
+  "ecommerce:responsive:target-small": {
+    "label": "false-positive",
+    "note": "a visually hidden radio whose label is the real target. Fixed in the code (measured through its label); replayed"
+  }
+}

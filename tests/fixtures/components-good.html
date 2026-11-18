@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Components good</title>
+<style>body{margin:0;font:16px/1.5 sans-serif;padding:16px}button{min-height:44px;padding:0 16px;margin:4px}[hidden]{display:none}</style></head><body>
+<main><h1>Widgets</h1>
+<div role="tablist" aria-label="Plans"><button role="tab" id="t1" aria-selected="true" aria-controls="p1" tabindex="0">One</button><button role="tab" id="t2" aria-selected="false" aria-controls="p2" tabindex="-1">Two</button></div>
+<div id="p1" role="tabpanel" aria-labelledby="t1">Panel one</div><div id="p2" role="tabpanel" aria-labelledby="t2" hidden>Panel two</div>
+<button id="acc" aria-expanded="false" aria-controls="acc-p">Details</button><div id="acc-p" hidden>More details</div>
+<button id="open" aria-haspopup="dialog" aria-controls="dlg">Open settings</button>
+<dialog id="dlg" aria-label="Settings"><p>Settings</p><button id="close" autofocus>Close</button></dialog>
+<button id="mb" aria-haspopup="menu" aria-expanded="false" aria-controls="menu">Actions</button>
+<ul id="menu" role="menu" hidden><li role="none"><button role="menuitem" tabindex="-1">Rename</button></li><li role="none"><button role="menuitem" tabindex="-1">Delete</button></li></ul>
+</main>
+<script>
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function sel(t){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on});t.focus()}
+tabs.forEach((t,i)=>{t.onclick=()=>sel(t);t.onkeydown=e=>{if(e.key==='ArrowRight')sel(tabs[(i+1)%tabs.length]);if(e.key==='ArrowLeft')sel(tabs[(i+tabs.length-1)%tabs.length])}});
+const acc=document.getElementById('acc');acc.onclick=()=>{const o=acc.getAttribute('aria-expanded')==='true';acc.setAttribute('aria-expanded',!o);document.getElementById('acc-p').hidden=o};
+document.getElementById('open').onclick=()=>document.getElementById('dlg').showModal();document.getElementById('close').onclick=()=>document.getElementById('dlg').close();
+const mb=document.getElementById('mb'),menu=document.getElementById('menu'),items=[...menu.querySelectorAll('[role=menuitem]')];
+function openM(){mb.setAttribute('aria-expanded','true');menu.hidden=false}function closeM(){mb.setAttribute('aria-expanded','false');menu.hidden=true;mb.focus()}
+mb.onclick=()=>mb.getAttribute('aria-expanded')==='true'?closeM():openM();
+mb.onkeydown=e=>{if(e.key==='ArrowDown'){openM();items[0].focus();e.preventDefault()}};
+menu.onkeydown=e=>{if(e.key==='Escape')closeM();if(e.key==='ArrowDown'){items[(items.indexOf(document.activeElement)+1)%items.length].focus();e.preventDefault()}};
+document.onkeydown=e=>{if(e.key==='Escape'&&mb.getAttribute('aria-expanded')==='true')closeM()};
+</script></body></html>

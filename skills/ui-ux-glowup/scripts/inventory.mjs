@@ -10,6 +10,7 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectInventory, diffInventories, formatInventory, formatDiff } from "./lib/inventory.mjs";
 
 export { diffInventories, formatInventory, formatDiff };
@@ -48,7 +49,7 @@ if (isMain(import.meta.url)) {
     } else {
       console.log(formatInventory(before));
     }
-    if (flags.json) writeFileSync(flags.json === true ? "inventory.json" : flags.json, JSON.stringify(before, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "inventory.json" : flags.json, before);
   } catch (e) {
     console.error(e.message);
     process.exit(1);

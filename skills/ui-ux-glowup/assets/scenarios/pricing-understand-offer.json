@@ -1,0 +1,10 @@
+{ "scenarios": [
+  { "name": "A visitor sees what the annual plan costs",
+    "goal": "A visitor switches to annual billing and sees the yearly price",
+    "maxActions": 1,
+    "steps": [
+      { "click": "[data-period=year]" },
+      { "expect": { "attr": ["[data-period=year]", "aria-checked", "true"] } },
+      { "expect": { "text": [".billing", "per member per year"] } }
+    ] }
+] }

@@ -10,7 +10,7 @@ try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
 const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
 const data = (o = {}) => ({ url: "https://x.test/p", web: true, isHome: false, filled: [{ sel: "a.btn", label: "Start" }], fields: [], forms: [], emptyLists: [], navs: [], homeLink: true, ...o });
-const rules = (d) => uxFindings(d).map((f) => f.rule).sort();
+const rules = (d) => uxFindings(d, { context: "saas" }).map((f) => f.rule).sort();
 const field = (o) => ({ sel: "input", type: "text", id: "", placeholder: false, labelled: true, autocomplete: "off", ...o });
 
 test("a clean page has no UX finding", () => assert.deepEqual(rules(data()), []));
@@ -39,7 +39,7 @@ test("forms: long form and unsupported errors; states; navigation", () => {
 });
 
 test("every finding carries a concrete fix", () => {
-  const all = uxFindings(data({ filled: [], emptyLists: [{ sel: "ul", kind: "list" }], homeLink: false }));
+  const all = uxFindings(data({ filled: [], emptyLists: [{ sel: "ul", kind: "list" }], homeLink: false }), { context: "saas" });
   assert.ok(all.length >= 3 && all.every((f) => f.fix.length > 20));
 });
 

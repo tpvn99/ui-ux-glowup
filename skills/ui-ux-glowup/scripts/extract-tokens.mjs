@@ -12,6 +12,7 @@
 
 import { writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectPageData } from "./lib/probe.mjs";
 import { summarizeTokens, histogram } from "./lib/analyze.mjs";
 import { flattenBackground, toHex } from "./lib/color.mjs";
@@ -77,7 +78,7 @@ if (isMain(import.meta.url)) {
   try {
     const tokens = await extractTokens(target, { mobile: Boolean(flags.mobile), ...commonOptions(flags) });
     console.log(formatTokens(tokens));
-    if (flags.json) writeFileSync(flags.json === true ? "tokens.json" : flags.json, JSON.stringify(tokens, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "tokens.json" : flags.json, tokens);
   } catch (e) {
     console.error(e.message);
     process.exit(1);

@@ -1,0 +1,12 @@
+{ "scenarios": [
+  { "name": "An administrator manages an account",
+    "goal": "An administrator finds a customer account and reaches its edit form (stop before saving)",
+    "maxActions": 4,
+    "steps": [
+      { "goto": "REPLACE: admin list path (use --storage-state with an ADMIN test session)" },
+      { "fill": ["REPLACE: search field selector", "REPLACE: a test account name"] },
+      { "click": "REPLACE: the account row link" },
+      { "click": "REPLACE: Edit button" },
+      { "expect": { "visible": "REPLACE: the edit form" } }
+    ] }
+] }

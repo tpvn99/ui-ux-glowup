@@ -1,0 +1,1991 @@
+{
+  "meta": {
+    "date": "2026-11-17",
+    "version": "1.14.0",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "mergedFrom": [
+      "ecommerce",
+      "vue-app"
+    ]
+  },
+  "summary": {
+    "projects": 10,
+    "failedProjects": 0,
+    "defectsSeeded": 120,
+    "notApplicable": 3,
+    "notMeasured": 0,
+    "ambiguous": 5,
+    "attributable": 112,
+    "detected": 112,
+    "recall": 1,
+    "traps": 25,
+    "trapsDetected": 25,
+    "trapRecall": 1,
+    "cleanFindings": 33,
+    "cleanErrors": 2,
+    "cleanWarnings": 31,
+    "reviewed": 33,
+    "falsePositives": 0,
+    "valid": 33,
+    "unreviewed": 0,
+    "precision": 1,
+    "seconds": 1209
+  },
+  "results": [
+    {
+      "id": "saas-landing",
+      "type": "SaaS landing page",
+      "defects": [
+        {
+          "id": "viewport-missing",
+          "status": "detected",
+          "via": [
+            "audit:viewport-meta"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "lang-missing",
+          "status": "detected",
+          "via": [
+            "audit:lang"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "title-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-title"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "h1-missing",
+          "status": "detected",
+          "via": [
+            "audit:h1-missing"
+          ],
+          "area": "hierarchy"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "focus-removed",
+          "status": "detected",
+          "via": [
+            "audit:focus-invisible"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "blocking-heavy-script",
+          "status": "ambiguous",
+          "via": [
+            "perf:render-blocking-script",
+            "perf:heavy-library"
+          ],
+          "area": "performance"
+        },
+        {
+          "id": "js-error",
+          "status": "detected",
+          "via": [
+            "smoke:js-error"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "unnamed-icon-button",
+          "status": "detected",
+          "via": [
+            "audit:accessible-name"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "clickable-div",
+          "status": "detected",
+          "via": [
+            "audit:clickable-div"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "empty-link",
+          "status": "detected",
+          "via": [
+            "smoke:empty-link",
+            "audit:vague-cta"
+          ],
+          "area": "functionality"
+        }
+      ],
+      "traps": [
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "heading-removed",
+          "status": "not-applicable"
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "a11y:no-skip-link",
+          "severity": "warning",
+          "count": 1,
+          "label": "valid",
+          "note": "the example has 6+ links before the content and no skip link"
+        },
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        },
+        {
+          "key": "responsive:text-too-small",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+        },
+        {
+          "key": "smoke:empty-link",
+          "severity": "warning",
+          "count": 9,
+          "label": "valid",
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+        }
+      ],
+      "audit": {
+        "before": 35,
+        "after": 45
+      },
+      "errors": {
+        "before": 11,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 5,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 1036,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 133500,
+          "requests": 4
+        },
+        "after": {
+          "lcp": 552,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109990,
+          "requests": 3
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 51444,
+        "after": 42953,
+        "broken": 30101
+      }
+    },
+    {
+      "id": "ecommerce",
+      "type": "E-commerce product page",
+      "defects": [
+        {
+          "id": "description-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-description"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "zoom-blocked",
+          "status": "detected",
+          "via": [
+            "audit:zoom-blocked"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "audit:mobile-body-size",
+            "audit:body-size",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "img-alt-missing",
+          "status": "detected",
+          "via": [
+            "audit:img-alt"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "lcp-lazy",
+          "status": "detected",
+          "via": [
+            "perf:lcp-lazy"
+          ],
+          "area": "performance"
+        },
+        {
+          "id": "dead-button",
+          "status": "ambiguous",
+          "via": [
+            "smoke:dead-control"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "positive-tabindex",
+          "status": "detected",
+          "via": [
+            "a11y:positive-tabindex"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "aria-hidden-focusable",
+          "status": "detected",
+          "via": [
+            "a11y:aria-hidden-focusable"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "broken-image",
+          "status": "detected",
+          "via": [
+            "audit:broken-images"
+          ],
+          "area": "visuals"
+        },
+        {
+          "id": "duplicate-id",
+          "status": "detected",
+          "via": [
+            "a11y:duplicate-id"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "main-removed",
+          "status": "detected",
+          "via": [
+            "a11y:no-main-landmark"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "seo-noindex",
+          "status": "detected",
+          "via": [
+            "audit:seo-noindex"
+          ],
+          "area": "seo"
+        }
+      ],
+      "traps": [
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "js-handler-broken",
+          "status": "not-applicable",
+          "why": "no button had a behaviour to break"
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:third-party-heavy",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "placeholder photos from Unsplash and web fonts"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        },
+        {
+          "key": "smoke:empty-link",
+          "severity": "warning",
+          "count": 2,
+          "label": "valid",
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+        },
+        {
+          "key": "smoke:dead-control",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "static mockup: its buttons have no behaviour"
+        }
+      ],
+      "audit": {
+        "before": 37.5,
+        "after": 45
+      },
+      "errors": {
+        "before": 7,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 3,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 876,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 543249,
+          "requests": 6
+        },
+        "after": {
+          "lcp": 212,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 543241,
+          "requests": 6
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 45815,
+        "after": 35971,
+        "broken": 28491
+      }
+    },
+    {
+      "id": "dashboard",
+      "type": "Professional dashboard",
+      "defects": [
+        {
+          "id": "viewport-missing",
+          "status": "detected",
+          "via": [
+            "audit:viewport-meta"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "focus-removed",
+          "status": "detected",
+          "via": [
+            "audit:focus-invisible"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "keyboard-trap",
+          "status": "detected",
+          "via": [
+            "a11y:keyboard-trap"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "dead-button",
+          "status": "ambiguous",
+          "via": [
+            "smoke:dead-control"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "unnamed-icon-button",
+          "status": "detected",
+          "via": [
+            "audit:accessible-name"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "audit:mobile-body-size",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "lorem",
+          "status": "detected",
+          "via": [
+            "audit:lorem"
+          ],
+          "area": "content"
+        },
+        {
+          "id": "empty-link",
+          "status": "detected",
+          "via": [
+            "smoke:empty-link",
+            "audit:vague-cta"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "h1-missing",
+          "status": "detected",
+          "via": [
+            "audit:h1-missing"
+          ],
+          "area": "hierarchy"
+        },
+        {
+          "id": "aria-hidden-focusable",
+          "status": "detected",
+          "via": [
+            "a11y:aria-hidden-focusable"
+          ],
+          "area": "accessibility"
+        }
+      ],
+      "traps": [
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "js-handler-broken",
+          "status": "not-applicable",
+          "why": "no button had a behaviour to break"
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "a11y:no-skip-link",
+          "severity": "warning",
+          "count": 1,
+          "label": "valid",
+          "note": "the example has 6+ links before the content and no skip link"
+        },
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        },
+        {
+          "key": "responsive:text-too-small",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+        },
+        {
+          "key": "smoke:dead-control",
+          "severity": "warning",
+          "count": 8,
+          "label": "by-design",
+          "note": "static mockup: its buttons have no behaviour"
+        },
+        {
+          "key": "smoke:empty-link",
+          "severity": "warning",
+          "count": 7,
+          "label": "valid",
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+        }
+      ],
+      "audit": {
+        "before": 35.5,
+        "after": 45
+      },
+      "errors": {
+        "before": 11,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 7,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 144,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109998,
+          "requests": 3
+        },
+        "after": {
+          "lcp": 312,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109993,
+          "requests": 3
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 56605,
+        "after": 46483,
+        "broken": 36561
+      }
+    },
+    {
+      "id": "wordpress",
+      "type": "WordPress-style site (static export of a theme's markup, not a running WordPress)",
+      "defects": [
+        {
+          "id": "form-label-removed",
+          "status": "detected",
+          "via": [
+            "audit:form-labels"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "img-alt-missing",
+          "status": "detected",
+          "via": [
+            "audit:img-alt"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "lang-missing",
+          "status": "detected",
+          "via": [
+            "audit:lang"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "title-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-title"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "description-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-description"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "zoom-blocked",
+          "status": "detected",
+          "via": [
+            "audit:zoom-blocked"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "blocking-heavy-script",
+          "status": "detected",
+          "via": [
+            "perf:render-blocking-script",
+            "perf:heavy-library"
+          ],
+          "area": "performance"
+        },
+        {
+          "id": "main-removed",
+          "status": "detected",
+          "via": [
+            "a11y:no-main-landmark"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "audit:overflow",
+            "responsive:overflow-x",
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "clickable-div",
+          "status": "detected",
+          "via": [
+            "audit:clickable-div"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "empty-link",
+          "status": "detected",
+          "via": [
+            "smoke:empty-link",
+            "audit:vague-cta"
+          ],
+          "area": "functionality"
+        }
+      ],
+      "traps": [
+        {
+          "id": "validation-removed",
+          "status": "detected",
+          "via": [
+            "validation-lost"
+          ],
+          "expected": [
+            "validation-lost"
+          ]
+        },
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [],
+      "audit": {
+        "before": 36.5,
+        "after": 45
+      },
+      "errors": {
+        "before": 13,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 7,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 584,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 23876,
+          "requests": 1
+        },
+        "after": {
+          "lcp": 20,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 0,
+          "requests": 0
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 35211,
+        "after": 26387,
+        "broken": 19652
+      }
+    },
+    {
+      "id": "react-app",
+      "type": "React application (React 18 from a CDN, no build step)",
+      "defects": [
+        {
+          "id": "form-label-removed",
+          "status": "not-applicable"
+        },
+        {
+          "id": "viewport-missing",
+          "status": "detected",
+          "via": [
+            "audit:viewport-meta"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "title-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-title"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "audit:mobile-body-size",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "focus-removed",
+          "status": "detected",
+          "via": [
+            "audit:focus-invisible"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "blocking-heavy-script",
+          "status": "detected",
+          "via": [
+            "perf:render-blocking-script",
+            "perf:heavy-library"
+          ],
+          "area": "performance"
+        },
+        {
+          "id": "unnamed-icon-button",
+          "status": "detected",
+          "via": [
+            "audit:accessible-name"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "duplicate-id",
+          "status": "detected",
+          "via": [
+            "a11y:duplicate-id"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "keyboard-trap",
+          "status": "detected",
+          "via": [
+            "a11y:keyboard-trap"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "js-error",
+          "status": "detected",
+          "via": [
+            "smoke:js-error"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "main-removed",
+          "status": "detected",
+          "via": [
+            "a11y:no-main-landmark"
+          ],
+          "area": "accessibility"
+        }
+      ],
+      "traps": [
+        {
+          "id": "js-handler-broken",
+          "status": "detected",
+          "via": [
+            "control-broken"
+          ],
+          "expected": [
+            "control-broken",
+            "scenario-regressed"
+          ]
+        },
+        {
+          "id": "heading-removed",
+          "status": "not-applicable"
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "audit:no-js-content-missing",
+          "severity": "error",
+          "count": 1,
+          "label": "by-design",
+          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+        }
+      ],
+      "audit": {
+        "before": 38,
+        "after": 44
+      },
+      "errors": {
+        "before": 8,
+        "after": 1
+      },
+      "a11yErrors": {
+        "before": 4,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 96,
+          "cls": 0.154,
+          "tbt": 0,
+          "weight": 65976,
+          "requests": 3
+        },
+        "after": {
+          "lcp": 16,
+          "cls": 0.065,
+          "tbt": 0,
+          "weight": 42103,
+          "requests": 2
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 36582,
+        "after": 32765,
+        "broken": 24281
+      }
+    },
+    {
+      "id": "vue-app",
+      "type": "Vue application (Vue 3 from a CDN, no build step)",
+      "defects": [
+        {
+          "id": "form-label-removed",
+          "status": "detected",
+          "via": [
+            "audit:form-labels",
+            "ux:placeholder-as-label"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "h1-missing",
+          "status": "detected",
+          "via": [
+            "audit:h1-missing"
+          ],
+          "area": "hierarchy"
+        },
+        {
+          "id": "lang-missing",
+          "status": "detected",
+          "via": [
+            "audit:lang"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "zoom-blocked",
+          "status": "detected",
+          "via": [
+            "audit:zoom-blocked"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "dead-button",
+          "status": "detected",
+          "via": [
+            "smoke:dead-control"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "positive-tabindex",
+          "status": "detected",
+          "via": [
+            "a11y:positive-tabindex"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "aria-hidden-focusable",
+          "status": "detected",
+          "via": [
+            "a11y:aria-hidden-focusable"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "audit:overflow",
+            "responsive:overflow-x",
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "blocking-heavy-script",
+          "status": "detected",
+          "via": [
+            "perf:render-blocking-script",
+            "perf:heavy-library"
+          ],
+          "area": "performance"
+        },
+        {
+          "id": "empty-link",
+          "status": "detected",
+          "via": [
+            "smoke:empty-link",
+            "audit:vague-cta"
+          ],
+          "area": "functionality"
+        }
+      ],
+      "traps": [
+        {
+          "id": "js-handler-broken",
+          "status": "detected",
+          "via": [
+            "control-broken"
+          ],
+          "expected": [
+            "control-broken",
+            "scenario-regressed"
+          ]
+        },
+        {
+          "id": "validation-removed",
+          "status": "detected",
+          "via": [
+            "validation-lost"
+          ],
+          "expected": [
+            "validation-lost"
+          ]
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "audit:no-js-content-missing",
+          "severity": "error",
+          "count": 1,
+          "label": "by-design",
+          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+        },
+        {
+          "key": "audit:tap-target",
+          "severity": "warning",
+          "count": 1,
+          "label": "valid",
+          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+        }
+      ],
+      "audit": {
+        "before": 37.5,
+        "after": 43.5
+      },
+      "errors": {
+        "before": 10,
+        "after": 1
+      },
+      "a11yErrors": {
+        "before": 5,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 108,
+          "cls": 0.134,
+          "tbt": 0,
+          "weight": 72364,
+          "requests": 2
+        },
+        "after": {
+          "lcp": 16,
+          "cls": 0.056,
+          "tbt": 0,
+          "weight": 48899,
+          "requests": 1
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 31166,
+        "after": 26209,
+        "broken": 19772
+      }
+    },
+    {
+      "id": "institutional",
+      "type": "Institutional site (health practice)",
+      "defects": [
+        {
+          "id": "description-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-description"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "title-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-title"
+          ],
+          "area": "seo"
+        },
+        {
+          "id": "lang-missing",
+          "status": "detected",
+          "via": [
+            "audit:lang"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "h1-missing",
+          "status": "detected",
+          "via": [
+            "audit:h1-missing"
+          ],
+          "area": "hierarchy"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "focus-removed",
+          "status": "detected",
+          "via": [
+            "audit:focus-invisible"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "audit:mobile-body-size",
+            "audit:body-size",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "audit:overflow",
+            "responsive:overflow-x",
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "js-error",
+          "status": "detected",
+          "via": [
+            "smoke:js-error"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "clickable-div",
+          "status": "detected",
+          "via": [
+            "audit:clickable-div"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "unnamed-icon-button",
+          "status": "detected",
+          "via": [
+            "audit:accessible-name"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "seo-noindex",
+          "status": "detected",
+          "via": [
+            "audit:seo-noindex"
+          ],
+          "area": "seo"
+        }
+      ],
+      "traps": [
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "heading-removed",
+          "status": "detected",
+          "via": [
+            "element-missing"
+          ],
+          "expected": [
+            "element-missing"
+          ]
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        },
+        {
+          "key": "smoke:empty-link",
+          "severity": "warning",
+          "count": 3,
+          "label": "valid",
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+        }
+      ],
+      "audit": {
+        "before": 32.5,
+        "after": 45
+      },
+      "errors": {
+        "before": 14,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 5,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 140,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 83977,
+          "requests": 4
+        },
+        "after": {
+          "lcp": 132,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 83968,
+          "requests": 4
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 49771,
+        "after": 50114,
+        "broken": 45810
+      }
+    },
+    {
+      "id": "editorial",
+      "type": "Editorial article",
+      "defects": [
+        {
+          "id": "viewport-missing",
+          "status": "detected",
+          "via": [
+            "audit:viewport-meta"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "zoom-blocked",
+          "status": "not-applicable"
+        },
+        {
+          "id": "h1-missing",
+          "status": "detected",
+          "via": [
+            "audit:h1-missing"
+          ],
+          "area": "hierarchy"
+        },
+        {
+          "id": "img-alt-missing",
+          "status": "detected",
+          "via": [
+            "audit:img-alt"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "audit:mobile-body-size",
+            "audit:body-size",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "lorem",
+          "status": "detected",
+          "via": [
+            "audit:lorem"
+          ],
+          "area": "content"
+        },
+        {
+          "id": "empty-link",
+          "status": "detected",
+          "via": [
+            "smoke:empty-link",
+            "audit:vague-cta"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "duplicate-id",
+          "status": "detected",
+          "via": [
+            "a11y:duplicate-id"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "broken-image",
+          "status": "detected",
+          "via": [
+            "audit:broken-images"
+          ],
+          "area": "visuals"
+        },
+        {
+          "id": "blocking-heavy-script",
+          "status": "ambiguous",
+          "via": [
+            "perf:render-blocking-script",
+            "perf:heavy-library"
+          ],
+          "area": "performance"
+        },
+        {
+          "id": "main-removed",
+          "status": "detected",
+          "via": [
+            "a11y:no-main-landmark"
+          ],
+          "area": "accessibility"
+        }
+      ],
+      "traps": [
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "heading-removed",
+          "status": "detected",
+          "via": [
+            "element-missing"
+          ],
+          "expected": [
+            "element-missing"
+          ]
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        },
+        {
+          "key": "smoke:empty-link",
+          "severity": "warning",
+          "count": 9,
+          "label": "valid",
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+        }
+      ],
+      "audit": {
+        "before": 35.5,
+        "after": 45
+      },
+      "errors": {
+        "before": 6,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 2,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 356,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 416589,
+          "requests": 11
+        },
+        "after": {
+          "lcp": 228,
+          "cls": 0.001,
+          "tbt": 0,
+          "weight": 393079,
+          "requests": 10
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 59209,
+        "after": 54642,
+        "broken": 44217
+      }
+    },
+    {
+      "id": "responsive-app",
+      "type": "Responsive application screen (settings)",
+      "defects": [
+        {
+          "id": "form-label-removed",
+          "status": "not-applicable"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "audit:mobile-body-size",
+            "audit:body-size",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "focus-removed",
+          "status": "detected",
+          "via": [
+            "audit:focus-invisible"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "dead-button",
+          "status": "ambiguous",
+          "via": [
+            "smoke:dead-control"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "unnamed-icon-button",
+          "status": "detected",
+          "via": [
+            "audit:accessible-name"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "positive-tabindex",
+          "status": "detected",
+          "via": [
+            "a11y:positive-tabindex"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "aria-hidden-focusable",
+          "status": "detected",
+          "via": [
+            "a11y:aria-hidden-focusable"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "keyboard-trap",
+          "status": "detected",
+          "via": [
+            "a11y:keyboard-trap"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "viewport-missing",
+          "status": "detected",
+          "via": [
+            "audit:viewport-meta"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "lang-missing",
+          "status": "detected",
+          "via": [
+            "audit:lang"
+          ],
+          "area": "accessibility"
+        }
+      ],
+      "traps": [
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        },
+        {
+          "id": "js-handler-broken",
+          "status": "not-applicable",
+          "why": "no button had a behaviour to break"
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "a11y:no-skip-link",
+          "severity": "warning",
+          "count": 1,
+          "label": "valid",
+          "note": "the example has 6+ links before the content and no skip link"
+        },
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        },
+        {
+          "key": "smoke:empty-link",
+          "severity": "warning",
+          "count": 2,
+          "label": "valid",
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+        },
+        {
+          "key": "smoke:dead-control",
+          "severity": "warning",
+          "count": 4,
+          "label": "by-design",
+          "note": "static mockup: its buttons have no behaviour"
+        }
+      ],
+      "audit": {
+        "before": 37.5,
+        "after": 45
+      },
+      "errors": {
+        "before": 9,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 7,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 788,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109984,
+          "requests": 3
+        },
+        "after": {
+          "lcp": 220,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109990,
+          "requests": 3
+        }
+      },
+      "scenarios": null,
+      "ms": {
+        "before": 50101,
+        "after": 39852,
+        "broken": 30834
+      }
+    },
+    {
+      "id": "multi-journey-app",
+      "type": "Complex application with several user journeys (searchable, sortable, selectable list)",
+      "defects": [
+        {
+          "id": "form-label-removed",
+          "status": "detected",
+          "via": [
+            "audit:form-labels",
+            "ux:placeholder-as-label"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "dead-button",
+          "status": "detected",
+          "via": [
+            "smoke:dead-control"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "keyboard-trap",
+          "status": "detected",
+          "via": [
+            "a11y:keyboard-trap"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "overflow-block",
+          "status": "detected",
+          "via": [
+            "audit:overflow",
+            "responsive:overflow-x",
+            "a11y:reflow-320"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "low-contrast",
+          "status": "detected",
+          "via": [
+            "audit:contrast"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "focus-removed",
+          "status": "detected",
+          "via": [
+            "audit:focus-invisible"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "tiny-text",
+          "status": "detected",
+          "via": [
+            "audit:tiny-text",
+            "responsive:text-too-small"
+          ],
+          "area": "responsive"
+        },
+        {
+          "id": "unnamed-icon-button",
+          "status": "detected",
+          "via": [
+            "audit:accessible-name"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "aria-hidden-focusable",
+          "status": "detected",
+          "via": [
+            "a11y:aria-hidden-focusable"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "duplicate-id",
+          "status": "detected",
+          "via": [
+            "a11y:duplicate-id"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "js-error",
+          "status": "detected",
+          "via": [
+            "smoke:js-error"
+          ],
+          "area": "functionality"
+        },
+        {
+          "id": "title-missing",
+          "status": "detected",
+          "via": [
+            "audit:seo-title"
+          ],
+          "area": "seo"
+        }
+      ],
+      "traps": [
+        {
+          "id": "js-handler-broken",
+          "status": "detected",
+          "via": [
+            "control-broken",
+            "scenario-regressed"
+          ],
+          "expected": [
+            "control-broken",
+            "scenario-regressed"
+          ]
+        },
+        {
+          "id": "new-js-error",
+          "status": "detected",
+          "via": [
+            "new-js-error"
+          ],
+          "expected": [
+            "new-js-error"
+          ]
+        },
+        {
+          "id": "nav-link-removed",
+          "status": "detected",
+          "via": [
+            "control-missing",
+            "element-missing"
+          ],
+          "expected": [
+            "control-missing",
+            "element-missing"
+          ]
+        }
+      ],
+      "clean": [
+        {
+          "key": "audit:tap-target",
+          "severity": "warning",
+          "count": 1,
+          "label": "valid",
+          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+        },
+        {
+          "key": "perf:heavy-library",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+        },
+        {
+          "key": "perf:render-blocking-script",
+          "severity": "warning",
+          "count": 1,
+          "label": "by-design",
+          "note": "the same Tailwind browser script, in the head"
+        }
+      ],
+      "audit": {
+        "before": 36.5,
+        "after": 44.5
+      },
+      "errors": {
+        "before": 14,
+        "after": 0
+      },
+      "a11yErrors": {
+        "before": 8,
+        "after": 0
+      },
+      "perf": {
+        "before": {
+          "lcp": 280,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109993,
+          "requests": 3
+        },
+        "after": {
+          "lcp": 940,
+          "cls": 0,
+          "tbt": 0,
+          "weight": 109989,
+          "requests": 3
+        }
+      },
+      "scenarios": {
+        "passedAfter": 5,
+        "total": 5,
+        "passedBroken": 3
+      },
+      "ms": {
+        "before": 57282,
+        "after": 51461,
+        "broken": 48935
+      }
+    }
+  ]
+}

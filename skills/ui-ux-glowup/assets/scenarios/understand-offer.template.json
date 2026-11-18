@@ -1,0 +1,10 @@
+{ "scenarios": [
+  { "name": "A visitor understands the offer",
+    "goal": "A visitor can find what the product costs and what is included, without leaving the page",
+    "maxActions": 2,
+    "steps": [
+      { "click": "REPLACE: pricing link or billing toggle" },
+      { "expect": { "visible": "REPLACE: the price" } },
+      { "expect": { "visible": "REPLACE: what is included, e.g. text=Unlimited projects" } }
+    ] }
+] }

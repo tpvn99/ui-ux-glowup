@@ -5,7 +5,7 @@
 // A selector is CSS, or "text=Label", or "role=button[name=Save]" (Playwright syntax).
 
 const ACTIONS = ["goto", "click", "fill", "select", "check", "uncheck", "press", "hover", "wait", "expect"];
-const EXPECTS = ["visible", "hidden", "text", "url", "count", "focusWithin", "focusOutside", "enabled", "disabled", "valid", "invalid", "attr"];
+const EXPECTS = ["visible", "hidden", "text", "url", "count", "focusWithin", "focusOutside", "enabled", "disabled", "valid", "invalid", "attr", "checked", "unchecked"];
 
 export function validateScenarios(doc) {
   const errors = [];
@@ -15,6 +15,10 @@ export function validateScenarios(doc) {
     const tag = `scenario ${i + 1}${s && s.name ? ` "${s.name}"` : ""}`;
     if (!s || !s.name) errors.push(`${tag}: missing name`);
     if (!s || !Array.isArray(s.steps) || !s.steps.length) return errors.push(`${tag}: no steps`);
+    if (s.goal !== undefined && (typeof s.goal !== "string" || !s.goal.trim())) errors.push(`${tag}: goal must be a sentence`);
+    if (s.goal && !("expect" in s.steps[s.steps.length - 1])) errors.push(`${tag}: a goal must end with an expect step, otherwise nothing proves it was reached`);
+    if (s.maxActions !== undefined && !(Number.isInteger(s.maxActions) && s.maxActions > 0)) errors.push(`${tag}: maxActions must be a positive whole number`);
+    if (s.profile !== undefined && !PROFILES.includes(s.profile)) errors.push(`${tag}: profile must be ${PROFILES.join(" or ")}`);
     s.steps.forEach((st, j) => {
       const keys = Object.keys(st || {}).filter((k) => ACTIONS.includes(k));
       if (keys.length !== 1) return errors.push(`${tag} step ${j + 1}: exactly one of ${ACTIONS.join(", ")}`);
@@ -38,6 +42,22 @@ export function effort(steps) {
   return steps.filter((st) => EFFORT.some((k) => k in st)).length;
 }
 
+export const PROFILES = ["mouse", "keyboard"];
+
+/** Hints about steps a person should not need: repeated actions and very long forms. */
+export function journeyHints(steps) {
+  const hints = [];
+  const act = steps.filter((st) => EFFORT.some((k) => k in st));
+  for (let i = 1; i < steps.length; i++) {
+    const a = steps[i - 1], b = steps[i];
+    if ("click" in a && "click" in b && a.click === b.click) hints.push({ rule: "repeated-click", message: `Clicks ${JSON.stringify(a.click)} twice in a row: a step the person should not need.` });
+    if ("fill" in a && "fill" in b && a.fill[0] === b.fill[0]) hints.push({ rule: "repeated-fill", message: `Fills ${JSON.stringify(a.fill[0])} twice: the person types the same thing again.` });
+  }
+  const fields = act.filter((st) => "fill" in st || "select" in st || "check" in st).length;
+  if (fields >= 6) hints.push({ rule: "many-fields", message: `${fields} fields to complete: ask only what is needed now, or split the journey.` });
+  return hints;
+}
+
 export function describeStep(st) {
   const k = Object.keys(st).find((x) => ACTIONS.includes(x));
   const v = st[k];
@@ -57,8 +77,9 @@ export function formatScenarios(report, regressions = []) {
   const failed = report.results.filter((r) => !r.passed);
   const lines = [`Scenarios: ${report.results.length - failed.length}/${report.results.length} passed${report.errors.length ? ` · ${report.errors.length} JS errors` : ""}`];
   for (const r of report.results) {
-    lines.push(`  ${r.passed ? "✓" : "✗"} ${r.name} [${r.actions} actions${r.actions > LONG_JOURNEY ? " — long journey: simplify or split" : ""}]${r.passed ? "" : ` — step ${r.failedStep}: ${r.step}\n      ${r.message}`}`);
+    lines.push(`  ${r.passed ? "✓" : "✗"} ${r.name} [${r.actions} actions${r.budget ? ` of ${r.budget}` : ""}${r.actions > LONG_JOURNEY && !r.budget ? " — long journey: simplify or split" : ""}${r.goal ? `; goal: ${r.goal}` : ""}${r.profile === "keyboard" ? `; keyboard only, ${r.tabs} Tab presses` : ""}]${r.passed ? "" : ` — step ${r.failedStep}: ${r.step}\n      ${r.message}`}`);
   }
+  for (const r of report.results) for (const h of r.hints || []) lines.push(`  ! ${r.name}: ${h.message}`);
   for (const e of report.errors.slice(0, 5)) lines.push(`  ! JS error: ${e}`);
   if (regressions.length) lines.push(`REGRESSIONS (passed before, fail now): ${regressions.join(", ")}`);
   return lines.join("\n");

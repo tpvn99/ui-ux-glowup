@@ -1,0 +1,12 @@
+{ "scenarios": [
+  { "name": "A user changes a setting",
+    "goal": "A signed-in user finds a setting, changes it and sees it saved",
+    "maxActions": 3,
+    "profile": "keyboard",
+    "steps": [
+      { "goto": "REPLACE: settings page path (use --storage-state for the signed-in session)" },
+      { "uncheck": "REPLACE: a switch or checkbox selector" },
+      { "click": "REPLACE: Save button" },
+      { "expect": { "text": ["REPLACE: confirmation region selector, e.g. [role=status]", "REPLACE: part of the confirmation text"] } }
+    ] }
+] }

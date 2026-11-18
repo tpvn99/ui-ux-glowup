@@ -70,3 +70,25 @@ test("verify on real pages: snapshot, change, check lists the loss; report mode 
   assert.equal(solo.mode, "audit");
   assert.ok(solo.categories.find((c) => c.name === "Functionality").errors >= 1);
 });
+
+test("report order: problems before style, high impact first; style never leads 'Fix first'", async () => {
+  const { kindOf } = await import("../skills/ui-ux-glowup/scripts/lib/verify.mjs");
+  assert.equal(kindOf("audit", "ai-gradient-text"), "style"); assert.equal(kindOf("audit", "shadows"), "style"); assert.equal(kindOf("audit", "contrast"), "problem"); assert.equal(kindOf("ux", "no-buy-action", "usability"), "usability");
+  const s = snap({
+    audit: { scores: {}, total: 40, max: 45, findings: [{ criterion: "Visuals", severity: "warn", rule: "ai-gradient-text", message: "gradient", items: [] }, { criterion: "Accessibility", severity: "warn", rule: "heading-order", message: "levels skip", items: [] }] },
+    ux: { context: "ecommerce", findings: [{ rule: "buy-no-price", severity: "warning", impact: "high", kind: "usability", message: "no price", fix: "show it", items: [] }, { rule: "no-author", severity: "warning", impact: "low", kind: "usability", message: "no author", fix: "name them", items: [] }] },
+  });
+  const r = buildReport({ target: "x", date: "d", after: s });
+  assert.deepEqual(r.top.map((f) => f.rule), ["buy-no-price", "heading-order", "no-author"]);
+  assert.ok(!r.top.some((f) => f.rule === "ai-gradient-text"));
+  const md = toMarkdown(r);
+  assert.match(md, /UX was checked as a \*\*ecommerce\*\* site/); assert.match(md, /high impact/); assert.match(md, /style, optional/);
+});
+
+test("the report shows where the page changed visually, when screenshots were kept", () => {
+  const visual = [{ size: 390, percent: 7.2, heightDelta: 12.5, heightBefore: 2000, heightAfter: 2250, regions: [{ y: 80, w: 360, h: 80 }], maskedCells: 2 }];
+  const r = buildReport({ target: "x", date: "d", before: snap(), after: snap({ visual }) });
+  const md = toMarkdown(r);
+  assert.match(md, /## Visual change, before → after/); assert.match(md, /\| 390px \| 7.2% \| 2000 → 2250px \(\+12.5%\) \| y=80px 360×80 \|/);
+  assert.ok(!toMarkdown(buildReport({ target: "x", date: "d", after: snap() })).includes("Visual change"));
+});

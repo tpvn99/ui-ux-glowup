@@ -62,6 +62,30 @@ node <skill-dir>/scripts/consistency.mjs --site https://example.com --max 6    #
 
 Compares fonts, heading scale, header and footer links, primary button, palette, card radius, content width, header height, title pattern and language. Differences are listed with the values and the pages. Reading pages may be narrower on purpose: say so rather than "fix" it.
 
+## 6. Goals, budgets and the keyboard
+
+A scenario can state what a person is trying to do, and how much effort is acceptable:
+
+```json
+{ "name": "A shopper picks a size and reaches the buy button",
+  "goal": "A shopper chooses the second size and can add the product to the cart",
+  "maxActions": 2, "profile": "keyboard",
+  "steps": [ { "check": "input[name=size] >> nth=1" }, { "expect": { "checked": "input[name=size] >> nth=1" } },
+             { "click": "button:has-text('Add to cart')" }, { "expect": { "visible": "button:has-text('Add to cart')" } } ] }
+```
+
+The goal must end with an `expect` (nothing else proves it was reached). The journey fails when it takes more than `maxActions`. `--profile keyboard` removes the mouse: every click and field is reached with Tab (radio groups with the arrow keys) and the report says how many presses it took; a control that Tab cannot reach fails the journey. Templates for find a product, reach payment, change a setting, administer an account, understand an offer, and three working journeys: `assets/scenarios/`. An automatic journey says whether the goal can be reached and at what effort, never whether people understand the page.
+
+## 7. Real phones, roles and visual regressions
+
+```bash
+node <skill-dir>/scripts/screenshot.mjs <page> shots/ --device "iPhone 15"      # also on audit, a11y, ux, smoke, scenario…
+node <skill-dir>/scripts/roles.mjs <url> --as admin=admin.json --as user=user.json --as guest=none --forbid user:#delete-account
+node <skill-dir>/scripts/visual-diff.mjs <before> <after> --sizes 390,768,1440 --tolerance 0.5 --out shots/
+```
+
+`--device` applies a named device's viewport, pixel ratio, touch and user agent: an **emulation**, not a phone (`docs/real-device-checklist.md` lists what only a real iPhone or Android phone shows). `roles.mjs` compares what each saved session is shown and fails when a role sees a control it should not; it checks the interface only, the server must refuse the action too. `visual-diff.mjs` counts changed pixels against a tolerance, ignores content that moves by itself (it compares the page with a second shot of itself), groups changes into regions and names the elements under them; use a tight tolerance after a refactor, and read the regions after a redesign. `verify.mjs snapshot` keeps screenshots and `check` adds the same comparison to the report.
+
 ## Which journeys to write
 
 Pick from what the product does, most valuable first: the primary action (sign-up, checkout, save) · each form's validation (`invalid` then `valid`) · each modal / drawer / menu (opens, focus inside, closes with Escape) · each filter, search, tab, sort · login and logout (log in with `login.mjs` and `--storage-state`; never write credentials in a scenario file).

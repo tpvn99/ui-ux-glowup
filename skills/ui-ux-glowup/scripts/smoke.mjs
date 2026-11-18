@@ -9,7 +9,8 @@
 //   Options: --max 40 (controls clicked) · --storage-state state.json · --wait-for "<css>"
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, loadPlaywright, launchBrowser, trackPageErrors, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectControls, classifyEffect, unsafeLabel, smokeFindings, diffSmoke, formatSmoke } from "./lib/smoke.mjs";
 
 export { diffSmoke, smokeFindings, formatSmoke };
@@ -35,7 +36,7 @@ export async function smoke(target, { route, max = 40, viewport = "desktop", ...
   const errors = new Set();
   const failedRequests = new Set();
   const hook = (page) => {
-    page.on("pageerror", (e) => errors.add(String(e.message).slice(0, 120)));
+    trackPageErrors(page, url, (m) => errors.add(m));
     page.on("response", (r) => {
       if (r.status() >= 400 && new URL(r.url()).origin === new URL(url).origin) failedRequests.add(`${r.status()} ${new URL(r.url()).pathname}`);
     });
@@ -90,7 +91,7 @@ if (isMain(import.meta.url)) {
     const diff = typeof flags.baseline === "string" ? diffSmoke(JSON.parse(readFileSync(flags.baseline, "utf8")), snap) : null;
     const findings = smokeFindings(snap);
     console.log(formatSmoke(snap, findings, diff));
-    if (flags.json) writeFileSync(flags.json === true ? "smoke.json" : flags.json, JSON.stringify(snap, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "smoke.json" : flags.json, snap);
     const bad = [...(diff || []), ...findings].some((f) => f.severity === "error");
     process.exit(bad ? 1 : 0);
   } catch (e) {

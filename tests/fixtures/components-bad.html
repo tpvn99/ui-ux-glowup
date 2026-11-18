@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Components bad</title>
+<style>body{margin:0;font:16px/1.5 sans-serif;padding:16px}button{min-height:44px;padding:0 16px;margin:4px}[hidden]{display:none}#dlg{border:1px solid #333;padding:16px;margin:8px 0}</style></head><body>
+<main><h1>Widgets</h1>
+<div role="tablist" aria-label="Plans"><button role="tab" id="t1" aria-selected="true" aria-controls="p1">One</button><button role="tab" id="t2" aria-selected="false" aria-controls="p2">Two</button></div>
+<div id="p1" role="tabpanel">Panel one</div><div id="p2" role="tabpanel" hidden>Panel two</div>
+<button id="acc" aria-expanded="false" aria-controls="acc-p">Details</button><div id="acc-p" hidden>More details</div>
+<button id="open" aria-haspopup="dialog" aria-controls="dlg">Open settings</button>
+<div id="dlg" role="dialog" aria-label="Settings" hidden><p>Settings</p><button id="close">Close</button></div>
+<button id="mb" aria-haspopup="menu" aria-expanded="false" aria-controls="menu">Actions</button>
+<ul id="menu" role="menu" hidden><li role="none"><button role="menuitem">Rename</button></li></ul>
+</main>
+<script>
+document.getElementById('acc').onclick=()=>{const p=document.getElementById('acc-p');p.hidden=!p.hidden};
+document.getElementById('open').onclick=()=>{document.getElementById('dlg').hidden=false};
+document.getElementById('close').onclick=()=>{document.getElementById('dlg').hidden=true};
+document.getElementById('mb').onclick=function(){const o=this.getAttribute('aria-expanded')==='true';this.setAttribute('aria-expanded',!o);document.getElementById('menu').hidden=o};
+</script></body></html>

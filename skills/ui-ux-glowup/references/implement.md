@@ -101,7 +101,9 @@ node <skill-dir>/scripts/safeguard.mjs backup --label "before redesign"
 
 `backup` snapshots the project without touching the working tree, the index, the branch or the stash (git: a commit object under `refs/glowup/`, untracked files included; no git: a copy in `.glowup-backup/`). Tell the user the backup id and the rollback command: `safeguard.mjs restore <id> --yes`. A restore takes a new backup first, puts the files back, and lists files created since (`--clean` deletes them).
 
-`check` never prints a secret. When it reports one: say where and what kind, never repeat the value, move it to an environment variable, and tell the user to rotate it. `state.json` files from `login.mjs` hold live sessions. `login.mjs` locks the file (600), adds it to `.gitignore`, and summarises it without printing a value; delete it when done (`login.mjs --clear`). Never commit, paste or upload it, and never print cookies or tokens in a report.
+`check` never prints a secret. When it reports one: say where and what kind, never repeat the value, move it to an environment variable, and tell the user to rotate it. Install the commit guard once per repository: `node <skill-dir>/scripts/safeguard.mjs hook install` blocks a commit that contains a secret or a session file (`hook remove` takes it out; a hook someone else wrote is never overwritten). A project with fake keys as test data lists those paths (one prefix per line) in `.glowup-safeguard-ignore`: their content is then not scanned for secrets, while session and `.env` file names are always reported. Backups never include `.env`, session files or keys, and everything the scripts write (JSON, snapshots, reports) has tokens in URLs and known key shapes masked.
+
+`state.json` files from `login.mjs` hold live sessions. `login.mjs` locks the file (600), adds it to `.gitignore`, and summarises it without printing a value; delete it when done (`login.mjs --clear`). Never commit, paste or upload it, and never print cookies or tokens in a report.
 
 After the change, compare with the backup:
 

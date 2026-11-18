@@ -10,7 +10,8 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { VIEWPORTS, ENGINES, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { VIEWPORTS, ENGINES, loadPlaywright, launchBrowser, trackPageErrors, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectLayout, crossFindings, formatCross } from "./lib/crossbrowser.mjs";
 
 export { crossFindings, formatCross };
@@ -34,7 +35,7 @@ export async function crossBrowser(target, { engines = ENGINES, out = "shots", r
     try {
       for (const vp of ["desktop", "mobile"]) {
         const errors = [];
-        const { page, close } = await openPage(browser, url, VIEWPORTS[vp], { route, ...options, onPage: (p) => p.on("pageerror", (e) => errors.push(String(e.message).slice(0, 120))) });
+        const { page, close } = await openPage(browser, url, VIEWPORTS[vp], { route, ...options, onPage: (p) => trackPageErrors(p, url, (m) => errors.push(m)) });
         const layout = await page.evaluate(collectLayout);
         const file = join(out, `${name}-${engine}-${vp}.png`);
         await page.screenshot({ path: file, fullPage: true }).catch(() => {});
@@ -59,7 +60,7 @@ if (isMain(import.meta.url)) {
     const engines = typeof flags.browsers === "string" ? flags.browsers.split(",").map((s) => s.trim()) : ENGINES;
     const r = await crossBrowser(target, { ...commonOptions(flags), engines, out: typeof flags.out === "string" ? flags.out : "shots" });
     console.log(formatCross(r.findings, Object.keys(r.results), r.missing, r.files));
-    if (flags.json) writeFileSync(flags.json === true ? "cross-browser.json" : flags.json, JSON.stringify(r, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "cross-browser.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") || !Object.keys(r.results).length ? 1 : 0);
   } catch (e) {
     console.error(e.message);

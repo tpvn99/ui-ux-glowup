@@ -23,16 +23,21 @@ import { responsive } from "./responsive.mjs";
 import { inventory } from "./inventory.mjs";
 import { runScenarios } from "./scenario.mjs";
 import { buildReport, toMarkdown, toHtml, summaryLine } from "./lib/verify.mjs";
+import { redactDeep, redactText } from "./lib/redact.mjs";
+import { captureShots, compareShots } from "./visual-diff.mjs";
+
+export const SNAPSHOT_SCHEMA = 1;
 
 export { buildReport, toMarkdown, toHtml };
 
 export async function collect(target, { scenarios = null, fast = false, ...options } = {}) {
-  const snap = { target, date: new Date().toISOString().slice(0, 10) };
+  const snap = { schema: SNAPSHOT_SCHEMA, target, date: new Date().toISOString().slice(0, 10) };
   const a = await audit(target, { ...options, noJs: true });
   snap.audit = { scores: a.scores, total: a.total, max: a.max, findings: a.findings };
   snap.smoke = await smoke(target, options);
   snap.smokeFindings = smokeFindings(snap.smoke);
   snap.ux = await ux(target, options);
+  snap.ux = { context: snap.ux.context, findings: [...snap.ux.findings] };
   snap.a11y = await a11y(target, options);
   snap.inventory = await inventory(target, options);
   if (scenarios) snap.scenarios = await runScenarios(target, scenarios, options);
@@ -49,7 +54,7 @@ const readJson = (f) => JSON.parse(readFileSync(f, "utf8"));
 
 export function save(report, out) {
   const file = resolve(out);
-  writeFileSync(file, extname(file) === ".html" ? toHtml(report) : toMarkdown(report));
+  writeFileSync(file, redactText(extname(file) === ".html" ? toHtml(report) : toMarkdown(report)));
   return file;
 }
 
@@ -63,18 +68,29 @@ if (isMain(import.meta.url)) {
     const dir = typeof flags.dir === "string" ? flags.dir : ".glowup/before";
     const scenarios = typeof flags.scenarios === "string" ? readJson(flags.scenarios) : null;
     const options = { ...commonOptions(flags), scenarios, fast: !!flags.fast };
-    const snap = await collect(target, options);
-    if (cmd === "snapshot") {
-      mkdirSync(dir, { recursive: true });
-      writeFileSync(join(dir, "snapshot.json"), JSON.stringify(snap));
-      console.log(`Snapshot saved in ${dir}/snapshot.json (${snap.audit.total}/${snap.audit.max} audit, ${snap.smoke.results.length} controls, ${snap.inventory.navigation.length} nav links${snap.scenarios ? `, ${snap.scenarios.results.length} scenarios` : ""}). Make the change, then: node verify.mjs check ${target} --dir ${dir}${scenarios ? " --scenarios " + flags.scenarios : ""} --out report.md`);
-      process.exit(0);
-    }
     let before = null;
     if (cmd === "check") {
       const f = join(dir, "snapshot.json");
       if (!existsSync(f)) throw new Error(`No snapshot in ${dir}. Run first: node verify.mjs snapshot ${target} --dir ${dir}`);
       before = readJson(f);
+      if (before.schema !== SNAPSHOT_SCHEMA) throw new Error(`The snapshot in ${dir} was made by another version of verify.mjs (schema ${before.schema ?? "none"}, expected ${SNAPSHOT_SCHEMA}). Take a new one: node verify.mjs snapshot ${target} --dir ${dir}`);
+    }
+    const snap = redactDeep(await collect(target, options));
+    if (cmd === "snapshot") {
+      mkdirSync(dir, { recursive: true });
+      if (!flags.fast) {
+        const shots = await captureShots(target, [390, 1440], options);
+        snap.shots = {};
+        for (const [w, s] of Object.entries(shots)) { writeFileSync(join(dir, `before-${w}.png`), s.png); snap.shots[w] = { height: s.height, file: `before-${w}.png` }; }
+      }
+      writeFileSync(join(dir, "snapshot.json"), JSON.stringify(snap));
+      console.log(`Snapshot saved in ${dir}/snapshot.json (${snap.audit.total}/${snap.audit.max} audit, ${snap.smoke.results.length} controls, ${snap.inventory.navigation.length} nav links${snap.scenarios ? `, ${snap.scenarios.results.length} scenarios` : ""}). Make the change, then: node verify.mjs check ${target} --dir ${dir}${scenarios ? " --scenarios " + flags.scenarios : ""} --out report.md`);
+      process.exit(0);
+    }
+    if (before?.shots && !flags.fast) {
+      const saved = {};
+      for (const [w, s] of Object.entries(before.shots)) { try { saved[w] = { png: readFileSync(join(dir, s.file)), height: s.height }; } catch {} }
+      if (Object.keys(saved).length) snap.visual = await compareShots(saved, target, { options });
     }
     const report = buildReport({ target, date: snap.date, before, after: snap });
     console.log(summaryLine(report));

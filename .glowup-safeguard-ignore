@@ -1,0 +1,3 @@
+# Fake keys used as test data: their content is not scanned for secrets
+tests/
+benchmark/

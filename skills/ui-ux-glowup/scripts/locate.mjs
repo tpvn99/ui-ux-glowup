@@ -11,6 +11,7 @@
 
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import { parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { locate, formatLocations } from "./lib/locate.mjs";
 
 export { locate, formatLocations };
@@ -24,7 +25,7 @@ if (isMain(import.meta.url)) {
     if (flags.url) {
       const { audit } = await import("./audit.mjs");
       result = await audit(flags.url, commonOptions(flags));
-      if (flags.json) writeFileSync(flags.json === true ? "audit.json" : flags.json, JSON.stringify(result, null, 2));
+      if (flags.json) saveJson(flags.json === true ? "audit.json" : flags.json, result);
     } else if (first) {
       result = JSON.parse(readFileSync(first, "utf8"));
     } else {

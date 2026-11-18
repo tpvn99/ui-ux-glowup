@@ -12,6 +12,18 @@ Read only the sections `stack.mjs` lists. The rules that apply everywhere:
 - **Do not touch** data fetching, routing, auth, forms' submit logic, analytics, test ids, or generated files.
 - Run the project's own `build` and `test` scripts after the change; then `smoke.mjs` and the scenarios (`testing.md`).
 
+## By major version
+
+`stack.mjs` prints the major versions and what changes. The rule: write the version the project is on, never the newest syntax you know.
+
+- **Vue 2 / Nuxt 2**: Options API, no `<script setup>`; **Vue 3 / Nuxt 3**: Composition API is available, follow the project's style.
+- **Angular < 14** NgModules only · **14–16** standalone components, `*ngIf` / `*ngFor` · **17+** `@if` / `@for` control flow.
+- **Svelte 4** `export let` and stores · **Svelte 5** runes (`$state`, `$props`); components of both can coexist.
+- **Next < 13** pages router only · **13–14** app or pages router: stay in the one the project uses.
+- **React < 18** `ReactDOM.render`; **18+** `createRoot`.
+- **Bootstrap 4** needs jQuery and uses `ml-`/`mr-`; **Bootstrap 5** uses `ms-`/`me-`.
+- **MUI 4** `makeStyles`; **MUI 5+** `sx` and `styled`. **Tailwind 3** config file; **4** `@theme` in CSS.
+
 ## next
 - App Router: components are server components by default; add `'use client'` only where state or handlers need it, and keep it low in the tree.
 - Images with `next/image` (set `sizes`, `priority` on the LCP image), fonts with `next/font`, SEO head with the `metadata` export. Don't convert `pages/` to `app/` or the reverse.

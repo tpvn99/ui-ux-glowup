@@ -1,0 +1,11 @@
+{ "scenarios": [
+  { "name": "A shopper picks a size and reaches the buy button",
+    "goal": "A shopper chooses the second size and can add the product to the cart",
+    "maxActions": 2,
+    "steps": [
+      { "check": "input[name=size] >> nth=1" },
+      { "expect": { "checked": "input[name=size] >> nth=1" } },
+      { "click": "button:has-text('Add to cart')" },
+      { "expect": { "visible": "button:has-text('Add to cart')" } }
+    ] }
+] }

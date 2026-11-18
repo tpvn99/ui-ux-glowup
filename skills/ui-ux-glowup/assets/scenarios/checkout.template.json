@@ -1,0 +1,13 @@
+{ "scenarios": [
+  { "name": "A customer reaches the payment step",
+    "goal": "A customer adds a product to the cart and reaches the payment step (stop before paying)",
+    "maxActions": 6,
+    "steps": [
+      { "goto": "REPLACE: product page path or URL" },
+      { "click": "REPLACE: add to cart button" },
+      { "click": "REPLACE: go to cart / checkout link" },
+      { "fill": ["REPLACE: email field", "REPLACE: a test address, never a real customer"] },
+      { "click": "REPLACE: continue to payment button" },
+      { "expect": { "visible": "REPLACE: the payment form or step title" } }
+    ] }
+] }

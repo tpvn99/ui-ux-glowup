@@ -9,6 +9,7 @@
 
 import { writeFileSync } from "node:fs";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
+import { saveJson } from "./lib/redact.mjs";
 import { collectSignature, compareSignatures, formatConsistency } from "./lib/consistency.mjs";
 
 export { compareSignatures, formatConsistency };
@@ -49,7 +50,7 @@ if (isMain(import.meta.url)) {
   try {
     const r = await consistency(targets, { ...commonOptions(flags), site, max: Number(flags.max) || 6 });
     console.log(formatConsistency(r.findings, r.pages.map((p) => p.label)));
-    if (flags.json) writeFileSync(flags.json === true ? "consistency.json" : flags.json, JSON.stringify(r, null, 2));
+    if (flags.json) saveJson(flags.json === true ? "consistency.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") ? 1 : 0);
   } catch (e) {
     console.error(e.message);

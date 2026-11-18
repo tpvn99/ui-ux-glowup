@@ -29,6 +29,9 @@ Il **garde les couleurs de votre marque** et travaille tout le reste : structure
 - **Le bon registre selon le secteur.** `sectors.md` couvre santé, services publics, finance, immobilier, voyage, éducation, mode, médias et plus, avec un contrôle de variété face au look tech par défaut.
 - **Marque conservée.** `brand-guard.mjs` échoue quand un changement retire une couleur de marque, abandonne une police ou ajoute une bibliothèque UI non demandée.
 - **Toutes les tailles, toutes les langues.** `responsive.mjs` balaie 14 tailles et teste mots longs, +50 % de texte et droite-à-gauche ; `consistency.mjs` vérifie que les pages forment un seul site.
+- **Atteignable même sans souris.** Les parcours fixent un objectif et un budget d'actions et peuvent tourner au clavier seul ; `ux.mjs` ajoute les contrôles de chaque type de site (boutique, SaaS, commerce local, tableau de bord, article) classés par impact ; `a11y.mjs` manipule onglets, accordéons, modales et menus et teste le zoom à 200 % et 400 %.
+- **Mesuré, pas seulement affirmé.** `benchmark/` injecte des défauts et des régressions connus dans dix projets et publie ce qui est trouvé, manqué et signalé à tort sur des pages propres (`docs/benchmark.md`).
+- **Sans danger à lancer.** Les sauvegardes excluent `.env` et les sessions, les sorties masquent les jetons, un hook pre-commit bloque les secrets, et `doctor.mjs` dit ce qui manque et comment le corriger.
 - **Votre stack, conservée.** `stack.mjs` détecte Next, Nuxt, Vue, Svelte, Angular, Astro, WordPress (et son constructeur), Tailwind, shadcn, MUI, Bootstrap et indique où vivent les tokens ; rien de nouveau n'est ajouté sans demander.
 - **Tous les navigateurs.** `cross-browser.mjs` compare Chromium, Firefox et WebKit ; `--browser` fonctionne sur les autres scripts.
 - **Rapide.** `perf.mjs` mesure LCP, CLS, temps de blocage et poids sur un téléphone bridé, et nomme la cause : image principale surdimensionnée ou en lazy, scripts bloquants, polices, bibliothèques lourdes.
@@ -139,7 +142,7 @@ Compressez le dossier `skills/ui-ux-glowup` en zip et importez-le depuis la sect
 
 ### Recommandé : activer la vérification visuelle
 
-L'étape de capture d'écran a besoin de Node 18+ et de Playwright dans le projet où l'agent travaille :
+Les vérifications qui ouvrent un navigateur (audit, captures, tests) ont besoin de **Node 20+** et de Playwright dans le projet où l'agent travaille (Node 18 ne fait tourner que les scripts sans navigateur) ; `node <skill-dir>/scripts/doctor.mjs` indique ce qui manque :
 
 ```bash
 npm i -D playwright && npx playwright install chromium
@@ -215,7 +218,9 @@ Les guides sont en anglais (le README seul est traduit) :
 - [Niveaux, modes et limites](docs/levels-and-limits.md) : audit seul / recommandations / application, léger à complet, technologies prises en charge, limites connues
 - [Tutoriels](docs/tutorials.md) : trois pas-à-pas à rejouer dans ce dépôt
 - [Exemple de rapport](docs/example-report.md) : un vrai rapport avant/après
-- [Dépannage](docs/troubleshooting.md)
+- [FAQ](docs/faq.md) · [Dépannage](docs/troubleshooting.md) · [Installation par agent](docs/install-by-agent.md)
+- [Benchmark](docs/benchmark.md) : ce que les outils trouvent et manquent sur dix projets aux défauts connus
+- [Liste de contrôle sur vrais appareils](docs/real-device-checklist.md)
 
 ## Utiliser les scripts directement
 

@@ -38,3 +38,24 @@ test("a11y.mjs catches real keyboard and ARIA problems and passes the corrected 
   const good = await a11y(fixture("a11y2-good.html"));
   assert.deepEqual(rules(good.findings), [], JSON.stringify(good.findings));
 });
+
+test("custom widgets are operated with the keyboard: tabs, disclosure, dialog, menu", { skip }, async () => {
+  const bad = await a11y(fixture("components-bad.html"));
+  const got = rules(bad.findings);
+  for (const x of ["tabs-no-arrow-keys", "disclosure-not-toggling", "modal-focus-not-moved", "modal-no-escape", "menu-no-escape"]) assert.ok(got.includes(x), `${x} in ${got}`);
+  const good = await a11y(fixture("components-good.html"));
+  assert.deepEqual(rules(good.findings), [], JSON.stringify(good.findings));
+});
+
+test("zoom 200% and 400%: overflow and clipped text are errors, a flexible page passes; fieldset needs a legend", { skip }, async () => {
+  const bad = await a11y(fixture("zoom-bad.html"));
+  const got = rules(bad.findings);
+  for (const x of ["zoom-200-overflow", "zoom-200-clipped", "reflow-320"]) assert.ok(got.includes(x), `${x} in ${got}`);
+  assert.deepEqual(rules((await a11y(fixture("zoom-good.html"))).findings), []);
+});
+
+test("static rules for zoom and fieldsets", () => {
+  const s = { invalidRoles: [], brokenRefs: [], hiddenFocusable: [], roleNotFocusable: [], duplicateIds: [], positiveTabindex: [], dialogsUnnamed: [], hasMain: true, hasSkipLink: true, linksBeforeMain: 0, authFields: [], autoplay: [], tables: [], fieldsetsNoLegend: ["fieldset"] };
+  const z = { overflow: 0, clipped: [], fixedShare: 60, offenders: [] };
+  assert.deepEqual(rules(a11yFindings({ statics: s, stops: [stop()], zoom200: z, zoom400: z })), ["fieldset-no-legend", "zoom-fixed-covers"]);
+});
