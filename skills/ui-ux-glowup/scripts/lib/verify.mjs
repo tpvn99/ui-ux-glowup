@@ -76,6 +76,7 @@ export function buildReport({ target, date, before = null, after }) {
     "Real devices and field data (the performance numbers are lab measurements on this machine).",
     "Screen reader behaviour, zoom to 200%, and anything that needs a human eye on the screenshots.",
     "Other browsers (run `cross-browser.mjs`) and other languages (`responsive.mjs --stress long`).",
+    "Requests to known analytics and tag-manager hosts are blocked, so the audit does not count as a visit; their weight is not in the numbers (`--allow-tracking` loads them; `--block host` adds your own experiment or stats endpoint).",
     after.perf ? null : "Performance was skipped.",
     after.responsive ? null : "The size sweep was skipped (`--fast`).",
   ].filter(Boolean);
