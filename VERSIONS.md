@@ -4,9 +4,17 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.15.1 | 2026-11-18 |
+| ui-ux-glowup | 1.15.2 | 2026-11-19 |
 
 ## Recent Changes
+
+### 1.15.2 (2026-11-19)
+
+- **ui-ux-glowup** (1.15.1 → 1.15.2): `lang-mismatch` is more reliable, and the benchmark now really measures it.
+  - Found by the benchmark: the two new defect families were not assigned to any project, so they were not measured. Once assigned, `lang-wrong` was missed on 3 of 6 pages.
+  - Fixes: label-heavy pages (shops, dashboards) are recognised (at least 5 common words, 4 % of the text, winner at least twice the runner-up); English words that also exist in Portuguese (`do`, `no`, `as`, `e`, `o`) no longer count; emails and URLs are ignored (the `com` of `example.com` read as Portuguese).
+  - Benchmark: `lang-wrong` on 3 projects, `rtl-not-mirrored` on 5, never both on one project (the Arabic block fills the text sample). 141 defects seeded, 133 attributable, 133 found; 25 of 25 regressions caught; 33 findings on the clean pages, none about language or direction.
+  - Tests: 2 new (label-heavy page and near tie; the `com` of an email).
 
 ### 1.15.1 (2026-11-18)
 
