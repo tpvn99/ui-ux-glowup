@@ -731,6 +731,8 @@ export function collectPageData() {
     viewport: { width: window.innerWidth, height: window.innerHeight },
     title: document.title,
     lang: document.documentElement.getAttribute("lang") || "",
+    textSample: bodyText.replace(/\s+/g, " ").slice(0, 3000),
+    bodyDirection: getComputedStyle(document.body).direction,
     hasViewportMeta: Boolean(document.querySelector('meta[name="viewport"]')),
     hasDescription: Boolean(document.querySelector('meta[name="description"]')),
     overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),

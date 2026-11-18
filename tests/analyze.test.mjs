@@ -184,3 +184,30 @@ test("AI-look rules: gradients, glass, radii, identical cards, emoji, clichés (
   const clean = page({ aiLook: { gradients: [], glass: 1, bigRadius: 1, radiusElements: 10, bigRadiusSample: [], identicalCards: [], emoji: [], cliches: [], centeredShare: 30 } });
   assert.equal(analyze(clean, page({ viewport: { width: 390, height: 844 } })).filter((f) => f.rule.startsWith("ai-")).length, 0);
 });
+
+const EN = "The team builds fast and simple tools for your business. You can book a call with us and we will answer your questions about the plan that fits your needs. Our clients are happy with the results and they come back for more work. This page is for people who want to know how it works and what it costs for them.";
+const FR = "L'équipe construit des outils simples et rapides pour votre entreprise. Vous pouvez réserver un appel avec nous et nous répondrons à vos questions sur le forfait qui convient à vos besoins. Nos clients sont satisfaits des résultats et ils reviennent pour de nouveaux projets. Cette page est pour les personnes qui veulent savoir comment cela fonctionne et ce que cela coûte.";
+const AR = "هذا النص مكتوب باللغة العربية ويجب أن تكون الصفحة من اليمين إلى اليسار حتى تظهر علامات الترقيم والمحاذاة بشكل صحيح للقارئ العربي في كل مكان";
+
+test("lang-mismatch: the declared language must match the text (good and bad fixtures)", () => {
+  const good = page({ lang: "en", textSample: EN });
+  assert.ok(!analyze(good, good).some((f) => f.rule === "lang-mismatch"));
+  const bad = page({ lang: "fr", textSample: EN });
+  assert.ok(analyze(bad, bad).some((f) => f.rule === "lang-mismatch"));
+  const okFr = page({ lang: "fr-FR", textSample: FR });
+  assert.ok(!analyze(okFr, okFr).some((f) => f.rule === "lang-mismatch"));
+});
+
+test("lang-mismatch stays silent on short or unclear text", () => {
+  const short = page({ lang: "fr", textSample: "Hello world" });
+  assert.ok(!analyze(short, short).some((f) => f.rule === "lang-mismatch"));
+});
+
+test("rtl-direction: Arabic or Hebrew text needs dir=rtl (good and bad fixtures)", () => {
+  const bad = page({ textSample: AR.repeat(3), bodyDirection: "ltr", lang: "ar" });
+  assert.ok(analyze(bad, bad).some((f) => f.rule === "rtl-direction"));
+  const good = page({ textSample: AR.repeat(3), bodyDirection: "rtl", lang: "ar" });
+  assert.ok(!analyze(good, good).some((f) => f.rule === "rtl-direction"));
+  const en = page({ textSample: EN, bodyDirection: "ltr" });
+  assert.ok(!analyze(en, en).some((f) => f.rule === "rtl-direction"));
+});
