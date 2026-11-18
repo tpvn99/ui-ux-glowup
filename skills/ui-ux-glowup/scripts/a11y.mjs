@@ -136,6 +136,34 @@ export async function componentChecks(page) {
     const moved = !(await items.first().evaluate((el) => el === document.activeElement || el.contains(document.activeElement)));
     if (!moved) add("tree-no-arrow-keys", "error", "A tree does not move between items with the arrow keys.", [`tree ${i + 1}`], "ArrowDown / ArrowUp move between visible items; ArrowRight expands and ArrowLeft collapses a branch (aria-expanded).");
   }
+
+  const nSlider = Math.min(await page.locator('[role="slider"]:not(input)').count(), 3);
+  for (let i = 0; i < nSlider; i++) {
+    await fresh();
+    const sl = page.locator('[role="slider"]:not(input)').nth(i);
+    const label = ((await sl.getAttribute("aria-label")) || "slider").slice(0, 30);
+    await sl.focus();
+    const val = () => sl.getAttribute("aria-valuenow");
+    const before = await val();
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("ArrowUp");
+    await page.waitForTimeout(100);
+    let changed = (await val()) !== before;
+    if (!changed) { await page.keyboard.press("ArrowLeft"); await page.keyboard.press("ArrowDown"); await page.waitForTimeout(100); changed = (await val()) !== before; }
+    if (!changed) add("slider-no-arrow-keys", "error", `The slider "${label}" does not change value with the arrow keys.`, [label], "Focusable (tabindex=0), ArrowRight / ArrowUp increase and ArrowLeft / ArrowDown decrease aria-valuenow; Home / End jump to the ends. Or use <input type=range>.");
+  }
+
+  const nBar = Math.min(await page.locator('[role="menubar"]').count(), 2);
+  for (let i = 0; i < nBar; i++) {
+    await fresh();
+    const items = page.locator('[role="menubar"]').nth(i).locator('> [role="menuitem"], > li > [role="menuitem"]');
+    if ((await items.count()) < 2) continue;
+    await items.first().focus();
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(100);
+    const moved = !(await items.first().evaluate((el) => el === document.activeElement));
+    if (!moved) add("menubar-no-arrow-keys", "error", "A menu bar does not move between its items with ArrowRight / ArrowLeft.", [`menubar ${i + 1}`], "Use a roving tabindex: ArrowRight / ArrowLeft move between top-level items, ArrowDown opens the submenu, Escape closes it.");
+  }
   return out;
 }
 
