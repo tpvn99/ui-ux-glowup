@@ -1,20 +1,15 @@
 {
   "meta": {
-    "date": "2026-11-17",
-    "version": "1.14.0",
+    "date": "2026-11-18",
+    "version": "1.15.0",
     "node": "v26.7.0",
     "os": "darwin arm64",
-    "fast": false,
-    "mergedFrom": [
-      "saas-landing",
-      "react-app",
-      "responsive-app"
-    ]
+    "fast": false
   },
   "recall": 1,
   "trapRecall": 1,
   "cleanErrors": 2,
-  "cleanWarnings": 31,
+  "cleanWarnings": 28,
   "falsePositives": 0,
-  "projects": 10
+  "projects": 9
 }

@@ -4,9 +4,17 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.14.1 | 2026-11-18 |
+| ui-ux-glowup | 1.15.0 | 2026-11-18 |
 
 ## Recent Changes
+
+### 1.15.0 (2026-11-18)
+
+- **ui-ux-glowup** (1.14.1 → 1.15.0): two new audit rules and two new benchmark defect families.
+  - `lang-mismatch` (warning): `<html lang>` disagrees with the language of the visible text (guessed from common words in en, fr, es, de, it, pt; silent on short or unclear text).
+  - `rtl-direction` (error): the text is mostly Arabic or Hebrew but the page direction is `ltr` (no `dir="rtl"`).
+  - Benchmark: `lang-wrong` and `rtl-not-mirrored` seeded in every project; recall 100 %, no new finding on the clean pages.
+  - Tests: 3 new (good and bad fixtures for each rule).
 
 ### 1.14.1 (2026-11-18)
 

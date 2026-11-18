@@ -1,39 +1,34 @@
 {
   "meta": {
-    "date": "2026-11-17",
-    "version": "1.14.0",
+    "date": "2026-11-18",
+    "version": "1.15.0",
     "node": "v26.7.0",
     "os": "darwin arm64",
-    "fast": false,
-    "mergedFrom": [
-      "saas-landing",
-      "react-app",
-      "responsive-app"
-    ]
+    "fast": false
   },
   "summary": {
-    "projects": 10,
-    "failedProjects": 0,
-    "defectsSeeded": 133,
+    "projects": 9,
+    "failedProjects": 1,
+    "defectsSeeded": 120,
     "notApplicable": 3,
     "notMeasured": 0,
     "ambiguous": 5,
-    "attributable": 125,
-    "detected": 125,
+    "attributable": 112,
+    "detected": 112,
     "recall": 1,
-    "traps": 25,
-    "trapsDetected": 25,
+    "traps": 22,
+    "trapsDetected": 22,
     "trapRecall": 1,
-    "cleanFindings": 33,
+    "cleanFindings": 30,
     "cleanErrors": 2,
-    "cleanWarnings": 31,
-    "reviewed": 33,
+    "cleanWarnings": 28,
+    "reviewed": 30,
     "humanReviewed": 0,
     "falsePositives": 0,
-    "valid": 33,
+    "valid": 30,
     "unreviewed": 0,
     "precision": 1,
-    "seconds": 1872
+    "seconds": 975
   },
   "results": [
     {
@@ -239,25 +234,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 436,
+          "lcp": 160,
           "cls": 0,
           "tbt": 0,
-          "weight": 133472,
+          "weight": 133478,
           "requests": 4
         },
         "after": {
-          "lcp": 252,
+          "lcp": 728,
           "cls": 0,
           "tbt": 0,
-          "weight": 109980,
+          "weight": 109978,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 37218,
-        "after": 35793,
-        "broken": 25776
+        "before": 38912,
+        "after": 38656,
+        "broken": 28200
       }
     },
     {
@@ -457,25 +452,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 768,
+          "lcp": 496,
           "cls": 0,
           "tbt": 0,
-          "weight": 543277,
+          "weight": 543246,
           "requests": 6
         },
         "after": {
-          "lcp": 176,
+          "lcp": 208,
           "cls": 0,
           "tbt": 0,
-          "weight": 543241,
+          "weight": 543229,
           "requests": 6
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 42867,
-        "after": 36228,
-        "broken": 24564
+        "before": 39670,
+        "after": 33499,
+        "broken": 24574
       }
     },
     {
@@ -683,25 +678,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 328,
+          "lcp": 224,
           "cls": 0,
           "tbt": 0,
-          "weight": 109994,
+          "weight": 109980,
           "requests": 3
         },
         "after": {
-          "lcp": 144,
+          "lcp": 196,
           "cls": 0,
           "tbt": 0,
-          "weight": 109651,
+          "weight": 109979,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 50549,
-        "after": 580766,
-        "broken": 332136
+        "before": 53276,
+        "after": 45043,
+        "broken": 37620
       }
     },
     {
@@ -874,10 +869,10 @@
       },
       "perf": {
         "before": {
-          "lcp": 104,
+          "lcp": 192,
           "cls": 0,
           "tbt": 0,
-          "weight": 23567,
+          "weight": 23861,
           "requests": 1
         },
         "after": {
@@ -890,9 +885,9 @@
       },
       "scenarios": null,
       "ms": {
-        "before": 30277,
-        "after": 26589,
-        "broken": 19552
+        "before": 30232,
+        "after": 26257,
+        "broken": 19423
       }
     },
     {
@@ -1054,10 +1049,10 @@
       },
       "perf": {
         "before": {
-          "lcp": 108,
+          "lcp": 128,
           "cls": 0.154,
           "tbt": 0,
-          "weight": 65938,
+          "weight": 65941,
           "requests": 3
         },
         "after": {
@@ -1070,9 +1065,9 @@
       },
       "scenarios": null,
       "ms": {
-        "before": 33519,
-        "after": 29515,
-        "broken": 23387
+        "before": 33299,
+        "after": 29329,
+        "broken": 23593
       }
     },
     {
@@ -1255,235 +1250,31 @@
       },
       "perf": {
         "before": {
-          "lcp": 92,
+          "lcp": 204,
           "cls": 0.153,
           "tbt": 0,
-          "weight": 71788,
+          "weight": 72341,
           "requests": 2
         },
         "after": {
           "lcp": 16,
           "cls": 0.056,
           "tbt": 0,
-          "weight": 48572,
+          "weight": 48903,
           "requests": 1
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 29389,
-        "after": 24709,
-        "broken": 18925
+        "before": 30923,
+        "after": 25848,
+        "broken": 20482
       }
     },
     {
       "id": "institutional",
       "type": "Institutional site (health practice)",
-      "defects": [
-        {
-          "id": "description-missing",
-          "status": "detected",
-          "via": [
-            "audit:seo-description"
-          ],
-          "area": "seo"
-        },
-        {
-          "id": "title-missing",
-          "status": "detected",
-          "via": [
-            "audit:seo-title"
-          ],
-          "area": "seo"
-        },
-        {
-          "id": "lang-missing",
-          "status": "detected",
-          "via": [
-            "audit:lang"
-          ],
-          "area": "accessibility"
-        },
-        {
-          "id": "h1-missing",
-          "status": "detected",
-          "via": [
-            "audit:h1-missing"
-          ],
-          "area": "hierarchy"
-        },
-        {
-          "id": "low-contrast",
-          "status": "detected",
-          "via": [
-            "audit:contrast"
-          ],
-          "area": "accessibility"
-        },
-        {
-          "id": "focus-removed",
-          "status": "detected",
-          "via": [
-            "audit:focus-invisible"
-          ],
-          "area": "accessibility"
-        },
-        {
-          "id": "tiny-text",
-          "status": "detected",
-          "via": [
-            "audit:tiny-text",
-            "audit:mobile-body-size",
-            "audit:body-size",
-            "responsive:text-too-small"
-          ],
-          "area": "responsive"
-        },
-        {
-          "id": "overflow-block",
-          "status": "detected",
-          "via": [
-            "audit:overflow",
-            "responsive:overflow-x",
-            "a11y:reflow-320"
-          ],
-          "area": "responsive"
-        },
-        {
-          "id": "js-error",
-          "status": "detected",
-          "via": [
-            "smoke:js-error"
-          ],
-          "area": "functionality"
-        },
-        {
-          "id": "clickable-div",
-          "status": "detected",
-          "via": [
-            "audit:clickable-div"
-          ],
-          "area": "accessibility"
-        },
-        {
-          "id": "unnamed-icon-button",
-          "status": "detected",
-          "via": [
-            "audit:accessible-name"
-          ],
-          "area": "accessibility"
-        },
-        {
-          "id": "seo-noindex",
-          "status": "detected",
-          "via": [
-            "audit:seo-noindex"
-          ],
-          "area": "seo"
-        },
-        {
-          "id": "distorted-image",
-          "status": "detected",
-          "via": [
-            "audit:distorted-images"
-          ],
-          "area": "visuals"
-        }
-      ],
-      "traps": [
-        {
-          "id": "nav-link-removed",
-          "status": "detected",
-          "via": [
-            "control-missing",
-            "element-missing"
-          ],
-          "expected": [
-            "control-missing",
-            "element-missing"
-          ]
-        },
-        {
-          "id": "heading-removed",
-          "status": "detected",
-          "via": [
-            "element-missing"
-          ],
-          "expected": [
-            "element-missing"
-          ]
-        },
-        {
-          "id": "new-js-error",
-          "status": "detected",
-          "via": [
-            "new-js-error"
-          ],
-          "expected": [
-            "new-js-error"
-          ]
-        }
-      ],
-      "clean": [
-        {
-          "key": "perf:heavy-library",
-          "severity": "warning",
-          "count": 1,
-          "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
-          "human": false
-        },
-        {
-          "key": "perf:render-blocking-script",
-          "severity": "warning",
-          "count": 1,
-          "label": "by-design",
-          "note": "the same Tailwind browser script, in the head",
-          "human": false
-        },
-        {
-          "key": "smoke:empty-link",
-          "severity": "warning",
-          "count": 3,
-          "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
-          "human": false
-        }
-      ],
-      "audit": {
-        "before": 32,
-        "after": 45
-      },
-      "errors": {
-        "before": 14,
-        "after": 0
-      },
-      "a11yErrors": {
-        "before": 5,
-        "after": 0
-      },
-      "perf": {
-        "before": {
-          "lcp": 144,
-          "cls": 0,
-          "tbt": 0,
-          "weight": 83634,
-          "requests": 4
-        },
-        "after": {
-          "lcp": 136,
-          "cls": 0,
-          "tbt": 0,
-          "weight": 83633,
-          "requests": 4
-        }
-      },
-      "scenarios": null,
-      "ms": {
-        "before": 42168,
-        "after": 40874,
-        "broken": 32524
-      }
+      "error": "browserType.launch: Timeout 180000ms exceeded."
     },
     {
       "id": "editorial",
@@ -1677,25 +1468,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 156,
+          "lcp": 256,
           "cls": 0,
           "tbt": 0,
-          "weight": 415993,
+          "weight": 416557,
           "requests": 11
         },
         "after": {
-          "lcp": 152,
+          "lcp": 280,
           "cls": 0.001,
           "tbt": 0,
-          "weight": 393229,
+          "weight": 393069,
           "requests": 10
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 45493,
-        "after": 44315,
-        "broken": 35466
+        "before": 59558,
+        "after": 48938,
+        "broken": 37982
       }
     },
     {
@@ -1891,25 +1682,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 152,
+          "lcp": 160,
           "cls": 0,
           "tbt": 0,
-          "weight": 109977,
+          "weight": 109981,
           "requests": 3
         },
         "after": {
-          "lcp": 152,
+          "lcp": 148,
           "cls": 0,
           "tbt": 0,
-          "weight": 109988,
+          "weight": 99076,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 43145,
-        "after": 36178,
-        "broken": 27823
+        "before": 43991,
+        "after": 37066,
+        "broken": 30044
       }
     },
     {
@@ -2101,17 +1892,17 @@
       },
       "perf": {
         "before": {
-          "lcp": 136,
+          "lcp": 144,
           "cls": 0,
           "tbt": 0,
-          "weight": 109651,
+          "weight": 109981,
           "requests": 3
         },
         "after": {
-          "lcp": 128,
+          "lcp": 224,
           "cls": 0,
           "tbt": 0,
-          "weight": 109650,
+          "weight": 109981,
           "requests": 3
         }
       },
@@ -2121,9 +1912,9 @@
         "passedBroken": 3
       },
       "ms": {
-        "before": 45425,
-        "after": 39373,
-        "broken": 37418
+        "before": 50975,
+        "after": 43877,
+        "broken": 43683
       }
     }
   ]

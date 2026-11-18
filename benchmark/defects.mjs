@@ -7,6 +7,8 @@ const beforeBodyEnd = (s) => (html) => html.replace(/<\/body>/i, `${s}\n</body>`
 export const DEFECTS = {
   "viewport-missing": { area: "responsive", desc: "No viewport meta tag", apply: rep(/<meta name="viewport"[^>]*>\s*/i, ""), expect: ["audit:viewport-meta"] },
   "lang-missing": { area: "accessibility", desc: "No lang attribute on <html>", apply: rep(/(<html\b[^>]*?)\slang="[^"]*"/i, "$1"), expect: ["audit:lang"] },
+  "lang-wrong": { area: "accessibility", desc: "lang says French on an English page", apply: rep(/(<html\b[^>]*?\slang=")[^"]*"/i, '$1fr"'), expect: ["audit:lang-mismatch"] },
+  "rtl-not-mirrored": { area: "accessibility", desc: "An Arabic block on a page that stays left-to-right", apply: (h) => h.replace(/(<body\b[^>]*>)/i, `$1<p style="padding:16px">${"هذا النص مكتوب باللغة العربية ويجب أن تكون الصفحة من اليمين إلى اليسار حتى تظهر علامات الترقيم والمحاذاة بشكل صحيح للقارئ العربي في كل مكان ".repeat(12)}</p>`), expect: ["audit:rtl-direction"] },
   "title-missing": { area: "seo", desc: "No <title>", apply: rep(/<title>[\s\S]*?<\/title>\s*/i, ""), expect: ["audit:seo-title"] },
   "description-missing": { area: "seo", desc: "No meta description", apply: rep(/<meta name="description"[^>]*>\s*/i, ""), expect: ["audit:seo-description"] },
   "seo-noindex": { area: "seo", desc: "Page set to noindex", apply: beforeHeadEnd('<meta name="robots" content="noindex">'), expect: ["audit:seo-noindex"] },

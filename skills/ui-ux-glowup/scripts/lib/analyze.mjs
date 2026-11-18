@@ -379,6 +379,11 @@ export function analyze(desktop, mobile, { allow = [] } = {}) {
   const nameless = d.interactive.filter((i) => !i.hasName);
   if (nameless.length) add("Accessibility", "error", "accessible-name", "Interactive elements without an accessible name (icon buttons need aria-label).", nameless.map((i) => i.sel));
   if (!d.lang) add("Accessibility", "warn", "lang", "Missing lang attribute on <html>.");
+  else {
+    const guess = guessLanguage(d.textSample || "");
+    if (guess && guess !== d.lang.toLowerCase().split("-")[0]) add("Accessibility", "warn", "lang-mismatch", `<html lang="${d.lang}"> but the text reads as ${guess}: screen readers will use the wrong voice and pronunciation.`);
+  }
+  if (rtlShare(d.textSample || "") > 0.3 && d.bodyDirection === "ltr") add("Accessibility", "error", "rtl-direction", 'Text is right-to-left (Arabic, Hebrew…) but the page direction is ltr: add dir="rtl" to <html> so punctuation, alignment and layout mirror.');
   const levels = d.headings.map((h) => h.level);
   const skips = levels.filter((l, i) => i > 0 && l - levels[i - 1] > 1);
   if (skips.length) add("Accessibility", "warn", "heading-order", "Heading levels skip (e.g. h2 → h4).");
@@ -394,6 +399,31 @@ export function analyze(desktop, mobile, { allow = [] } = {}) {
 
 function stripSlash(u) {
   return String(u).replace(/#.*$/, "").replace(/\/+$/, "");
+}
+
+const STOP = {
+  en: "the and of to in is that for with on are this you your it as be at from or by".split(" "),
+  fr: "le la les des et est une un pour dans que qui sur avec vous votre nous pas au aux du ce sont par".split(" "),
+  es: "el la los las de y es una un para en que con por su se del al como más usted".split(" "),
+  de: "der die das und ist nicht ein eine für mit von zu auf den dem sie wir ich auch bei".split(" "),
+  it: "il lo gli di e è una un per che con non sono del della le nel più da si".split(" "),
+  pt: "o os as de e é uma um para que com não em do da dos no na por mais você".split(" "),
+};
+
+/** Best guess of the language of a text from common words; null when the text is short or the guess is not clear. */
+export function guessLanguage(text) {
+  const words = String(text).toLowerCase().match(/\p{L}+/gu) || [];
+  if (words.length < 40) return null;
+  const scores = Object.entries(STOP).map(([lang, list]) => { const set = new Set(list); return [lang, words.filter((w) => set.has(w)).length / words.length]; }).sort((a, b) => b[1] - a[1]);
+  const [best, second] = scores;
+  return best[1] >= 0.12 && best[1] >= second[1] * 1.5 ? best[0] : null;
+}
+
+/** Share of letters written in a right-to-left script. */
+export function rtlShare(text) {
+  const letters = String(text).match(/\p{L}/gu) || [];
+  if (letters.length < 20) return 0;
+  return letters.filter((c) => /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/.test(c)).length / letters.length;
 }
 
 /** hreflang problems on one page: bad codes, duplicates, no self-reference, no x-default. */

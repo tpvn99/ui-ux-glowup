@@ -53,5 +53,35 @@
     "cleanErrors": 2,
     "cleanWarnings": 31,
     "falsePositives": 0
+  },
+  {
+    "date": "2026-11-18",
+    "version": "1.15.0",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "recall": 1,
+    "trapRecall": 1,
+    "attributable": 99,
+    "detected": 99,
+    "cleanErrors": 1,
+    "cleanWarnings": 31,
+    "falsePositives": 0,
+    "seconds": 1028
+  },
+  {
+    "date": "2026-11-18",
+    "version": "1.15.0",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "recall": 1,
+    "trapRecall": 1,
+    "attributable": 112,
+    "detected": 112,
+    "cleanErrors": 2,
+    "cleanWarnings": 28,
+    "falsePositives": 0,
+    "seconds": 975
   }
 ]
