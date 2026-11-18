@@ -6,6 +6,8 @@
 
 **Can I undo what it did?** Yes: `node <skill-dir>/scripts/safeguard.mjs restore latest --yes`. A restore takes a new backup first, so the restore itself can be undone. Backups never contain `.env` files, sessions or keys.
 
+**Does auditing my live site count as a visit?** It would: a page loaded in a browser runs its scripts. So the scripts **block known analytics, tag-manager and session-recording hosts by default** (Google Tag Manager and Analytics, Umami, Plausible, PostHog, Segment, Mixpanel, Hotjar, Clarity, Meta and TikTok pixels, Sentry…) and tell you how many requests were blocked. They cannot know your own endpoints: an A/B test or event log that talks to your own server or database still receives an exposure for each fresh browser the audit opens (dozens per audit). Add them with `--block host1,host2` (for example `--block supabase.co`), audit a staging copy, or filter the audit's time window out of your results. `--allow-tracking` loads the trackers (to measure their weight).
+
 **Does it send my code or data anywhere?** The scripts run on your machine. `doctor.mjs --online` asks GitHub for the latest release number and sends nothing about you or your project. Pages you audit are loaded in a local browser. Tokens in URLs and known key shapes are masked in everything the scripts write.
 
 **What does a score of 45/45 mean?** That no automatic rule fired. It is not a guarantee: it says nothing about real usability, real devices or screen reader use. Reports show one status per area instead of a single blended number, and always list what was not tested.

@@ -34,6 +34,34 @@ export async function loadPlaywright() {
 
 export const ENGINES = ["chromium", "firefox", "webkit"];
 
+/**
+ * Analytics, tag managers and session recorders. Loading a live page runs its scripts like a visitor's would, so an
+ * audit would count as visits (pageviews, A/B exposures, conversions). Requests to these hosts are blocked by default;
+ * --allow-tracking loads them (to measure their weight, for instance), --block adds hosts (your own analytics or
+ * experiment endpoint, e.g. --block supabase.co,stats.example.com).
+ */
+export const TRACKING_HOSTS = [
+  "googletagmanager.com", "google-analytics.com", "analytics.google.com", "googleadservices.com", "doubleclick.net", "googlesyndication.com",
+  "facebook.net", "facebook.com/tr", "connect.facebook.net", "analytics.tiktok.com", "snap.licdn.com", "px.ads.linkedin.com", "ads.twitter.com", "static.ads-twitter.com", "bat.bing.com",
+  "cloud.umami.is", "umami.is", "plausible.io", "simpleanalytics.com", "fathom.com", "usefathom.com", "matomo.cloud", "piwik.pro", "pirsch.io", "goatcounter.com",
+  "posthog.com", "us.i.posthog.com", "eu.i.posthog.com", "segment.com", "segment.io", "cdn.segment.com", "mixpanel.com", "amplitude.com", "heap.io", "heapanalytics.com", "rudderstack.com",
+  "hotjar.com", "hotjar.io", "clarity.ms", "fullstory.com", "logrocket.com", "smartlook.com", "mouseflow.com", "crazyegg.com", "luckyorange.com",
+  "sentry.io", "bugsnag.com", "datadoghq.com", "newrelic.com", "nr-data.net", "intercom.io", "hubspot.com", "hs-analytics.net", "hsforms.com",
+];
+
+/** True when the URL's host (or host + path prefix) is in the list. */
+export function matchesHost(url, list) {
+  let u;
+  try { u = new URL(url); } catch { return false; }
+  if (!/^https?:$/.test(u.protocol)) return false;
+  const host = u.hostname.toLowerCase();
+  const hostPath = host + u.pathname;
+  return list.some((t) => (t.includes("/") ? hostPath.startsWith(t) : host === t || host.endsWith("." + t)));
+}
+
+/** A known tracker, or a host the caller asked to block. */
+export const isTrackingUrl = (url, extra = []) => matchesHost(url, [...TRACKING_HOSTS, ...extra]);
+
 /** Playwright's device descriptor by name ("iPhone 15", "Pixel 7"), with the closest names when it is unknown. */
 export function resolveDevice(pw, name) {
   const devices = pw.devices || {};
@@ -68,6 +96,8 @@ export function resolveTarget(target) {
 /**
  * Open a page at a viewport and wait until it is visually settled.
  * options.route: optional (route) => void handler, used by tests to serve assets offline.
+ * options.allowTracking: load known analytics and tag-manager hosts (default: they are blocked so an audit does not count as a visit).
+ * options.block: extra hosts to block (e.g. an experiment or stats endpoint of the site under test). openPage also returns blocked(): the number of requests blocked.
  * options.scroll: scroll through the page to trigger lazy content (default true).
  * options.reducedMotion: "reduce" (default: stable captures) or "no-preference" (measure the motion people really see).
  * options.onPage: (page) => void, called before navigation, awaited (listen for errors, set throttling).
@@ -94,7 +124,15 @@ export async function openPage(browser, url, viewport, options = {}) {
     javaScriptEnabled: options.javaScript !== false,
     ...(storageState ? { storageState } : {}),
   });
-  if (options.route) await context.route("**/*", options.route);
+  let blocked = 0;
+  const extraBlock = options.block || [];
+  if (options.allowTracking !== true || extraBlock.length || options.route) {
+    await context.route("**/*", async (route) => {
+      const u = route.request().url();
+      if (options.allowTracking === true ? matchesHost(u, extraBlock) : isTrackingUrl(u, extraBlock)) { blocked++; return route.abort("blockedbyclient"); }
+      return options.route ? options.route(route) : route.continue();
+    });
+  }
   await context.addInitScript(() => {
     window.__glowupShifts = [];
     try {
@@ -107,7 +145,7 @@ export async function openPage(browser, url, viewport, options = {}) {
   if (options.onPage) await options.onPage(page);
   await page.goto(url, { waitUntil: "networkidle", timeout: 45000 }).catch(() => {});
   if (options.waitFor) await page.waitForSelector(options.waitFor, { timeout: 15000 }).catch(() => {});
-  if (options.javaScript === false) return { page, close: () => context.close() };
+  if (options.javaScript === false) return { page, blocked: () => blocked, close: () => context.close() };
   if (options.dismiss !== false) await dismissOverlays(page);
   await page.evaluate(() => document.fonts && document.fonts.ready).catch(() => {});
   if (options.scroll !== false) {
@@ -122,7 +160,7 @@ export async function openPage(browser, url, viewport, options = {}) {
     });
     await page.waitForTimeout(300);
   }
-  return { page, close: () => context.close() };
+  return { page, blocked: () => blocked, close: () => context.close() };
 }
 
 /**
@@ -166,6 +204,8 @@ export function commonOptions(flags) {
     dismiss: !flags["no-dismiss"],
     browser: typeof flags.browser === "string" ? flags.browser : undefined,
     device: typeof flags.device === "string" ? flags.device : undefined,
+    allowTracking: !!flags["allow-tracking"],
+    block: typeof flags.block === "string" ? flags.block.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean) : [],
   };
 }
 
