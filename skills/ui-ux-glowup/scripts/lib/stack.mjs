@@ -61,7 +61,7 @@ export function findTokens(dir, styling) {
   const found = [];
   for (const f of files) {
     if (!/\.(css|scss|ts|js|mjs|json)$/.test(f)) continue;
-    const name = f.slice(dir.length + 1);
+    const name = f.slice(dir.length + 1).split("\\").join("/");
     if (/tailwind\.config\.(js|ts|mjs|cjs)$/.test(f)) found.push({ file: name, kind: "tailwind-config" });
     else if (/\.css$/.test(f)) { const t = read(f).slice(0, 60000); if (/@theme\b/.test(t)) found.push({ file: name, kind: "tailwind-theme" }); else if (/:root\s*\{[^}]*--[a-z]/i.test(t) && found.filter((x) => x.kind === "css-variables").length < 2) found.push({ file: name, kind: "css-variables" }); }
     else if (/theme\.json$/.test(f) && styling !== undefined) found.push({ file: name, kind: "theme-json" });

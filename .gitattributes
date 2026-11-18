@@ -1,3 +1,14 @@
 # GitHub language stats: count the skill's own tooling, not the example pages
 skills/*/assets/** linguist-documentation
 skills/*/scripts/audit.browser.js linguist-generated
+
+# Tests compare generated files and fixtures byte for byte: always check out with LF (Git on Windows would add CRLF)
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.woff binary
+*.ttf binary
+*.pdf binary

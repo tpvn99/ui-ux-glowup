@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { crossFindings } from "../skills/ui-ux-glowup/scripts/lib/crossbrowser.mjs";
 import { crossBrowser } from "../skills/ui-ux-glowup/scripts/cross-browser.mjs";
@@ -15,7 +16,7 @@ for (const e of ["chromium", "firefox", "webkit"]) {
   try { installed[e] = !!pw && !!(await (await launchBrowser(pw, e)).close().then(() => true)); } catch { installed[e] = false; }
 }
 const skip = !pw && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 const L = (o = {}) => ({ errors: [], layout: { overflow: 0, height: 2000, h1: { lines: 2, width: 600 }, brokenImages: 0, unsupported: [], fontsLoaded: 2, ...o } });
 
 test("crossFindings compares each engine with the first one", () => {

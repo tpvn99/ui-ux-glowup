@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { diffSmoke, smokeFindings, classifyEffect, unsafeLabel } from "../skills/ui-ux-glowup/scripts/lib/smoke.mjs";
 import { smoke } from "../skills/ui-ux-glowup/scripts/smoke.mjs";
@@ -7,7 +8,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 const rules = (l) => l.map((f) => f.rule).sort();
 
 test("classifyEffect tells navigation, toggle, UI change and nothing apart", () => {
@@ -88,7 +89,7 @@ test("an already-active toggle (aria-pressed, aria-selected, aria-current) that 
 });
 
 test("a link to the page you are already on is not dead, and an image-only link is named by its alt text", { skip }, async () => {
-  const s = await smoke(new URL("./fixtures/real-world.html", import.meta.url).pathname);
+  const s = await smoke(fileURLToPath(new URL("./fixtures/real-world.html", import.meta.url)));
   const home = s.results.find((c) => c.href && /real-world\.html$/.test(c.href));
   assert.equal(home.label, "Accueil"); assert.equal(home.skipped, true);
   assert.equal(s.results.filter((c) => c.effect === "none" && !c.skipped && !c.disabled && c.tag !== "input" && !c.href?.startsWith("#")).length, 0);
@@ -98,7 +99,7 @@ test("a link to the page you are already on is not dead, and an image-only link 
 });
 
 test("a control that cannot be clicked (covered, moving) is reported as such, never as a dead control", { skip }, async () => {
-  const s = await smoke(new URL("./fixtures/covered.html", import.meta.url).pathname);
+  const s = await smoke(fileURLToPath(new URL("./fixtures/covered.html", import.meta.url)));
   assert.deepEqual(s.results.filter((c) => c.effect === "none" && !c.skipped && !c.disabled && c.tag !== "input"), []);
   assert.ok(s.results.some((c) => c.why), JSON.stringify(s.results.map((c) => [c.label, c.effect, c.why])));
   assert.ok(s.results.every((c) => !c.why || c.skipped));

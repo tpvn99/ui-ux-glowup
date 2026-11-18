@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { uxFindings, inferContext, IMPACT, CONTEXTS } from "../skills/ui-ux-glowup/scripts/lib/ux.mjs";
 import { ux } from "../skills/ui-ux-glowup/scripts/ux.mjs";
@@ -7,7 +8,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/ctx/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/ctx/${n}`, import.meta.url));
 const rules = (l) => [...l].map((f) => f.rule).sort();
 
 const X = (o = {}) => ({ buy: null, price: false, shipping: false, signup: null, login: null, pricingLink: null, contact: { tel: false, mail: false, link: null, address: false }, hours: false, tables: [], search: false, liveRegion: false, article: { hasTime: false, hasAuthor: false, isArticle: false }, groupsNoLegend: [], invalidNotDescribed: [], authScreen: false, pricingPage: false, vh: 800, ...o });
