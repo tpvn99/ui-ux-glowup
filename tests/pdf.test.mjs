@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { mkdtempSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -13,7 +14,7 @@ try {
 } catch {
   hasPlaywright = false;
 }
-const FIX = new URL("./fixtures/pdf/", import.meta.url).pathname;
+const FIX = fileURLToPath(new URL("./fixtures/pdf/", import.meta.url));
 const page = (textOps = 200, over = {}) => ({ width: 595, height: 842, textOps, drawOps: 10, images: [], ...over });
 const pdf = (over = {}) => ({ size: 80_000, title: "Invoice F-2026-042 — Atelier", lang: "fr", tagged: true, outline: false, pages: [page()], fonts: [{ name: "AAAAAA+Inter-Regular", family: "Inter-Regular", subtype: "Type0", embedded: true }], ...over });
 const rules = (findings) => new Set(findings.map((f) => f.rule));

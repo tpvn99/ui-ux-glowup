@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { responsiveFindings, formatResponsive, SIZES } from "../skills/ui-ux-glowup/scripts/lib/responsive.mjs";
 import { responsive } from "../skills/ui-ux-glowup/scripts/responsive.mjs";
@@ -7,7 +8,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 const D = (o = {}) => ({ overflow: 0, offenders: [], clipped: [], smallText: [], h1Lines: 2, longLine: null, fixedShare: 5, smallTargets: [], dir: "ltr", ...o });
 const at = (name, data) => ({ size: SIZES.find((s) => s.name === name), data });
 const rules = (l) => l.map((f) => f.rule).sort();

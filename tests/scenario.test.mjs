@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { validateScenarios, compareScenarios, formatScenarios, runScenarios } from "../skills/ui-ux-glowup/scripts/scenario.mjs";
@@ -7,7 +8,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 const doc = JSON.parse(readFileSync(fixture("journey.json"), "utf8"));
 
 test("validateScenarios rejects malformed files with a precise message", () => {
@@ -50,7 +51,7 @@ test("journey hints: consecutive repeats and long forms, not a deliberate toggle
   assert.deepEqual(journeyHints(many).map((h) => h.rule), ["many-fields"]);
 });
 
-const journeyPage = new URL("./fixtures/goal.html", import.meta.url).pathname;
+const journeyPage = fileURLToPath(new URL("./fixtures/goal.html", import.meta.url));
 test("keyboard profile: a control that Tab cannot reach fails the journey, a budget is enforced", { skip }, async () => {
   const doc = { scenarios: [
     { name: "Real button", steps: [{ click: "#real" }, { expect: { visible: "#done" } }] },

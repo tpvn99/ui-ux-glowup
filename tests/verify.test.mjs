@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { mkdtempSync, copyFileSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
@@ -10,7 +11,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 
 const snap = (o = {}) => ({
   audit: { scores: { Hierarchy: 5, Accessibility: 4 }, total: 40, max: 45, findings: [{ criterion: "Accessibility", severity: "warn", rule: "heading-order", message: "Heading levels skip.", items: [] }, { criterion: "Typography", severity: "info", rule: "accepted", accepted: true, message: "brand", items: [] }] },

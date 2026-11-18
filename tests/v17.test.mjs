@@ -1,4 +1,5 @@
 // v1.7 rules: no-JS render, H1 glue, JSON-LD validation, motion, copy, brand choices, site files.
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { analyze, score, checkJsonLd, missingShare, hreflangIssues, plain, BRAND_CHOICE_RULES } from "../skills/ui-ux-glowup/scripts/lib/analyze.mjs";
@@ -14,7 +15,7 @@ try {
   hasPlaywright = false;
 }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (name) => new URL(`./fixtures/${name}`, import.meta.url).pathname;
+const fixture = (name) => fileURLToPath(new URL(`./fixtures/${name}`, import.meta.url));
 
 const page = (over = {}) => ({
   url: "https://example.com/", viewport: { width: 1440, height: 900 }, title: "Page", lang: "en",

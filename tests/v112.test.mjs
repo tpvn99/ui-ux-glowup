@@ -1,4 +1,5 @@
 // v1.12: new examples stay healthy, and the tool fixes found while building them.
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
@@ -12,8 +13,8 @@ import { audit } from "../skills/ui-ux-glowup/scripts/audit.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
-const example = (n) => new URL(`../skills/ui-ux-glowup/assets/examples/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
+const example = (n) => fileURLToPath(new URL(`../skills/ui-ux-glowup/assets/examples/${n}`, import.meta.url));
 
 test("data-table.html: search, empty state, status filter, sorting and bulk selection all work", { skip }, async () => {
   const r = await runScenarios(example("data-table.html"), JSON.parse(readFileSync(fixture("data-table.scenarios.json"), "utf8")));

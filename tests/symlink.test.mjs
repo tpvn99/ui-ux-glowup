@@ -1,11 +1,12 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, symlinkSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-const skills = new URL("../skills", import.meta.url).pathname;
+const skills = fileURLToPath(new URL("../skills", import.meta.url));
 
 test("scripts run when the skill is installed through a symbolic link (npx skills add)", { skip: process.platform === "win32" }, () => {
   const d = mkdtempSync(join(tmpdir(), "glowup-link-"));

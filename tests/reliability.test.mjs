@@ -1,4 +1,5 @@
 // v1.14 reliability: every script, secrets never copied or printed, interrupted work is recoverable.
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -9,7 +10,7 @@ import { redactUrl, redactSecrets, redactDeep, saveJson } from "../skills/ui-ux-
 import { compareVersions, checkNode, checkSkillVersion, formatDoctor } from "../skills/ui-ux-glowup/scripts/lib/doctor.mjs";
 import { backup, restore, list, stagedCheck, hook, check } from "../skills/ui-ux-glowup/scripts/safeguard.mjs";
 
-const scripts = new URL("../skills/ui-ux-glowup/scripts/", import.meta.url).pathname;
+const scripts = fileURLToPath(new URL("../skills/ui-ux-glowup/scripts/", import.meta.url));
 const g = (d, ...a) => execFileSync("git", a, { cwd: d, encoding: "utf8" }).trim();
 const repo = () => { const d = mkdtempSync(join(tmpdir(), "glowup-rel-")); g(d, "init", "-q"); g(d, "config", "user.email", "t@t.t"); g(d, "config", "user.name", "t"); writeFileSync(join(d, "a.css"), "a{color:red}\n"); g(d, "add", "."); g(d, "commit", "-qm", "init"); return d; };
 const KEY = "sk-" + "Zy9Xw8Vu7Ts6Rq5Po4Nm3Lk2";

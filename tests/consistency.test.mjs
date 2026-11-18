@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { compareSignatures, formatConsistency } from "../skills/ui-ux-glowup/scripts/lib/consistency.mjs";
 import { consistency } from "../skills/ui-ux-glowup/scripts/consistency.mjs";
@@ -7,7 +8,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/site-pages/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/site-pages/${n}`, import.meta.url));
 const sig = (o = {}) => ({ lang: "en", titleSuffix: "acme", favicon: true, bodyFont: "inter", bodySize: 16, bodyBg: "#ffffff", h1: { size: 40, weight: 600, font: "inter" }, nav: ["home", "pricing"], footerNav: ["privacy"], hasFooter: true, headerHeight: 64, button: { bg: "#1d4ed8", color: "#ffffff", radius: 8, height: 44, weight: 500 }, container: 960, radius: 12, palette: ["#111111", "#ffffff", "#1d4ed8"], ...o });
 const P = (label, o) => ({ label, sig: sig(o) });
 const rules = (l) => l.map((f) => f.rule).sort();

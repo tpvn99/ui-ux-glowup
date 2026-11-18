@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { regionsFromCells, unstableCells, judge, formatVisualDiff } from "../skills/ui-ux-glowup/scripts/lib/visualdiff.mjs";
 import { visualDiff } from "../skills/ui-ux-glowup/scripts/visual-diff.mjs";
@@ -10,7 +11,7 @@ import { join } from "node:path";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fx = (n) => new URL(`./fixtures/vd/${n}`, import.meta.url).pathname;
+const fx = (n) => fileURLToPath(new URL(`./fixtures/vd/${n}`, import.meta.url));
 
 test("regions: changed cells that touch form one box; far-apart ones are separate; noise below 1% is ignored", () => {
   const cols = 6, rows = 4, cells = new Array(cols * rows).fill(0);

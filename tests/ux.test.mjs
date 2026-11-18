@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { uxFindings } from "../skills/ui-ux-glowup/scripts/lib/ux.mjs";
 import { effort, LONG_JOURNEY, formatScenarios } from "../skills/ui-ux-glowup/scripts/lib/scenario.mjs";
@@ -8,7 +9,7 @@ import { loadPlaywright } from "../skills/ui-ux-glowup/scripts/lib/browser.mjs";
 let hasPlaywright = true;
 try { await loadPlaywright(); } catch { hasPlaywright = false; }
 const skip = !hasPlaywright && "playwright not installed";
-const fixture = (n) => new URL(`./fixtures/${n}`, import.meta.url).pathname;
+const fixture = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
 const data = (o = {}) => ({ url: "https://x.test/p", web: true, isHome: false, filled: [{ sel: "a.btn", label: "Start" }], fields: [], forms: [], emptyLists: [], navs: [], homeLink: true, ...o });
 const rules = (d) => uxFindings(d, { context: "saas" }).map((f) => f.rule).sort();
 const field = (o) => ({ sel: "input", type: "text", id: "", placeholder: false, labelled: true, autocomplete: "off", ...o });
