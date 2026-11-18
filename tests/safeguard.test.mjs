@@ -45,7 +45,7 @@ test("git backup captures untracked files without touching the project, and rest
   writeFileSync(join(d, "new.html"), "<p>BROKEN</p>");
   writeFileSync(join(d, "extra.js"), "x");
   const r = restore(d, "latest");
-  assert.equal(readFileSync(join(d, "a.css"), "utf8"), "body{color:red}\n");
+  assert.equal(readFileSync(join(d, "a.css"), "utf8").replace(/\r\n/g, "\n"), "body{color:red}\n"); // Git on Windows restores CRLF
   assert.equal(readFileSync(join(d, "new.html"), "utf8"), "<p>v1</p>");
   assert.deepEqual(r.left, ["extra.js"]);
   assert.ok(existsSync(join(d, "extra.js")));
