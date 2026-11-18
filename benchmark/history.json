@@ -1,0 +1,57 @@
+[
+  {
+    "date": "2026-11-17",
+    "version": "1.13.0+",
+    "mode": "fast (no performance, no size sweep)",
+    "note": "first pass; it exposed that performance defects cannot be measured in fast mode and several false positives in the tools",
+    "recall": 0.946,
+    "attributable": 111,
+    "detected": 105,
+    "trapRecall": 0.893,
+    "cleanErrors": 10,
+    "cleanWarnings": 57,
+    "seconds": 862
+  },
+  {
+    "date": "2026-11-17",
+    "version": "1.14.0",
+    "mode": "full",
+    "note": "machine kept awake; review of the 35 clean-page findings found 2 false positives, fixed and replayed (final: 112/112, 33 findings)",
+    "recall": 1,
+    "attributable": 111,
+    "detected": 111,
+    "trapRecall": 1,
+    "cleanErrors": 2,
+    "cleanWarnings": 33,
+    "falsePositivesFound": 2,
+    "seconds": 1215
+  },
+  {
+    "date": "2026-11-17",
+    "version": "1.14.0",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "recall": 0.976,
+    "trapRecall": 1,
+    "attributable": 125,
+    "detected": 122,
+    "cleanErrors": 2,
+    "cleanWarnings": 31,
+    "falsePositives": 0,
+    "seconds": 1876
+  },
+  {
+    "date": "2026-11-18",
+    "version": "1.14.0",
+    "mode": "full + 3 projects replayed",
+    "note": "three new defect families (stretched image, heading hidden until an animation runs, form that cannot show errors): the first run missed 3 hidden-heading defects (a tool gap for short headings, and one defect made inapplicable by another); fixed and replayed",
+    "recall": 1,
+    "attributable": 125,
+    "detected": 125,
+    "trapRecall": 1,
+    "cleanErrors": 2,
+    "cleanWarnings": 31,
+    "falsePositives": 0
+  }
+]

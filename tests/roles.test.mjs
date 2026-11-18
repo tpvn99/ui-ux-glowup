@@ -43,3 +43,38 @@ test("real roles: admin sees Delete, user and guest do not, guest is redirected;
   assert.ok(leak.findings.some((f) => f.rule === "forbidden-control-visible" && /user/.test(f.message)), JSON.stringify(leak.findings));
   if (process.platform !== "win32") assert.equal(statSync(states.admin).mode & 0o077, 0);
 });
+
+test("--expect: the server's answer per role; unsafe methods need --unsafe; header secrets come from the environment", async () => {
+  const { parseExpect, assertSafe, checkEndpoints } = await import("../skills/ui-ux-glowup/scripts/lib/roles.mjs");
+  assert.deepEqual(parseExpect("user:GET:/api/a:b:401,403"), { role: "user", method: "GET", path: "/api/a:b", allowed: [401, 403] });
+  assert.throws(() => parseExpect("user:GET:api:403"), /Cannot read --expect/); assert.throws(() => parseExpect("user:GET:/x:teapot"), /Cannot read/);
+  assert.doesNotThrow(() => assertSafe([parseExpect("u:GET:/x:200")], false));
+  assert.throws(() => assertSafe([parseExpect("u:DELETE:/x:403")], false), /can change data on the server/);
+  assert.doesNotThrow(() => assertSafe([parseExpect("u:DELETE:/x:403")], true));
+  const f = checkEndpoints([{ role: "user", method: "GET", path: "/x", status: 200 }, { role: "admin", method: "GET", path: "/x", status: 403 }, { role: "guest", method: "GET", path: "/x", status: 0 }], [parseExpect("user:GET:/x:401,403"), parseExpect("admin:GET:/x:200"), parseExpect("guest:GET:/x:401")]);
+  assert.deepEqual(f.map((x) => x.rule), ["endpoint-wrong-status", "endpoint-wrong-status", "endpoint-unreachable"]);
+  assert.match(f[0].fix, /Authorize on the server/); assert.match(f[1].fix, /should be allowed/);
+});
+
+test("real server: admin allowed, user and guest refused; a leaky endpoint is caught; the token never appears", { skip }, async () => {
+  const { createServer } = await import("node:http");
+  const srv = createServer((req, res) => {
+    const role = (/role=(\w+)/.exec(req.headers.cookie || "") || [])[1] || (req.headers.authorization === "Bearer secret-token-123" ? "admin" : "");
+    if (req.url.startsWith("/api/leaky")) { res.statusCode = 200; return res.end("ok"); }
+    res.statusCode = role === "admin" ? 200 : role ? 403 : 401; res.end("x");
+  });
+  await new Promise((r) => srv.listen(0, "127.0.0.1", r));
+  const origin = `http://127.0.0.1:${srv.address().port}`;
+  const cookieState = (role) => { const f = join(dir, `c-${role}.json`); writeFileSync(f, JSON.stringify({ cookies: [{ name: "role", value: role, domain: "127.0.0.1", path: "/", expires: -1, httpOnly: false, secure: false, sameSite: "Lax" }], origins: [] }), { mode: 0o600 }); return f; };
+  try {
+    const { parseExpect } = await import("../skills/ui-ux-glowup/scripts/lib/roles.mjs");
+    const states = { admin: cookieState("admin"), user: cookieState("user"), guest: "none" };
+    const expect = ["admin:GET:/api/users:200", "user:GET:/api/users:401,403", "guest:GET:/api/users:401", "user:GET:/api/leaky:401,403"].map(parseExpect);
+    process.env.GL_TEST_TOKEN = "Bearer secret-token-123";
+    const r = await roles(`${origin}/accounts.html`, states, { expect, headerEnv: { guest: [["Authorization", "GL_TEST_TOKEN"]] } });
+    const bad = r.findings.filter((f) => f.rule === "endpoint-wrong-status");
+    assert.equal(bad.length, 2, JSON.stringify(r.findings));
+    assert.match(bad.map((b) => b.message).join(), /user got 200 from GET \/api\/leaky/); assert.match(bad.map((b) => b.message).join(), /guest got 200 from GET \/api\/users/);
+    assert.ok(!JSON.stringify(r).includes("secret-token-123"));
+  } finally { srv.close(); delete process.env.GL_TEST_TOKEN; }
+});

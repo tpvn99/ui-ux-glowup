@@ -38,7 +38,7 @@ Brand colors, fonts and logo are kept. Features, routes, data and business logic
 - **Scenarios are written by hand** (or by the agent from your code). Only the journeys you describe are tested.
 - **Safari is tested through its engine (WebKit)**, not on a real iPhone; `--device` emulates a phone's screen, it is not a phone. See the [real-device checklist](real-device-checklist.md).
 - **No screen reader is driven.** Names, roles, states and focus order are checked, which is what a screen reader receives, not what it announces.
-- **Roles**: `roles.mjs` compares what each role's interface shows. A hidden button is not authorization: the server must refuse the action too.
+- **Roles**: `roles.mjs` compares what each role's interface shows, and with `--expect` checks the server's status per role. A hidden button is not authorization. Only GET, HEAD and OPTIONS are sent unless you add `--unsafe`, and write operations were not exercised against a real server in the tests beyond a local one.
 - **Node**: browser checks need Node 20+ (Playwright); Node 18 runs the scripts that need no browser. Windows is untested.
 - **Benchmark numbers** are exact for seeded defects only; see the [benchmark](benchmark.md).
 - **WordPress content lives in the database**: the file backup does not cover it.

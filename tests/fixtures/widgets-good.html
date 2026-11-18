@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Widgets good</title>
+<style>body{margin:0;font:16px/1.5 sans-serif;padding:16px}[hidden]{display:none}input{min-height:44px;padding:0 8px}[role=option],[role=treeitem]{padding:8px;min-height:24px}[aria-selected=true],[data-a]{background:#dbeafe}button{min-height:44px;padding:0 12px}</style></head><body><main><h1>Widgets</h1>
+<label for="cb">Country</label><input id="cb" role="combobox" aria-expanded="false" aria-controls="lb" aria-autocomplete="list" autocomplete="off">
+<ul id="lb" role="listbox" aria-label="Countries" hidden><li role="option" id="o1">France</li><li role="option" id="o2">Germany</li><li role="option" id="o3">Italy</li></ul>
+<ul id="tree" role="tree" aria-label="Files"><li role="treeitem" tabindex="0" id="t1" aria-expanded="false">src</li><li role="treeitem" tabindex="-1" id="t2">README</li></ul>
+<ul id="sortable"><li draggable="true">One <button type="button" aria-label="Move One down">↓</button></li><li draggable="true">Two <button type="button" aria-label="Move Two up">↑</button></li></ul>
+</main><script>
+var cb=document.getElementById("cb"),lb=document.getElementById("lb"),opts=[].slice.call(lb.children),idx=-1;
+function show(on){lb.hidden=!on;cb.setAttribute("aria-expanded",on)}function act(i){idx=(i+opts.length)%opts.length;opts.forEach(function(o,k){o.setAttribute("aria-selected",k===idx)});cb.setAttribute("aria-activedescendant",opts[idx].id)}
+cb.onkeydown=function(e){if(e.key==="ArrowDown"){show(true);act(idx+1);e.preventDefault()}if(e.key==="ArrowUp"){show(true);act(idx-1);e.preventDefault()}if(e.key==="Escape"){show(false)}};
+var items=[].slice.call(document.querySelectorAll("[role=treeitem]"));items.forEach(function(t,i){t.onkeydown=function(e){if(e.key==="ArrowDown"&&items[i+1]){items[i].tabIndex=-1;items[i+1].tabIndex=0;items[i+1].focus();e.preventDefault()}if(e.key==="ArrowUp"&&items[i-1]){items[i].tabIndex=-1;items[i-1].tabIndex=0;items[i-1].focus();e.preventDefault()}}});
+</script></body></html>

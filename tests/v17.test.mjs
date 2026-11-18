@@ -213,3 +213,12 @@ test("browser: site audit reads robots.txt, sitemap.xml and llms.txt next to loc
   assert.deepEqual(rules, { "ai-bots-blocked": "warn", "sitemap-invalid": "error", "llms-missing": "warn", "hreflang-not-reciprocal": "warn" });
   assert.match(formatSiteReport(site), /Site files/);
 });
+
+test("a hidden short heading is reported (a title is never too short to matter); a hidden tiny counter is not", { skip }, async () => {
+  const bad = await audit(fixture("hidden-short-heading.html"), { fast: true });
+  const f = bad.findings.find((x) => x.rule === "hidden-until-animated");
+  assert.ok(f, JSON.stringify(bad.findings.map((x) => x.rule)));
+  assert.match(f.items.join(), /h1/);
+  const ok = await audit(fixture("hidden-counter.html"), { fast: true });
+  assert.equal(ok.findings.some((x) => x.rule === "hidden-until-animated"), false);
+});

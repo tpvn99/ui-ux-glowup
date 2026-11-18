@@ -58,6 +58,12 @@ export function collectA11y() {
 
   return {
     invalidRoles, brokenRefs, hiddenFocusable, roleNotFocusable, duplicateIds, positiveTabindex, dialogsUnnamed,
+    dragNoAlternative: (() => {
+      const drag = [...document.querySelectorAll('[draggable="true"]')].filter(vis);
+      if (!drag.length) return [];
+      const alt = [...document.querySelectorAll("button, [role=button], a[href]")].some((b) => vis(b) && /\b(move|up|down|reorder|déplacer|monter|descendre)\b/i.test((b.getAttribute("aria-label") || b.textContent || "")));
+      return alt ? [] : [sel(drag[0]) + ` (${drag.length} draggable)`];
+    })(),
     fieldsetsNoLegend: [...document.querySelectorAll("fieldset")].filter((f) => vis(f) && !f.querySelector(":scope > legend")).map(sel),
     hasMain: !!mainEl, hasSkipLink: !!skipTarget, linksBeforeMain: beforeMain, authFields, autoplay, tables,
   };
@@ -121,6 +127,7 @@ export function a11yFindings({ statics: s, stops, reflow, zoom200 = null, zoom40
   if (s.authFields.length) add("auth-paste-blocked", "error", "Password / code fields block autofill or paste (WCAG 3.3.8, accessible authentication).", s.authFields, 'Use autocomplete="current-password" / "new-password" / "one-time-code" and remove onpaste handlers.');
   if (s.autoplay.length) add("autoplay-no-pause", "warning", "Autoplaying video with no controls: moving content longer than 5s needs a pause button (WCAG 2.2.2).", s.autoplay, "Add a visible pause control, or stop after 5s; honour prefers-reduced-motion.");
   if (s.tables.length) add("table-no-headers", "warning", "Data tables without <th> header cells.", s.tables, 'Use <th scope="col"> / <th scope="row">.');
+  if (s.dragNoAlternative && s.dragNoAlternative.length) add("drag-without-alternative", "error", "Items can be dragged but there is no button to do the same without dragging (WCAG 2.5.7).", s.dragNoAlternative, "Add Move up / Move down (or a Move to… menu) buttons that do what the drag does.");
   if (s.fieldsetsNoLegend && s.fieldsetsNoLegend.length) add("fieldset-no-legend", "warning", "A fieldset without a legend: the group has no name for screen reader users.", s.fieldsetsNoLegend, "Add <legend> as the first child of the fieldset, with the question or group name.");
   if (zoom200 && zoom200.overflow > 2) add("zoom-200-overflow", "error", `Horizontal scrolling at 200% zoom (${zoom200.overflow}px too wide, WCAG 1.4.4 / 1.4.10).`, zoom200.offenders, "Use relative widths and wrapping so the page works at 640 CSS px wide.");
   if (zoom200 && zoom200.clipped.length) add("zoom-200-clipped", "error", "Text is cut off at 200% zoom (WCAG 1.4.4).", zoom200.clipped, "Remove fixed heights and overflow: hidden around text; let containers grow.");

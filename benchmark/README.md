@@ -26,7 +26,7 @@ SaaS landing page, e-commerce product page, professional dashboard, WordPress-st
 
 ```bash
 npm install && npx playwright install chromium     # Node 20+; needs network (examples load Tailwind and fonts from CDNs)
-node benchmark/run.mjs                              # all ten, about 15–25 minutes; writes RESULTS.md and results.json
+node benchmark/run.mjs                              # all ten, about 30 minutes; writes RESULTS.md and results.json
 node benchmark/run.mjs --only ecommerce --fast      # one project, no performance or size sweep
 node benchmark/run.mjs --check                      # compare with baseline.json: exit 1 on a regression
 node benchmark/run.mjs --write-baseline             # after a deliberate improvement, accept the new numbers
@@ -39,6 +39,16 @@ node benchmark/run.mjs --write-baseline             # after a deliberate improve
 1. Put a clean page in `bases/` (or point to an example): valid head, one `<h1>`, `<main>`, labelled fields, no known problem.
 2. Add it to `projects.mjs` with the defects (from `defects.mjs`) and traps that apply; add a new defect to `defects.mjs` with the rules that should report it.
 3. Run it, label what it reports on the clean page in `labels.json`, and regenerate the baseline.
+
+## Defect families
+
+Missing document basics (viewport, `lang`, title, description, `noindex`, H1), accessibility (contrast, focus, labels, names, landmarks, keyboard traps, `aria-hidden`, duplicate ids, `tabindex`, zoom, content hidden until an animation runs), responsive (overflow, tiny text), visuals (broken and stretched images, placeholder text), functionality (script errors, empty links, buttons with no behaviour), performance (blocking script, lazy-loaded first image) and UX (a form that cannot show errors). Regressions: a link or heading removed, a field no longer required, handlers lost, a new script error. Not yet covered: right-to-left breakage, wrong `lang`, error flows after submission.
+
+`history.json` keeps the summary of every full run, so a trend is visible and a regression is not only compared with the last baseline.
+
+## Human review
+
+`node benchmark/review-sheet.mjs` writes `REVIEW.md`: every finding reported on a clean page, what the tool said, the AI's label and reason, and two boxes. After ticking, `node benchmark/review-sheet.mjs --apply` updates `labels.json` and `node benchmark/run.mjs --relabel` regenerates the results; labels a person has answered are counted as reviewed by a human.
 
 ## What it does not measure
 

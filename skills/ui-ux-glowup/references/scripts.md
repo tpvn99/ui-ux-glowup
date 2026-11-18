@@ -14,7 +14,7 @@ The workflow in `SKILL.md` shows `audit`, `audit-site`, `inventory`, `extract-to
 | `brand-guard.mjs [dir] [--allow color,font,dependency]` | Did the change touch brand colors, fonts or UI dependencies? (vs the last backup) |
 | `verify.mjs snapshot\|check\|report <page>` | Every check in one run: snapshot before, compare after, classified report (`--out report.md` or `.html`), `--fast` skips performance and the size sweep |
 | `doctor.mjs [--online]` | What is missing in the environment, the command that fixes it, and whether a newer release exists |
-| `roles.mjs <url> --as a=a.json --as b=none` | What each role sees; `--forbid role:css` / `--require role:css` |
+| `roles.mjs <url> --as a=a.json --as b=none` | What each role sees; `--forbid role:css` / `--require role:css`; `--expect role:GET:/path:401,403` asks the server (safe methods only without `--unsafe`) |
 | `visual-diff.mjs <before> <after>` | Pixel diff with tolerance, changed regions, elements named, moving content ignored |
 | `stack.mjs [dir]` | Framework, styling, token files, WordPress builders |
 | `ux.mjs <page>` | UX audit, a fix per finding |

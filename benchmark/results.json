@@ -6,19 +6,20 @@
     "os": "darwin arm64",
     "fast": false,
     "mergedFrom": [
-      "ecommerce",
-      "vue-app"
+      "saas-landing",
+      "react-app",
+      "responsive-app"
     ]
   },
   "summary": {
     "projects": 10,
     "failedProjects": 0,
-    "defectsSeeded": 120,
+    "defectsSeeded": 133,
     "notApplicable": 3,
     "notMeasured": 0,
     "ambiguous": 5,
-    "attributable": 112,
-    "detected": 112,
+    "attributable": 125,
+    "detected": 125,
     "recall": 1,
     "traps": 25,
     "trapsDetected": 25,
@@ -27,11 +28,12 @@
     "cleanErrors": 2,
     "cleanWarnings": 31,
     "reviewed": 33,
+    "humanReviewed": 0,
     "falsePositives": 0,
     "valid": 33,
     "unreviewed": 0,
     "precision": 1,
-    "seconds": 1209
+    "seconds": 1872
   },
   "results": [
     {
@@ -135,6 +137,22 @@
             "audit:vague-cta"
           ],
           "area": "functionality"
+        },
+        {
+          "id": "motion-hides-content",
+          "status": "detected",
+          "via": [
+            "audit:hidden-until-animated"
+          ],
+          "area": "accessibility"
+        },
+        {
+          "id": "form-no-error-handling",
+          "status": "detected",
+          "via": [
+            "ux:errors-unsupported"
+          ],
+          "area": "ux"
         }
       ],
       "traps": [
@@ -171,70 +189,75 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "the example has 6+ links before the content and no skip link"
+          "note": "the example has 6+ links before the content and no skip link",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "responsive:text-too-small",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+          "note": "text under 12px exists in the decorative product mockup; exact, but not body text",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 9,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
-        "before": 35,
+        "before": 34,
         "after": 45
       },
       "errors": {
-        "before": 11,
+        "before": 12,
         "after": 0
       },
       "a11yErrors": {
-        "before": 5,
+        "before": 6,
         "after": 0
       },
       "perf": {
         "before": {
-          "lcp": 1036,
+          "lcp": 436,
           "cls": 0,
           "tbt": 0,
-          "weight": 133500,
+          "weight": 133472,
           "requests": 4
         },
         "after": {
-          "lcp": 552,
+          "lcp": 252,
           "cls": 0,
           "tbt": 0,
-          "weight": 109990,
+          "weight": 109980,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 51444,
-        "after": 42953,
-        "broken": 30101
+        "before": 37218,
+        "after": 35793,
+        "broken": 25776
       }
     },
     {
@@ -339,6 +362,14 @@
             "audit:seo-noindex"
           ],
           "area": "seo"
+        },
+        {
+          "id": "distorted-image",
+          "status": "detected",
+          "via": [
+            "audit:distorted-images"
+          ],
+          "area": "visuals"
         }
       ],
       "traps": [
@@ -376,39 +407,44 @@
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:third-party-heavy",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "placeholder photos from Unsplash and web fonts"
+          "note": "placeholder photos from Unsplash and web fonts",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 2,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         },
         {
           "key": "smoke:dead-control",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "static mockup: its buttons have no behaviour"
+          "note": "static mockup: its buttons have no behaviour",
+          "human": false
         }
       ],
       "audit": {
-        "before": 37.5,
+        "before": 37,
         "after": 45
       },
       "errors": {
@@ -421,14 +457,14 @@
       },
       "perf": {
         "before": {
-          "lcp": 876,
+          "lcp": 768,
           "cls": 0,
           "tbt": 0,
-          "weight": 543249,
+          "weight": 543277,
           "requests": 6
         },
         "after": {
-          "lcp": 212,
+          "lcp": 176,
           "cls": 0,
           "tbt": 0,
           "weight": 543241,
@@ -437,9 +473,9 @@
       },
       "scenarios": null,
       "ms": {
-        "before": 45815,
-        "after": 35971,
-        "broken": 28491
+        "before": 42867,
+        "after": 36228,
+        "broken": 24564
       }
     },
     {
@@ -544,6 +580,14 @@
             "a11y:aria-hidden-focusable"
           ],
           "area": "accessibility"
+        },
+        {
+          "id": "form-no-error-handling",
+          "status": "detected",
+          "via": [
+            "ux:errors-unsupported"
+          ],
+          "area": "ux"
         }
       ],
       "traps": [
@@ -581,42 +625,48 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "the example has 6+ links before the content and no skip link"
+          "note": "the example has 6+ links before the content and no skip link",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "responsive:text-too-small",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+          "note": "text under 12px exists in the decorative product mockup; exact, but not body text",
+          "human": false
         },
         {
           "key": "smoke:dead-control",
           "severity": "warning",
           "count": 8,
           "label": "by-design",
-          "note": "static mockup: its buttons have no behaviour"
+          "note": "static mockup: its buttons have no behaviour",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 7,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
@@ -633,25 +683,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 144,
+          "lcp": 328,
           "cls": 0,
           "tbt": 0,
-          "weight": 109998,
+          "weight": 109994,
           "requests": 3
         },
         "after": {
-          "lcp": 312,
+          "lcp": 144,
           "cls": 0,
           "tbt": 0,
-          "weight": 109993,
+          "weight": 109651,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 56605,
-        "after": 46483,
-        "broken": 36561
+        "before": 50549,
+        "after": 580766,
+        "broken": 332136
       }
     },
     {
@@ -757,6 +807,22 @@
             "audit:vague-cta"
           ],
           "area": "functionality"
+        },
+        {
+          "id": "distorted-image",
+          "status": "detected",
+          "via": [
+            "audit:distorted-images"
+          ],
+          "area": "visuals"
+        },
+        {
+          "id": "motion-hides-content",
+          "status": "detected",
+          "via": [
+            "audit:hidden-until-animated"
+          ],
+          "area": "accessibility"
         }
       ],
       "traps": [
@@ -795,27 +861,27 @@
       ],
       "clean": [],
       "audit": {
-        "before": 36.5,
+        "before": 35,
         "after": 45
       },
       "errors": {
-        "before": 13,
+        "before": 15,
         "after": 0
       },
       "a11yErrors": {
-        "before": 7,
+        "before": 8,
         "after": 0
       },
       "perf": {
         "before": {
-          "lcp": 584,
+          "lcp": 104,
           "cls": 0,
           "tbt": 0,
-          "weight": 23876,
+          "weight": 23567,
           "requests": 1
         },
         "after": {
-          "lcp": 20,
+          "lcp": 24,
           "cls": 0,
           "tbt": 0,
           "weight": 0,
@@ -824,9 +890,9 @@
       },
       "scenarios": null,
       "ms": {
-        "before": 35211,
-        "after": 26387,
-        "broken": 19652
+        "before": 30277,
+        "after": 26589,
+        "broken": 19552
       }
     },
     {
@@ -927,6 +993,14 @@
             "a11y:no-main-landmark"
           ],
           "area": "accessibility"
+        },
+        {
+          "id": "motion-hides-content",
+          "status": "detected",
+          "via": [
+            "audit:hidden-until-animated"
+          ],
+          "area": "accessibility"
         }
       ],
       "traps": [
@@ -962,42 +1036,43 @@
           "severity": "error",
           "count": 1,
           "label": "by-design",
-          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports",
+          "human": false
         }
       ],
       "audit": {
-        "before": 38,
+        "before": 36,
         "after": 44
       },
       "errors": {
-        "before": 8,
+        "before": 10,
         "after": 1
       },
       "a11yErrors": {
-        "before": 4,
+        "before": 5,
         "after": 0
       },
       "perf": {
         "before": {
-          "lcp": 96,
+          "lcp": 108,
           "cls": 0.154,
           "tbt": 0,
-          "weight": 65976,
+          "weight": 65938,
           "requests": 3
         },
         "after": {
           "lcp": 16,
           "cls": 0.065,
           "tbt": 0,
-          "weight": 42103,
+          "weight": 42081,
           "requests": 2
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 36582,
-        "after": 32765,
-        "broken": 24281
+        "before": 33519,
+        "after": 29515,
+        "broken": 23387
       }
     },
     {
@@ -1105,6 +1180,14 @@
             "audit:vague-cta"
           ],
           "area": "functionality"
+        },
+        {
+          "id": "form-no-error-handling",
+          "status": "detected",
+          "via": [
+            "ux:errors-unsupported"
+          ],
+          "area": "ux"
         }
       ],
       "traps": [
@@ -1146,49 +1229,51 @@
           "severity": "error",
           "count": 1,
           "label": "by-design",
-          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports",
+          "human": false
         },
         {
           "key": "audit:tap-target",
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size",
+          "human": false
         }
       ],
       "audit": {
-        "before": 37.5,
+        "before": 35,
         "after": 43.5
       },
       "errors": {
-        "before": 10,
+        "before": 12,
         "after": 1
       },
       "a11yErrors": {
-        "before": 5,
+        "before": 6,
         "after": 0
       },
       "perf": {
         "before": {
-          "lcp": 108,
-          "cls": 0.134,
+          "lcp": 92,
+          "cls": 0.153,
           "tbt": 0,
-          "weight": 72364,
+          "weight": 71788,
           "requests": 2
         },
         "after": {
           "lcp": 16,
           "cls": 0.056,
           "tbt": 0,
-          "weight": 48899,
+          "weight": 48572,
           "requests": 1
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 31166,
-        "after": 26209,
-        "broken": 19772
+        "before": 29389,
+        "after": 24709,
+        "broken": 18925
       }
     },
     {
@@ -1295,6 +1380,14 @@
             "audit:seo-noindex"
           ],
           "area": "seo"
+        },
+        {
+          "id": "distorted-image",
+          "status": "detected",
+          "via": [
+            "audit:distorted-images"
+          ],
+          "area": "visuals"
         }
       ],
       "traps": [
@@ -1337,25 +1430,28 @@
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 3,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
-        "before": 32.5,
+        "before": 32,
         "after": 45
       },
       "errors": {
@@ -1368,25 +1464,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 140,
+          "lcp": 144,
           "cls": 0,
           "tbt": 0,
-          "weight": 83977,
+          "weight": 83634,
           "requests": 4
         },
         "after": {
-          "lcp": 132,
+          "lcp": 136,
           "cls": 0,
           "tbt": 0,
-          "weight": 83968,
+          "weight": 83633,
           "requests": 4
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 49771,
-        "after": 50114,
-        "broken": 45810
+        "before": 42168,
+        "after": 40874,
+        "broken": 32524
       }
     },
     {
@@ -1489,6 +1585,22 @@
             "a11y:no-main-landmark"
           ],
           "area": "accessibility"
+        },
+        {
+          "id": "distorted-image",
+          "status": "detected",
+          "via": [
+            "audit:distorted-images"
+          ],
+          "area": "visuals"
+        },
+        {
+          "id": "form-no-error-handling",
+          "status": "detected",
+          "via": [
+            "ux:errors-unsupported"
+          ],
+          "area": "ux"
         }
       ],
       "traps": [
@@ -1531,25 +1643,28 @@
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 9,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
-        "before": 35.5,
+        "before": 34,
         "after": 45
       },
       "errors": {
@@ -1562,25 +1677,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 356,
+          "lcp": 156,
           "cls": 0,
           "tbt": 0,
-          "weight": 416589,
+          "weight": 415993,
           "requests": 11
         },
         "after": {
-          "lcp": 228,
+          "lcp": 152,
           "cls": 0.001,
           "tbt": 0,
-          "weight": 393079,
+          "weight": 393229,
           "requests": 10
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 59209,
-        "after": 54642,
-        "broken": 44217
+        "before": 45493,
+        "after": 44315,
+        "broken": 35466
       }
     },
     {
@@ -1681,6 +1796,14 @@
             "audit:lang"
           ],
           "area": "accessibility"
+        },
+        {
+          "id": "motion-hides-content",
+          "status": "detected",
+          "via": [
+            "audit:hidden-until-animated"
+          ],
+          "area": "accessibility"
         }
       ],
       "traps": [
@@ -1718,70 +1841,75 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "the example has 6+ links before the content and no skip link"
+          "note": "the example has 6+ links before the content and no skip link",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 2,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         },
         {
           "key": "smoke:dead-control",
           "severity": "warning",
           "count": 4,
           "label": "by-design",
-          "note": "static mockup: its buttons have no behaviour"
+          "note": "static mockup: its buttons have no behaviour",
+          "human": false
         }
       ],
       "audit": {
-        "before": 37.5,
+        "before": 36,
         "after": 45
       },
       "errors": {
-        "before": 9,
+        "before": 11,
         "after": 0
       },
       "a11yErrors": {
-        "before": 7,
+        "before": 8,
         "after": 0
       },
       "perf": {
         "before": {
-          "lcp": 788,
+          "lcp": 152,
           "cls": 0,
           "tbt": 0,
-          "weight": 109984,
+          "weight": 109977,
           "requests": 3
         },
         "after": {
-          "lcp": 220,
+          "lcp": 152,
           "cls": 0,
           "tbt": 0,
-          "weight": 109990,
+          "weight": 109988,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 50101,
-        "after": 39852,
-        "broken": 30834
+        "before": 43145,
+        "after": 36178,
+        "broken": 27823
       }
     },
     {
@@ -1887,6 +2015,14 @@
             "audit:seo-title"
           ],
           "area": "seo"
+        },
+        {
+          "id": "distorted-image",
+          "status": "detected",
+          "via": [
+            "audit:distorted-images"
+          ],
+          "area": "visuals"
         }
       ],
       "traps": [
@@ -1931,25 +2067,28 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         }
       ],
       "audit": {
-        "before": 36.5,
+        "before": 36,
         "after": 44.5
       },
       "errors": {
@@ -1962,17 +2101,17 @@
       },
       "perf": {
         "before": {
-          "lcp": 280,
+          "lcp": 136,
           "cls": 0,
           "tbt": 0,
-          "weight": 109993,
+          "weight": 109651,
           "requests": 3
         },
         "after": {
-          "lcp": 940,
+          "lcp": 128,
           "cls": 0,
           "tbt": 0,
-          "weight": 109989,
+          "weight": 109650,
           "requests": 3
         }
       },
@@ -1982,9 +2121,9 @@
         "passedBroken": 3
       },
       "ms": {
-        "before": 57282,
-        "after": 51461,
-        "broken": 48935
+        "before": 45425,
+        "after": 39373,
+        "broken": 37418
       }
     }
   ]

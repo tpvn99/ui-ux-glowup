@@ -93,6 +93,49 @@ export async function componentChecks(page) {
       if (!(await page.evaluate(() => document.activeElement && document.activeElement.getAttribute("role") === "menuitem"))) add("menu-no-arrow-keys", "warning", `The menu "${label}" does not move focus into its items with the arrow keys.`, [label], "On ArrowDown focus the first menuitem; ArrowUp / ArrowDown move between items.");
     }
   }
+
+  const nCombo = Math.min(await page.locator('[role="combobox"]').count(), 3);
+  for (let i = 0; i < nCombo; i++) {
+    await fresh();
+    const c = page.locator('[role="combobox"]').nth(i);
+    const label = ((await c.getAttribute("aria-label")) || (await c.getAttribute("placeholder")) || "combobox").slice(0, 30);
+    await c.focus();
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(150);
+    const opened = (await c.getAttribute("aria-expanded")) === "true" || (await page.evaluate(() => { const o = document.querySelector('[role="listbox"]'); if (!o) return false; const r = o.getBoundingClientRect(), s = getComputedStyle(o); return r.width > 0 && r.height > 0 && s.visibility !== "hidden" && s.display !== "none"; }));
+    if (!opened) { add("combobox-no-arrow-down", "error", `The combobox "${label}" does not open its options with ArrowDown.`, [label], "On ArrowDown open the list, set aria-expanded=\"true\" and move to the first option (aria-activedescendant or focus)."); continue; }
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(150);
+    if ((await c.getAttribute("aria-expanded")) === "true") add("combobox-no-escape", "warning", `The combobox "${label}" does not close with Escape.`, [label], "Close the list on Escape and keep focus in the input.");
+  }
+
+  const nList = Math.min(await page.locator('[role="listbox"]:not([hidden])').count(), 3);
+  for (let i = 0; i < nList; i++) {
+    await fresh();
+    const lb = page.locator('[role="listbox"]:not([hidden])').nth(i);
+    const opts = lb.locator('[role="option"]');
+    if ((await opts.count()) < 2 || !(await lb.isVisible())) continue;
+    await lb.focus().catch(() => {});
+    if (!(await page.evaluate(() => !!document.activeElement && document.activeElement !== document.body))) await opts.first().focus().catch(() => {});
+    const before = await page.evaluate(() => (document.activeElement && (document.activeElement.getAttribute("aria-activedescendant") || document.activeElement.id || "")) + "|" + [...document.querySelectorAll('[role="option"][aria-selected="true"]')].map((o) => o.id || o.textContent).join());
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(100);
+    const after = await page.evaluate(() => (document.activeElement && (document.activeElement.getAttribute("aria-activedescendant") || document.activeElement.id || "")) + "|" + [...document.querySelectorAll('[role="option"][aria-selected="true"]')].map((o) => o.id || o.textContent).join());
+    const moved = await page.evaluate(() => !!document.activeElement && document.activeElement.getAttribute("role") === "option");
+    if (before === after && !moved) add("listbox-no-arrow-keys", "error", "A listbox does not respond to the arrow keys.", [`listbox ${i + 1}`], "ArrowDown / ArrowUp move the active option (aria-activedescendant or roving tabindex), Home / End jump to the ends.");
+  }
+
+  const nTree = Math.min(await page.locator('[role="tree"]').count(), 2);
+  for (let i = 0; i < nTree; i++) {
+    await fresh();
+    const items = page.locator('[role="tree"]').nth(i).locator('[role="treeitem"]');
+    if ((await items.count()) < 2) continue;
+    await items.first().focus();
+    await page.keyboard.press("ArrowDown");
+    await page.waitForTimeout(100);
+    const moved = !(await items.first().evaluate((el) => el === document.activeElement || el.contains(document.activeElement)));
+    if (!moved) add("tree-no-arrow-keys", "error", "A tree does not move between items with the arrow keys.", [`tree ${i + 1}`], "ArrowDown / ArrowUp move between visible items; ArrowRight expands and ArrowLeft collapses a branch (aria-expanded).");
+  }
   return out;
 }
 
