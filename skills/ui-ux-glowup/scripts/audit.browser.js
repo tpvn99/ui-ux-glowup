@@ -275,7 +275,7 @@ function analyze(desktop, mobile, { allow = [] } = {}) {
   for (const [label, v] of views) {
     for (const t of v.texts || []) if (t.isNumber && t.lines > 1) wrappedNumbers.set(t.sel + t.text, `${t.sel} "${t.text}" (${label}, ${t.lines} lines)`);
     for (const i of v.interactive || [])
-      if (["button", "a", "summary"].includes(i.tag) && !i.inline && i.lines > 1 && i.text.length <= 28 && !(i.width <= 2 && i.height <= 2)) wrappedControls.set(i.sel + i.text, `${i.sel} "${i.text}" (${label})`);
+      if (["button", "a", "summary"].includes(i.tag) && !i.inline && i.lines > 1 && i.text.length <= 28 && !(i.width <= 2 && i.height <= 2) && !i.inHeading) wrappedControls.set(i.sel + i.text, `${i.sel} "${i.text}" (${label})`);
     for (const c of v.clipped || []) clipped.set(c.sel + label, { ...c, label });
   }
   if (wrappedNumbers.size) add("Responsive", "error", "wrapped-number", "Numbers break across lines; keep amounts on one line (white-space: nowrap + tabular-nums) and give the column room.", [...wrappedNumbers.values()]);
@@ -711,6 +711,7 @@ function collectPageData() {
         inline,
         hasName: name.length > 0,
         clickableNonInteractive: el.hasAttribute("onclick") && !nativeInteractive,
+        inHeading: !!el.closest("h1, h2, h3, h4, h5, h6"),
         text: (el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 40),
         lines: (el.textContent || "").trim().length && (el.textContent || "").trim().length <= 40 ? lineCount(el) : 1,
       };
@@ -823,7 +824,7 @@ function collectPageData() {
     if (!visible(el) || seenCar.has(el)) continue;
     const s = getComputedStyle(el);
     const cls = typeof el.className === "string" ? el.className : "";
-    const nativeScroll = (s.overflowX === "auto" || s.overflowX === "scroll") && el.children.length >= 3 && el.scrollWidth > el.clientWidth + 20 && !el.querySelector("table") && el.tagName !== "TABLE";
+    const nativeScroll = (s.overflowX === "auto" || s.overflowX === "scroll") && el.children.length >= 3 && el.scrollWidth > el.clientWidth + 20 && !el.querySelector("table") && el.tagName !== "TABLE" && !el.closest("nav, [role=tablist], [role=toolbar]");
     const lib = LIB.test(cls) && el.children.length >= 2 && !LIB.test(el.parentElement && typeof el.parentElement.className === "string" ? el.parentElement.className : "");
     if (!nativeScroll && !lib) continue;
     [...el.querySelectorAll("*")].forEach((c) => seenCar.add(c));
@@ -944,7 +945,7 @@ function collectPageData() {
     const rad = parseFloat(s.borderTopLeftRadius);
     if (rad >= 24 && rad < 999 && el.getBoundingClientRect().width > 120) bigRadius.push(selector(el));
   }
-  const EMOJI = /\p{Extended_Pictographic}/u;
+  const EMOJI = /\p{Emoji_Presentation}|\p{Extended_Pictographic}\uFE0F/u;
   const emojiIn = [...document.querySelectorAll("h1, h2, h3, button, a")].filter((el) => visible(el) && EMOJI.test(el.textContent)).map((el) => `${selector(el)} "${el.textContent.trim().slice(0, 40)}"`);
   const CLICHE = new RegExp(
     "(?<![\\p{L}\\p{N}])(" +

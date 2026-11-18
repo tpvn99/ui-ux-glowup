@@ -210,7 +210,7 @@ export function analyze(desktop, mobile, { allow = [] } = {}) {
   for (const [label, v] of views) {
     for (const t of v.texts || []) if (t.isNumber && t.lines > 1) wrappedNumbers.set(t.sel + t.text, `${t.sel} "${t.text}" (${label}, ${t.lines} lines)`);
     for (const i of v.interactive || [])
-      if (["button", "a", "summary"].includes(i.tag) && !i.inline && i.lines > 1 && i.text.length <= 28 && !(i.width <= 2 && i.height <= 2)) wrappedControls.set(i.sel + i.text, `${i.sel} "${i.text}" (${label})`);
+      if (["button", "a", "summary"].includes(i.tag) && !i.inline && i.lines > 1 && i.text.length <= 28 && !(i.width <= 2 && i.height <= 2) && !i.inHeading) wrappedControls.set(i.sel + i.text, `${i.sel} "${i.text}" (${label})`);
     for (const c of v.clipped || []) clipped.set(c.sel + label, { ...c, label });
   }
   if (wrappedNumbers.size) add("Responsive", "error", "wrapped-number", "Numbers break across lines; keep amounts on one line (white-space: nowrap + tabular-nums) and give the column room.", [...wrappedNumbers.values()]);

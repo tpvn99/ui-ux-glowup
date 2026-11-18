@@ -17,7 +17,7 @@ export function collectControls() {
     if (!visible(el)) continue;
     const tag = el.tagName.toLowerCase();
     const href = tag === "a" ? el.getAttribute("href") : null;
-    const label = text(el) || el.id || el.getAttribute("name") || "";
+    const label = text(el) || (el.querySelector("img[alt]") || {}).alt?.trim().slice(0, 60) || el.id || el.getAttribute("name") || "";
     let key = [tag, el.getAttribute("role") || "", label.toLowerCase(), href || ""].join("|");
     const n = (seen.get(key) || 0) + 1;
     seen.set(key, n);
@@ -28,10 +28,12 @@ export function collectControls() {
     const isSubmit = (tag === "button" && (el.type || "submit") === "submit" && inForm) || (tag === "input" && el.type === "submit");
     const external = tag === "a" && el.origin && el.origin !== location.origin;
     const anchor = tag === "a" && /^#/.test(href || "");
+    el.setAttribute("data-glowup-ctl", String(controls.length));
     controls.push({
       key, tag, label, href, role: el.getAttribute("role") || "",
       disabled: el.disabled === true || el.getAttribute("aria-disabled") === "true",
       isSubmit, external, anchor, offscreen,
+      samePage: tag === "a" && !!el.href && !(href || "").startsWith("#") && el.href.split("#")[0] === location.href.split("#")[0],
       active: ["aria-pressed", "aria-selected", "aria-checked", "aria-current"].some((a) => { const v = el.getAttribute(a); return v && v !== "false"; }),
     });
   }
@@ -123,7 +125,8 @@ export function diffSmoke(before, after) {
 export function formatSmoke(snap, findings, diff) {
   const ran = snap.results.filter((c) => !c.skipped).length;
   const skipped = snap.results.length - ran;
-  const lines = [`Smoke test: ${snap.results.length} controls (${ran} clicked, ${skipped} skipped as unsafe/external/submit) · ${snap.forms.length} forms · ${snap.errors.length} JS errors`];
+  const stuck = snap.results.filter((c) => c.why);
+  const lines = [`Smoke test: ${snap.results.length} controls (${ran} clicked, ${skipped} skipped as unsafe/external/submit${stuck.length ? `, ${stuck.length} could not be clicked` : ""}) · ${snap.forms.length} forms · ${snap.errors.length} JS errors`];
   const all = [...(diff ? [["REGRESSIONS", diff]] : []), ["ISSUES", findings]];
   for (const [title, list] of all) {
     if (!list.length) { lines.push(`${title}: none`); continue; }

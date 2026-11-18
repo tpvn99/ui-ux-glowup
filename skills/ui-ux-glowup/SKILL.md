@@ -3,7 +3,7 @@ name: ui-ux-glowup
 description: "Improve, redesign or build web interfaces that look professionally designed — sites, SaaS, dashboards, KPI cards, pricing or product pages, components — and polished PDFs (invoices, quotes, reports, proposals). Use for 'make it look like Linear or Stripe', 'redesign this page', 'improve the UI', 'it looks amateur / AI-generated', 'fix it on mobile', 'SEO or readability', 'UI audit', 'make a clean PDF', or a screenshot/URL to upgrade. Keeps brand colors. Not for logos or brand identities."
 license: MIT
 metadata:
-  version: 1.14.0
+  version: 1.14.1
 ---
 
 # UI/UX Glowup

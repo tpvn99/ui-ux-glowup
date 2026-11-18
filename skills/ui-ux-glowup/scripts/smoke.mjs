@@ -48,7 +48,7 @@ export async function smoke(target, { route, max = 40, viewport = "desktop", ...
     const results = [];
     let clicked = 0;
     for (const c of base.controls) {
-      const skip = c.external || c.isSubmit || c.offscreen || unsafeLabel(c.label) || clicked >= max;
+      const skip = c.external || c.isSubmit || c.offscreen || c.samePage || unsafeLabel(c.label) || clicked >= max;
       if (skip || c.disabled) {
         results.push({ ...c, effect: "none", skipped: true });
         continue;
@@ -59,18 +59,20 @@ export async function smoke(target, { route, max = 40, viewport = "desktop", ...
       const fresh = await page.evaluate(collectControls);
       const idx = fresh.controls.findIndex((x) => x.key === c.key);
       let effect = "none";
-      if (idx >= 0) {
-        const handles = await page.$$('a[href], button, summary, [role="button"], [role="tab"], [role="menuitem"], input[type="button"], input[type="submit"]');
-        const visible = [];
-        for (const h of handles) if (await h.isVisible()) visible.push(h);
-        const h = visible[idx];
-        if (h) {
-          const before = await state(page);
-          await h.click({ timeout: 3000, noWaitAfter: true }).catch(() => {});
+      let why = null;
+      if (idx < 0) why = "not found again on a fresh load";
+      else {
+        const target = page.locator(`[data-glowup-ctl="${idx}"]`).first();
+        const before = await state(page);
+        try {
+          await target.click({ timeout: 3500, noWaitAfter: true });
           await page.waitForTimeout(300);
           effect = classifyEffect(before, await state(page).catch(() => ({ ...before, url: "navigated" })));
+        } catch (e) {
+          why = String(e.message).split("\n")[0].includes("intercepts pointer events") ? "covered by another element" : "could not be clicked (moving, hidden or covered)";
         }
       }
+      if (why) { results.push({ ...c, effect: "none", skipped: true, why }); await opened.close(); continue; }
       results.push({ ...c, effect });
       await opened.close();
     }
