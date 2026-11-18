@@ -22,6 +22,35 @@ export function compareRoles(byRole, { forbid = [], require = [] } = {}) {
   return { roles, differences, findings };
 }
 
+export const SAFE_METHODS = ["GET", "HEAD", "OPTIONS"];
+
+/** "user:GET:/api/admin/users:401,403,404" -> { role, method, path, allowed } */
+export function parseExpect(text) {
+  const last = text.lastIndexOf(":");
+  const [role, method, ...p] = text.slice(0, last).split(":");
+  const path = p.join(":");
+  const allowed = text.slice(last + 1).split(",").map((s) => Number(s.trim())).filter((n) => n >= 100 && n <= 599);
+  if (!role || !method || !path.startsWith("/") || !allowed.length) throw new Error(`Cannot read --expect "${text}". Use role:METHOD:/path:status[,status], e.g. user:GET:/api/admin/users:401,403`);
+  return { role, method: method.toUpperCase(), path, allowed };
+}
+
+export function assertSafe(expects, unsafe) {
+  const bad = expects.filter((e) => !SAFE_METHODS.includes(e.method));
+  if (bad.length && !unsafe) throw new Error(`${bad.map((b) => `${b.method} ${b.path}`).join(", ")} can change data on the server. Only GET, HEAD and OPTIONS are sent by default; add --unsafe, and only against a test environment with test accounts.`);
+}
+
+/** results: [{ role, method, path, status }] against expectations. Server-side authorization, not the interface. */
+export function checkEndpoints(results, expects) {
+  const out = [];
+  for (const e of expects) {
+    const r = results.find((x) => x.role === e.role && x.method === e.method && x.path === e.path);
+    if (!r) continue;
+    if (r.status === 0) out.push({ rule: "endpoint-unreachable", severity: "error", message: `${e.method} ${e.path} as ${e.role}: no response.`, fix: "Check the URL, the server and the network." });
+    else if (!e.allowed.includes(r.status)) out.push({ rule: "endpoint-wrong-status", severity: "error", message: `${e.role} got ${r.status} from ${e.method} ${e.path} (expected ${e.allowed.join(" or ")}).`, fix: e.allowed.every((s) => s >= 400) ? "Authorize on the server: refuse the request for this role, whatever the interface shows." : "This role should be allowed: check its permissions and its session." });
+  }
+  return out;
+}
+
 export function formatRoles(res, byRole) {
   const lines = [`Roles compared: ${res.roles.map((r) => `${r} (${byRole[r].controls.length} controls)`).join(" · ")}`];
   if (!res.differences.length) lines.push("  every role sees the same controls");
@@ -30,6 +59,7 @@ export function formatRoles(res, byRole) {
     for (const d of res.differences.slice(0, 20)) lines.push(`    ${d.tag} "${d.label}": seen by ${d.seenBy.join(", ")} only`);
   }
   for (const f of res.findings) lines.push(`  ${f.severity === "error" ? "✗" : "!"} ${f.rule} — ${f.message}`, `      → ${f.fix}`);
-  lines.push("This shows what each role's interface displays. It does not prove the server refuses forbidden actions: test the endpoints with each role.");
+  if (res.endpoints) lines.push(`  ${res.endpoints.length} endpoint check(s) sent (${res.endpoints.map((e) => `${e.role} ${e.method} ${e.path} → ${e.status}`).slice(0, 8).join("; ")})`);
+  lines.push(res.endpoints ? "Endpoints were tested with the saved cookies of each role (and any --header-env); only what you listed was checked." : "This shows what each role's interface displays. It does not prove the server refuses forbidden actions: test the endpoints with --expect.");
   return lines.join("\n");
 }

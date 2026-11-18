@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Widgets bad</title>
+<style>body{margin:0;font:16px/1.5 sans-serif;padding:16px}[hidden]{display:none}input{min-height:44px;padding:0 8px}[role=option],[role=treeitem]{padding:8px;min-height:24px}</style></head><body><main><h1>Widgets</h1>
+<label for="cb">Country</label><input id="cb" role="combobox" aria-expanded="false" aria-controls="lb" autocomplete="off">
+<ul id="lb" role="listbox" aria-label="Countries" hidden><li role="option">France</li><li role="option">Germany</li></ul>
+<ul id="plainlist" role="listbox" aria-label="Plain" tabindex="0"><li role="option" aria-selected="false">One</li><li role="option" aria-selected="false">Two</li></ul>
+<ul id="tree" role="tree" aria-label="Files"><li role="treeitem" tabindex="0">src</li><li role="treeitem" tabindex="0">README</li></ul>
+<ul id="sortable"><li draggable="true">One</li><li draggable="true">Two</li></ul>
+</main><script>document.getElementById("cb").onclick=function(){document.getElementById("lb").hidden=false}</script></body></html>

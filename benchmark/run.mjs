@@ -190,6 +190,10 @@ async function main() {
   const version = readFileSync(join(root, "skills/ui-ux-glowup/SKILL.md"), "utf8").match(/^\s+version:\s*"?([\d.]+)/m)?.[1];
   const meta = { date: new Date().toISOString().slice(0, 10), version, node: process.version, os: `${process.platform} ${process.arch}`, fast };
   if (!only) {
+    const hf = join(here, "history.json");
+    const hist = existsSync(hf) ? JSON.parse(readFileSync(hf, "utf8")) : [];
+    hist.push({ ...meta, recall: sum.recall, trapRecall: sum.trapRecall, attributable: sum.attributable, detected: sum.detected, cleanErrors: sum.cleanErrors, cleanWarnings: sum.cleanWarnings, falsePositives: sum.falsePositives, seconds: sum.seconds });
+    writeFileSync(hf, JSON.stringify(hist, null, 2) + "\n");
     writeFileSync(join(here, "results.json"), JSON.stringify({ meta, summary: sum, results }, null, 2));
     writeFileSync(join(here, "RESULTS.md"), toMarkdown(results, sum, meta));
   } else if (flags.merge && existsSync(join(here, "results.json"))) {

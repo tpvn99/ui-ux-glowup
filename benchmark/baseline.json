@@ -6,8 +6,9 @@
     "os": "darwin arm64",
     "fast": false,
     "mergedFrom": [
-      "ecommerce",
-      "vue-app"
+      "saas-landing",
+      "react-app",
+      "responsive-app"
     ]
   },
   "recall": 1,

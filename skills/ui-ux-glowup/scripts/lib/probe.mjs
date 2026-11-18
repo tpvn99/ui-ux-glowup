@@ -806,7 +806,7 @@ export function collectSnapshot() {
     else if (s.transform !== "none" && (r.right <= 0 || r.left >= docW || r.bottom + window.scrollY <= 0)) how = "moved off-screen";
     if (!how || el.closest(SKIP)) continue;
     const text = norm(el.textContent);
-    if (text.length < 20) continue;
+    if (text.length < 20 && !/^H[1-6]$/.test(el.tagName)) continue;
     flagged.add(el);
     hidden.push({ sel: selector(el), how, text: text.slice(0, 40) });
   }

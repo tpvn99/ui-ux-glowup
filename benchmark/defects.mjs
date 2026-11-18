@@ -31,6 +31,9 @@ export const DEFECTS = {
   "form-label-removed": { area: "accessibility", desc: "A field loses its label", apply: rep(/<label\b[^>]*\bfor="[^"]+"[^>]*>[\s\S]*?<\/label>/i, ""), expect: ["audit:form-labels", "ux:placeholder-as-label"] },
   "lorem": { area: "content", desc: "Placeholder text left in", apply: beforeBodyEnd('<p style="padding:16px;max-width:60ch">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>'), expect: ["audit:lorem"] },
   "broken-image": { area: "visuals", desc: "An image that fails to load", apply: beforeBodyEnd('<div style="padding:16px"><img src="/missing-hero.jpg" width="400" height="200" alt="Team photo"></div>'), expect: ["audit:broken-images"] },
+  "distorted-image": { area: "visuals", desc: "An image stretched out of its proportions", apply: beforeBodyEnd('<div style="padding:16px"><img src="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'600\'%3E%3Crect width=\'600\' height=\'600\' fill=\'%2394a3b8\'/%3E%3C/svg%3E" width="500" height="90" style="object-fit:fill;width:500px;height:90px" alt="Team"></div>'), expect: ["audit:distorted-images"] },
+  "motion-hides-content": { area: "accessibility", desc: "The headings stay invisible until an animation runs", apply: beforeHeadEnd("<style>h1,h2{opacity:0}</style>"), expect: ["audit:hidden-until-animated"] },
+  "form-no-error-handling": { area: "ux", desc: "A form with browser validation off and no way to show errors", apply: beforeBodyEnd('<form novalidate style="padding:16px"><label for="gl-e">Email</label> <input id="gl-e" name="email" type="email" required> <button type="submit">Send</button></form>'), expect: ["ux:errors-unsupported"] },
   "lcp-lazy": { area: "performance", desc: "The first image is lazy-loaded", apply: rep(/<img\b(?![^>]*loading=)/i, '<img loading="lazy" '), expect: ["perf:lcp-lazy", "perf:below-fold-not-lazy"] },
 };
 

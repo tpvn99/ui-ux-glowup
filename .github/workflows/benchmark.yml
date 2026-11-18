@@ -2,7 +2,7 @@ name: Benchmark
 
 # Ten projects, known seeded defects, injected regressions. Fails when recall, regressions caught or
 # false positives get worse than benchmark/baseline.json. Weekly, on demand, and on pull requests that
-# touch what it measures. Takes about 20 minutes and needs network (the examples load CDNs).
+# touch what it measures. Takes about 30 minutes and needs network (the examples load CDNs).
 
 on:
   schedule:
