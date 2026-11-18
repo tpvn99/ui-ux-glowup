@@ -36,7 +36,7 @@
   addEventListener("scroll", () => {
     if (done || scrollY < 200) return;
     done = true;
-    setTimeout(() => { document.getElementById("late").style.height = "480px"; }, 40);
+    document.getElementById("late").style.height = "480px"; // right away: a timer can fire after the audit has scrolled past, on a slow machine
   });
 </script>
 </body>
