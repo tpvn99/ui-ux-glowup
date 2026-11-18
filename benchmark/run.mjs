@@ -25,7 +25,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const labels = existsSync(join(here, "labels.json")) ? JSON.parse(readFileSync(join(here, "labels.json"), "utf8")) : {};
 
-const labelOf = (k) => { const l = labels[k]; return typeof l === "string" ? { label: l } : l ? { label: l.label, note: l.note } : { label: "unreviewed" }; };
+const labelOf = (k) => { const l = labels[k]; return typeof l === "string" ? { label: l } : l ? { label: l.label, note: l.humanComment ? `${l.note ? l.note + "; " : ""}reviewer: ${l.humanComment}` : l.note, human: l.reviewedBy === "human" } : { label: "unreviewed" }; };
 const keys = (snap) => new Set(normalize(snap, snap.smokeFindings).map((f) => `${f.source}:${f.rule}`));
 const sev = (snap, s) => normalize(snap, snap.smokeFindings).filter((f) => f.severity === s);
 const ms = async (fn) => { const t = performance.now(); const v = await fn(); return [v, Math.round(performance.now() - t)]; };
@@ -82,7 +82,7 @@ export async function runProject(p, { fast = false } = {}) {
   });
 
   const cleanAll = normalize(snapAfter, snapAfter.smokeFindings).filter((f) => f.severity !== "info");
-  const clean = [...new Map(cleanAll.map((f) => [`${f.source}:${f.rule}`, f])).values()].map((f) => ({ key: `${f.source}:${f.rule}`, severity: f.severity, count: cleanAll.filter((x) => x.source === f.source && x.rule === f.rule).length, label: labelOf(`${p.id}:${f.source}:${f.rule}`).label, note: labelOf(`${p.id}:${f.source}:${f.rule}`).note }));
+  const clean = [...new Map(cleanAll.map((f) => [`${f.source}:${f.rule}`, f])).values()].map((f) => ({ key: `${f.source}:${f.rule}`, severity: f.severity, count: cleanAll.filter((x) => x.source === f.source && x.rule === f.rule).length, label: labelOf(`${p.id}:${f.source}:${f.rule}`).label, note: labelOf(`${p.id}:${f.source}:${f.rule}`).note, human: labelOf(`${p.id}:${f.source}:${f.rule}`).human || false }));
   const m = (s) => (s.perf ? { lcp: s.perf.metrics.lcp, cls: s.perf.metrics.cls, tbt: s.perf.metrics.tbt, weight: s.perf.weightBytes, requests: s.perf.requests } : null);
   return {
     id: p.id, type: p.type, defects, traps, clean,
@@ -110,7 +110,7 @@ export function summarize(results) {
     attributable: attributable.length, detected, recall: attributable.length ? +(detected / attributable.length).toFixed(3) : null,
     traps: traps.length, trapsDetected: trapsHit, trapRecall: traps.length ? +(trapsHit / traps.length).toFixed(3) : null,
     cleanFindings: clean.length, cleanErrors: clean.filter((c) => c.severity === "error").length, cleanWarnings: clean.filter((c) => c.severity === "warning").length,
-    reviewed: reviewed.length, falsePositives: reviewed.filter((c) => c.label === "false-positive").length, valid: reviewed.filter((c) => c.label === "valid" || c.label === "by-design").length, unreviewed: clean.length - reviewed.length,
+    reviewed: reviewed.length, humanReviewed: clean.filter((c) => c.human).length, falsePositives: reviewed.filter((c) => c.label === "false-positive").length, valid: reviewed.filter((c) => c.label === "valid" || c.label === "by-design").length, unreviewed: clean.length - reviewed.length,
     precision: reviewed.length ? +(reviewed.filter((c) => c.label !== "false-positive").length / reviewed.length).toFixed(3) : null,
     seconds: Math.round(ok.reduce((a, r) => a + r.ms.before + r.ms.after + r.ms.broken, 0) / 1000),
   };
@@ -131,6 +131,7 @@ export function toMarkdown(results, sum, meta) {
   L.push(`| **Regressions caught** | **${pct(sum.trapRecall)}** (${sum.trapsDetected} of ${sum.traps}) |`);
   L.push(`| Findings on the clean pages | ${sum.cleanFindings} (${sum.cleanErrors} errors, ${sum.cleanWarnings} warnings) |`);
   L.push(`| Reviewed as false positive | ${sum.falsePositives} of ${sum.reviewed} reviewed (${sum.unreviewed} unreviewed) |`);
+  L.push(`| **Reviewed by a human** | ${sum.humanReviewed || 0} of ${sum.cleanFindings} (the others were labelled by an AI agent) |`);
   L.push(`| Precision on reviewed findings | ${pct(sum.precision)} |`);
   L.push(`| Total run time | ${sum.seconds} s for ${sum.projects} projects (3 pages each) |`);
   L.push(`| Tokens | not measurable here: the checks are scripts and do not call a model |`, "");
@@ -171,7 +172,7 @@ async function main() {
   const { flags } = parseArgs(process.argv.slice(2));
   if (flags.relabel) {
     const old = JSON.parse(readFileSync(join(here, "results.json"), "utf8"));
-    for (const r of old.results) for (const c of r.clean || []) { const l = labelOf(`${r.id}:${c.key}`); c.label = l.label; c.note = l.note; }
+    for (const r of old.results) for (const c of r.clean || []) { const l = labelOf(`${r.id}:${c.key}`); c.label = l.label; c.note = l.note; c.human = l.human || false; }
     const sum = summarize(old.results);
     writeFileSync(join(here, "results.json"), JSON.stringify({ meta: old.meta, summary: sum, results: old.results }, null, 2));
     writeFileSync(join(here, "RESULTS.md"), toMarkdown(old.results, sum, old.meta));

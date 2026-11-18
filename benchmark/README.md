@@ -46,6 +46,10 @@ Missing document basics (viewport, `lang`, title, description, `noindex`, H1), a
 
 `history.json` keeps the summary of every full run, so a trend is visible and a regression is not only compared with the last baseline.
 
+## Human review
+
+`node benchmark/review-sheet.mjs` writes `REVIEW.md`: every finding reported on a clean page, what the tool said, the AI's label and reason, and two boxes. After ticking, `node benchmark/review-sheet.mjs --apply` updates `labels.json` and `node benchmark/run.mjs --relabel` regenerates the results; labels a person has answered are counted as reviewed by a human.
+
 ## What it does not measure
 
 Tokens (the checks are scripts and call no model), real devices, screen readers, real users, field performance, or the quality of an agent's redesign. Time is wall-clock on one machine.

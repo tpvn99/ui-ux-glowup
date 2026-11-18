@@ -14,6 +14,7 @@ Run on 2026-11-17 (saas-landing, react-app, responsive-app replayed afterwards) 
 | **Regressions caught** | **100%** (25 of 25) |
 | Findings on the clean pages | 33 (2 errors, 31 warnings) |
 | Reviewed as false positive | 0 of 33 reviewed (0 unreviewed) |
+| **Reviewed by a human** | 0 of 33 (the others were labelled by an AI agent) |
 | Precision on reviewed findings | 100% |
 | Total run time | 1872 s for 10 projects (3 pages each) |
 | Tokens | not measurable here: the checks are scripts and do not call a model |

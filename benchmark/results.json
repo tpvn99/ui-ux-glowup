@@ -28,6 +28,7 @@
     "cleanErrors": 2,
     "cleanWarnings": 31,
     "reviewed": 33,
+    "humanReviewed": 0,
     "falsePositives": 0,
     "valid": 33,
     "unreviewed": 0,
@@ -188,35 +189,40 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "the example has 6+ links before the content and no skip link"
+          "note": "the example has 6+ links before the content and no skip link",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "responsive:text-too-small",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+          "note": "text under 12px exists in the decorative product mockup; exact, but not body text",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 9,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
@@ -401,35 +407,40 @@
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:third-party-heavy",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "placeholder photos from Unsplash and web fonts"
+          "note": "placeholder photos from Unsplash and web fonts",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 2,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         },
         {
           "key": "smoke:dead-control",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "static mockup: its buttons have no behaviour"
+          "note": "static mockup: its buttons have no behaviour",
+          "human": false
         }
       ],
       "audit": {
@@ -614,42 +625,48 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "the example has 6+ links before the content and no skip link"
+          "note": "the example has 6+ links before the content and no skip link",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "responsive:text-too-small",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "text under 12px exists in the decorative product mockup; exact, but not body text"
+          "note": "text under 12px exists in the decorative product mockup; exact, but not body text",
+          "human": false
         },
         {
           "key": "smoke:dead-control",
           "severity": "warning",
           "count": 8,
           "label": "by-design",
-          "note": "static mockup: its buttons have no behaviour"
+          "note": "static mockup: its buttons have no behaviour",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 7,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
@@ -1019,7 +1036,8 @@
           "severity": "error",
           "count": 1,
           "label": "by-design",
-          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports",
+          "human": false
         }
       ],
       "audit": {
@@ -1211,14 +1229,16 @@
           "severity": "error",
           "count": 1,
           "label": "by-design",
-          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports"
+          "note": "client-rendered app: the main text is absent without JavaScript, which is what the rule reports",
+          "human": false
         },
         {
           "key": "audit:tap-target",
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size",
+          "human": false
         }
       ],
       "audit": {
@@ -1410,21 +1430,24 @@
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 3,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
@@ -1620,21 +1643,24 @@
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 9,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         }
       ],
       "audit": {
@@ -1815,35 +1841,40 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "the example has 6+ links before the content and no skip link"
+          "note": "the example has 6+ links before the content and no skip link",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         },
         {
           "key": "smoke:empty-link",
           "severity": "warning",
           "count": 2,
           "label": "valid",
-          "note": "placeholder links with href=\"#\" in the example; they point nowhere"
+          "note": "placeholder links with href=\"#\" in the example; they point nowhere",
+          "human": false
         },
         {
           "key": "smoke:dead-control",
           "severity": "warning",
           "count": 4,
           "label": "by-design",
-          "note": "static mockup: its buttons have no behaviour"
+          "note": "static mockup: its buttons have no behaviour",
+          "human": false
         }
       ],
       "audit": {
@@ -2036,21 +2067,24 @@
           "severity": "warning",
           "count": 1,
           "label": "valid",
-          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size"
+          "note": "24px checkboxes: above the WCAG 2.5.8 minimum, below the 36–44px comfortable size",
+          "human": false
         },
         {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup"
+          "note": "Tailwind compiled in the browser (CDN script), documented prototype setup",
+          "human": false
         },
         {
           "key": "perf:render-blocking-script",
           "severity": "warning",
           "count": 1,
           "label": "by-design",
-          "note": "the same Tailwind browser script, in the head"
+          "note": "the same Tailwind browser script, in the head",
+          "human": false
         }
       ],
       "audit": {

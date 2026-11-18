@@ -4,13 +4,13 @@ Only what is **not done** is listed here. What exists is documented in `VERSIONS
 
 ## Needs a human
 
-- [ ] **Review the benchmark labels.** Findings on the clean pages were labelled valid / by-design / false positive by an AI agent (`benchmark/labels.json`). A human second opinion is needed before precision is quoted.
+- [ ] **Review the benchmark labels** (20 minutes: tick `benchmark/REVIEW.md`, then `node benchmark/review-sheet.mjs --apply` and `node benchmark/run.mjs --relabel`). Findings on the clean pages were labelled valid / by-design / false positive by an AI agent (`benchmark/labels.json`). A human second opinion is needed before precision is quoted.
 - [ ] **Review the recommendations** of `ux.mjs` per kind of site with people who run such sites; adjust the impact levels (`IMPACT` in `lib/ux.mjs`) from what they say matters.
 
 ## Needs real devices and assistive technology
 
-- [ ] **iPhone and Android phones**: the checks in `docs/real-device-checklist.md` have to be run on real hardware. `--device` is an emulation.
-- [ ] **Screen readers**: VoiceOver, NVDA, TalkBack and JAWS on the main journeys. Names, roles, states and focus are checked; what is announced is not.
+- [ ] **iPhone and Android phones** (fill `docs/device-test-log.md`): the checks in `docs/real-device-checklist.md` have to be run on real hardware. `--device` is an emulation.
+- [ ] **Screen readers** (follow `docs/voiceover-journey.md`): VoiceOver, NVDA, TalkBack and JAWS on the main journeys. Names, roles, states and focus are checked; what is announced is not.
 - [ ] **Widgets not driven yet**: date pickers, data grids, menu bars and custom sliders have no automatic keyboard test; they need a scenario each (comboboxes, listboxes, trees and drag and drop alternatives are checked).
 - [ ] **Windows**: untested (the scripts are plain Node; the suite and CI cover Linux and macOS).
 
@@ -24,7 +24,7 @@ Only what is **not done** is listed here. What exists is documented in `VERSIONS
 ## Needs measurements outside a lab
 
 - [ ] **Field performance**: real-user data (CrUX, RUM) and INP on real interactions; the numbers here are lab measurements with simulated throttling.
-- [ ] **Agent cost**: time and tokens of an agent-driven intervention (the scripts call no model, so they cannot measure it). Needs recorded agent runs.
+- [ ] **Agent cost** (run `docs/agent-cost-protocol.md`): time and tokens of an agent-driven intervention (the scripts call no model, so they cannot measure it). Needs recorded agent runs.
 
 ## Benchmark growth
 

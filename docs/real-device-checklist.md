@@ -36,4 +36,4 @@
 - [ ] Sign in as each role with a real test account: each sees what it should and nothing else.
 - [ ] As a role that must not delete or edit, call the endpoint directly: the **server** refuses. A hidden button is not protection (`roles.mjs` only checks the interface).
 
-Write down the device, the OS and browser versions, and what failed. The automatic reports say what was not tested; this list is how those gaps get covered.
+Use the [test log](device-test-log.md) to write it down (device, OS and browser versions, what failed, what the automatic report missed), and the [screen reader walk-through](voiceover-journey.md) for the VoiceOver / TalkBack / NVDA part. The automatic reports say what was not tested; this list is how those gaps get covered.
