@@ -4,9 +4,16 @@ Current versions of all skills. Agents can compare against local versions to che
 
 | Skill | Version | Last Updated |
 |-------|---------|--------------|
-| ui-ux-glowup | 1.15.0 | 2026-11-18 |
+| ui-ux-glowup | 1.15.1 | 2026-11-18 |
 
 ## Recent Changes
+
+### 1.15.1 (2026-11-18)
+
+- **ui-ux-glowup** (1.15.0 → 1.15.1): `a11y.mjs` drives two more custom widgets with the keyboard alone.
+  - `slider-no-arrow-keys` (error): a `role="slider"` that does not change `aria-valuenow` with the arrow keys.
+  - `menubar-no-arrow-keys` (error): a `role="menubar"` whose items ignore ArrowRight / ArrowLeft.
+  - Tests: both added to the widgets good/bad fixtures; the good page stays clean. Date pickers and data grids remain on the roadmap.
 
 ### 1.15.0 (2026-11-18)
 

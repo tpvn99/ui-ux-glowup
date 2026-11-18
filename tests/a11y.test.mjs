@@ -64,7 +64,7 @@ test("static rules for zoom and fieldsets", () => {
 test("comboboxes, listboxes, trees and drag and drop: operated with the keyboard, missing alternative reported", { skip }, async () => {
   const bad = await a11y(fixture("widgets-bad.html"));
   const got = rules(bad.findings);
-  for (const x of ["combobox-no-arrow-down", "listbox-no-arrow-keys", "tree-no-arrow-keys", "drag-without-alternative"]) assert.ok(got.includes(x), `${x} in ${got}`);
+  for (const x of ["combobox-no-arrow-down", "listbox-no-arrow-keys", "tree-no-arrow-keys", "drag-without-alternative", "slider-no-arrow-keys", "menubar-no-arrow-keys"]) assert.ok(got.includes(x), `${x} in ${got}`);
   const good = await a11y(fixture("widgets-good.html"));
   assert.deepEqual(rules(good.findings), [], JSON.stringify(good.findings));
 });

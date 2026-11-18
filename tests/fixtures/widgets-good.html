@@ -3,10 +3,14 @@
 <label for="cb">Country</label><input id="cb" role="combobox" aria-expanded="false" aria-controls="lb" aria-autocomplete="list" autocomplete="off">
 <ul id="lb" role="listbox" aria-label="Countries" hidden><li role="option" id="o1">France</li><li role="option" id="o2">Germany</li><li role="option" id="o3">Italy</li></ul>
 <ul id="tree" role="tree" aria-label="Files"><li role="treeitem" tabindex="0" id="t1" aria-expanded="false">src</li><li role="treeitem" tabindex="-1" id="t2">README</li></ul>
+<div id="vol" role="slider" style="height:24px;width:200px;background:#cbd5e1;margin:8px 0" tabindex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="10" aria-valuenow="5"></div>
+<div role="menubar" aria-label="App"><span role="menuitem" tabindex="0">File</span><span role="menuitem" tabindex="-1">Edit</span></div>
 <ul id="sortable"><li draggable="true">One <button type="button" aria-label="Move One down">↓</button></li><li draggable="true">Two <button type="button" aria-label="Move Two up">↑</button></li></ul>
 </main><script>
 var cb=document.getElementById("cb"),lb=document.getElementById("lb"),opts=[].slice.call(lb.children),idx=-1;
 function show(on){lb.hidden=!on;cb.setAttribute("aria-expanded",on)}function act(i){idx=(i+opts.length)%opts.length;opts.forEach(function(o,k){o.setAttribute("aria-selected",k===idx)});cb.setAttribute("aria-activedescendant",opts[idx].id)}
 cb.onkeydown=function(e){if(e.key==="ArrowDown"){show(true);act(idx+1);e.preventDefault()}if(e.key==="ArrowUp"){show(true);act(idx-1);e.preventDefault()}if(e.key==="Escape"){show(false)}};
 var items=[].slice.call(document.querySelectorAll("[role=treeitem]"));items.forEach(function(t,i){t.onkeydown=function(e){if(e.key==="ArrowDown"&&items[i+1]){items[i].tabIndex=-1;items[i+1].tabIndex=0;items[i+1].focus();e.preventDefault()}if(e.key==="ArrowUp"&&items[i-1]){items[i].tabIndex=-1;items[i-1].tabIndex=0;items[i-1].focus();e.preventDefault()}}});
+var vol=document.getElementById("vol");vol.onkeydown=function(e){var v=+vol.getAttribute("aria-valuenow");if(e.key==="ArrowRight"||e.key==="ArrowUp")v=Math.min(10,v+1);else if(e.key==="ArrowLeft"||e.key==="ArrowDown")v=Math.max(0,v-1);else return;vol.setAttribute("aria-valuenow",v);e.preventDefault()};
+var mi=[].slice.call(document.querySelectorAll("[role=menuitem]"));mi.forEach(function(m,i){m.onkeydown=function(e){var n=e.key==="ArrowRight"?mi[(i+1)%mi.length]:e.key==="ArrowLeft"?mi[(i-1+mi.length)%mi.length]:null;if(n){m.tabIndex=-1;n.tabIndex=0;n.focus();e.preventDefault()}}});
 </script></body></html>
