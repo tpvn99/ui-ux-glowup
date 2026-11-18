@@ -6,7 +6,7 @@ The workflow in `SKILL.md` shows `audit`, `audit-site`, `inventory`, `extract-to
 
 | Script | Use |
 |---|---|
-| Any browser script | `--browser chromium\|firefox\|webkit`, `--device "iPhone 15"` (emulation of a phone's screen and engine) |
+| Any browser script | `--browser chromium\|firefox\|webkit`, `--device "iPhone 15"` (emulation of a phone's screen and engine); known analytics hosts are blocked so an audit is not a visit: `--allow-tracking` loads them, `--block host,host` adds your own stats or experiment endpoint |
 | `cross-browser.mjs <page>` | Chromium, Firefox, WebKit: what differs; `--browser` on other scripts |
 | `login.mjs <url>` | Saves a session locked (600), git-ignored, summarised without values; `--clear` deletes it |
 | `responsive.mjs <page> [--stress long\|rtl]` | 14 sizes (320–1920, tablets, landscape), long words and +50% text, right-to-left |

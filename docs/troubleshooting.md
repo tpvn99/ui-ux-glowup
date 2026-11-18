@@ -21,6 +21,7 @@
 | The no-JS check fails on a single-page app | The page needs JavaScript to show content. `--fast` skips the check; for SEO, server-render the main content. |
 | A script prints nothing and exits | Skill installed through a symbolic link with a version before 1.13.0: upgrade (`doctor.mjs --online`). |
 | `git commit` is blocked by "Commit blocked by the safeguard hook" | A secret or a session file is staged. Fix what it names; remove the hook with `safeguard.mjs hook remove`; bypass once with `git commit --no-verify` only if it is a false alarm. |
+| My analytics or A/B test counted the audit | Known analytics hosts are blocked by default, but your own endpoints are not: re-run with `--block <your-endpoint-host>` (e.g. `--block supabase.co`), or audit a staging copy. See the FAQ. |
 | `safeguard check` or the hook flags a fake key in your tests | List the test folder in `.glowup-safeguard-ignore` (one path prefix per line). Only the content scan is skipped: `.env` and session files are still reported. |
 | `Unknown device "..."` | Use a Playwright device name: "iPhone 15", "Pixel 7", "iPad Pro 11", "Galaxy S9+". The error lists the closest names. It is an emulation, not a phone. |
 | A journey fails with `cannot be reached with the keyboard` | A real finding: the control is not focusable (a `<div onclick>`), or hidden from Tab order. Use a `<button>` or `<a href>`. Radio groups are reached with the arrow keys (the script does this). |

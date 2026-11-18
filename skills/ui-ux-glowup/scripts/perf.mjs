@@ -38,7 +38,7 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
   let lost = 0, errors = 0;
   const flakyRoute = prof.lose ? async (r) => { if (r.request().resourceType() !== "document" && rnd() < prof.lose) { lost++; return r.abort("failed"); } return route ? route(r) : r.continue(); } : route;
   try {
-    const { page, close } = await openPage(browser, url, VIEWPORTS[prof.viewport], {
+    const { page, close, blocked } = await openPage(browser, url, VIEWPORTS[prof.viewport], {
       route: flakyRoute, reducedMotion: "no-preference", ...options, scroll: false, dismiss: false,
       onPage: async (p) => {
         await p.context().addInitScript(initPerf);
@@ -73,12 +73,13 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
       try { thirdParty = new URL(u).origin !== origin; } catch {}
       resources.push({ url: u, type: req.resourceType(), bytes, thirdParty });
     }
+    const trackingBlocked = blocked();
     await close();
     const weight = resources.reduce((a, x) => a + x.bytes, 0);
     const data = { metrics, resources, images, page: pageInfo, resilience: prof.lose ? { failed: lost, errors, bodyText: pageInfo.bodyText, hasH1: pageInfo.hasH1 } : null };
     const findings = perfFindings(data);
     const f1 = (n) => (n == null ? "n/a" : (n / 1000).toFixed(1) + "s");
-    return { profile, findings, summary: { profile, lcp: f1(metrics.lcp), cls: metrics.cls, tbt: metrics.tbt, requests: resources.length, weight: weight >= 1048576 ? (weight / 1048576).toFixed(1) + " MB" : Math.round(weight / 1024) + " KB" }, metrics, weightBytes: weight, requests: resources.length };
+    return { profile, trackingBlocked, findings, summary: { profile, lcp: f1(metrics.lcp), cls: metrics.cls, tbt: metrics.tbt, requests: resources.length, weight: weight >= 1048576 ? (weight / 1048576).toFixed(1) + " MB" : Math.round(weight / 1024) + " KB" }, metrics, weightBytes: weight, requests: resources.length };
   } finally {
     await browser.close();
   }
@@ -94,6 +95,7 @@ if (isMain(import.meta.url)) {
     const profile = typeof flags.profile === "string" ? flags.profile : /^https?:/.test(target) ? "phone" : "fast";
     const r = await perf(target, { ...commonOptions(flags), profile });
     console.log(formatPerf(r.findings, r.summary));
+    if (r.trackingBlocked) console.log(`  (${r.trackingBlocked} analytics request(s) were blocked so this audit does not count as a visit: they are not in the weight above; --allow-tracking to include them)`);
     if (typeof flags.baseline === "string") {
       const b = JSON.parse(readFileSync(flags.baseline, "utf8"));
       const d = (k, f = (x) => x) => `${f(b.metrics[k])} → ${f(r.metrics[k])}`;
