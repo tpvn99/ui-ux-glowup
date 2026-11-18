@@ -2,7 +2,7 @@ name: Compatibility
 
 # Does the skill work where people will install it?
 #  - Node 20, 22, 24 on Linux, Node 22 on macOS: the full suite, every browser engine on Linux
-#  - Windows, Node 22: the suite without the PDF test (informational until it is green)
+#  - Windows, Node 22: the suite without the PDF test
 #  - Node 18: only the scripts that need no browser (Playwright itself requires Node 20)
 #  - a clean install: copied folder and symlinked folder, then doctor, stack, audit
 # Also runs every Monday: a new Playwright or Node release can break things without any commit here.
@@ -49,11 +49,8 @@ jobs:
           CI: true
 
   windows:
-    # Informational for now: the scripts were never run on Windows. Failures here show what to fix;
-    # once the job is green, remove continue-on-error and update docs/levels-and-limits.md.
-    name: Windows · Node 22 (informational)
+    name: Windows · Node 22
     runs-on: windows-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

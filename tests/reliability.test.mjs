@@ -74,7 +74,7 @@ test("an interrupted intervention (edits, deletions, new files) is fully recover
   const b = backup(d, "before");
   writeFileSync(join(d, "a.css"), "HALF-WRITTEN"); rmSync(join(d, "b.html")); writeFileSync(join(d, "new.js"), "x");
   const r1 = restore(d, b.id);
-  assert.equal(readFileSync(join(d, "a.css"), "utf8"), "a{color:red}\n"); assert.equal(readFileSync(join(d, "b.html"), "utf8"), "<p>keep</p>");
+  assert.equal(readFileSync(join(d, "a.css"), "utf8").replace(/\r\n/g, "\n"), "a{color:red}\n"); // Git on Windows restores CRLF assert.equal(readFileSync(join(d, "b.html"), "utf8"), "<p>keep</p>");
   assert.deepEqual(r1.left, ["new.js"]);
   restore(d, b.id, { clean: true });
   assert.equal(existsSync(join(d, "new.js")), false);

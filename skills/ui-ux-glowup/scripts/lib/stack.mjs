@@ -65,7 +65,7 @@ export function findTokens(dir, styling) {
     if (/tailwind\.config\.(js|ts|mjs|cjs)$/.test(f)) found.push({ file: name, kind: "tailwind-config" });
     else if (/\.css$/.test(f)) { const t = read(f).slice(0, 60000); if (/@theme\b/.test(t)) found.push({ file: name, kind: "tailwind-theme" }); else if (/:root\s*\{[^}]*--[a-z]/i.test(t) && found.filter((x) => x.kind === "css-variables").length < 2) found.push({ file: name, kind: "css-variables" }); }
     else if (/theme\.json$/.test(f) && styling !== undefined) found.push({ file: name, kind: "theme-json" });
-    else if (/(^|\/)theme\.(ts|js)$/.test(f) && /createTheme|extendTheme|defineConfig/.test(read(f).slice(0, 20000))) found.push({ file: name, kind: "ui-theme" });
+    else if (/(^|[\\/])theme\.(ts|js)$/.test(f) && /createTheme|extendTheme|defineConfig/.test(read(f).slice(0, 20000))) found.push({ file: name, kind: "ui-theme" });
     else if (/_variables\.scss$/.test(f)) found.push({ file: name, kind: "scss-variables" });
   }
   return found.slice(0, 6);

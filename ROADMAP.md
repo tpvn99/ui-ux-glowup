@@ -12,7 +12,7 @@ Only what is **not done** is listed here. What exists is documented in `VERSIONS
 - [ ] **iPhone and Android phones** (fill `docs/device-test-log.md`): the checks in `docs/real-device-checklist.md` have to be run on real hardware. `--device` is an emulation.
 - [ ] **Screen readers** (follow `docs/voiceover-journey.md`): VoiceOver, NVDA, TalkBack and JAWS on the main journeys. Names, roles, states and focus are checked; what is announced is not.
 - [ ] **Widgets not driven yet**: date pickers, data grids, menu bars and custom sliders have no automatic keyboard test; they need a scenario each (comboboxes, listboxes, trees and drag and drop alternatives are checked).
-- [ ] **Windows**: untested (the scripts are plain Node; the suite and CI cover Linux and macOS).
+- [ ] **Windows on a real machine**: CI runs the suite on Windows (Node 22, Chromium) and it passes; a real Windows PC with real browsers (Edge, Chrome) and a screen reader is untested.
 
 ## Needs real projects
 
