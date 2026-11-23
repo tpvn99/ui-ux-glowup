@@ -20,9 +20,9 @@
     "traps": 25,
     "trapsDetected": 25,
     "trapRecall": 1,
-    "cleanFindings": 34,
+    "cleanFindings": 33,
     "cleanErrors": 2,
-    "cleanWarnings": 32,
+    "cleanWarnings": 31,
     "reviewed": 33,
     "humanReviewed": 0,
     "humanSeverity": {
@@ -33,9 +33,9 @@
     "notRelevant": 0,
     "falsePositives": 0,
     "valid": 33,
-    "unreviewed": 1,
+    "unreviewed": 0,
     "precision": 1,
-    "seconds": 1213
+    "seconds": 1111
   },
   "results": [
     {
@@ -241,25 +241,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 180,
+          "lcp": 160,
           "cls": 0,
           "tbt": 0,
-          "weight": 133480,
+          "weight": 122463,
           "requests": 4
         },
         "after": {
-          "lcp": 268,
+          "lcp": 336,
           "cls": 0,
           "tbt": 0,
-          "weight": 109976,
+          "weight": 109981,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 43657,
-        "after": 37661,
-        "broken": 28214
+        "before": 40502,
+        "after": 36275,
+        "broken": 28306
       }
     },
     {
@@ -467,25 +467,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 1108,
+          "lcp": 404,
           "cls": 0,
           "tbt": 0,
-          "weight": 543236,
+          "weight": 543225,
           "requests": 6
         },
         "after": {
-          "lcp": 244,
+          "lcp": 208,
           "cls": 0,
           "tbt": 0,
-          "weight": 543236,
+          "weight": 543254,
           "requests": 6
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 46025,
-        "after": 35943,
-        "broken": 28073
+        "before": 41278,
+        "after": 36152,
+        "broken": 26695
       }
     },
     {
@@ -701,7 +701,7 @@
       },
       "perf": {
         "before": {
-          "lcp": 160,
+          "lcp": 156,
           "cls": 0,
           "tbt": 0,
           "weight": 109978,
@@ -711,15 +711,15 @@
           "lcp": 148,
           "cls": 0,
           "tbt": 0,
-          "weight": 109976,
+          "weight": 109987,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 53559,
-        "after": 49462,
-        "broken": 35394
+        "before": 54242,
+        "after": 49814,
+        "broken": 37042
       }
     },
     {
@@ -892,14 +892,14 @@
       },
       "perf": {
         "before": {
-          "lcp": 400,
+          "lcp": 108,
           "cls": 0,
           "tbt": 0,
-          "weight": 23859,
+          "weight": 23861,
           "requests": 1
         },
         "after": {
-          "lcp": 20,
+          "lcp": 28,
           "cls": 0,
           "tbt": 0,
           "weight": 0,
@@ -908,9 +908,9 @@
       },
       "scenarios": null,
       "ms": {
-        "before": 30869,
-        "after": 26238,
-        "broken": 19407
+        "before": 30501,
+        "after": 25979,
+        "broken": 19216
       }
     },
     {
@@ -1080,25 +1080,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 164,
+          "lcp": 128,
           "cls": 0.154,
           "tbt": 0,
-          "weight": 65942,
+          "weight": 65948,
           "requests": 3
         },
         "after": {
           "lcp": 16,
           "cls": 0.065,
           "tbt": 0,
-          "weight": 42074,
+          "weight": 42080,
           "requests": 2
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 36969,
-        "after": 31895,
-        "broken": 23894
+        "before": 36013,
+        "after": 31593,
+        "broken": 25505
       }
     },
     {
@@ -1290,25 +1290,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 164,
+          "lcp": 120,
           "cls": 0.126,
           "tbt": 0,
-          "weight": 72347,
+          "weight": 72354,
           "requests": 2
         },
         "after": {
-          "lcp": 20,
+          "lcp": 16,
           "cls": 0.056,
           "tbt": 0,
-          "weight": 48893,
+          "weight": 48889,
           "requests": 1
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 32658,
-        "after": 26087,
-        "broken": 19515
+        "before": 31484,
+        "after": 25493,
+        "broken": 20581
       }
     },
     {
@@ -1507,25 +1507,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 196,
+          "lcp": 392,
           "cls": 0.009,
           "tbt": 0,
-          "weight": 83966,
+          "weight": 83960,
           "requests": 4
         },
         "after": {
-          "lcp": 252,
+          "lcp": 248,
           "cls": 0,
           "tbt": 0,
-          "weight": 83957,
+          "weight": 83962,
           "requests": 4
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 46777,
-        "after": 48754,
-        "broken": 35345
+        "before": 45823,
+        "after": 44095,
+        "broken": 35785
       }
     },
     {
@@ -1728,25 +1728,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 244,
+          "lcp": 196,
           "cls": 0.01,
           "tbt": 0,
-          "weight": 416624,
+          "weight": 416833,
           "requests": 11
         },
         "after": {
-          "lcp": 180,
+          "lcp": 284,
           "cls": 0.001,
           "tbt": 0,
-          "weight": 393336,
+          "weight": 393338,
           "requests": 10
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 68758,
-        "after": 52755,
-        "broken": 47245
+        "before": 51902,
+        "after": 49464,
+        "broken": 38893
       }
     },
     {
@@ -1950,25 +1950,25 @@
       },
       "perf": {
         "before": {
-          "lcp": 156,
+          "lcp": 160,
           "cls": 0.007,
           "tbt": 0,
-          "weight": 109980,
+          "weight": 109981,
           "requests": 3
         },
         "after": {
-          "lcp": 140,
+          "lcp": 144,
           "cls": 0,
           "tbt": 0,
-          "weight": 109979,
+          "weight": 109981,
           "requests": 3
         }
       },
       "scenarios": null,
       "ms": {
-        "before": 56860,
-        "after": 46831,
-        "broken": 32732
+        "before": 43565,
+        "after": 39956,
+        "broken": 30319
       }
     },
     {
@@ -2139,13 +2139,6 @@
           "human": false
         },
         {
-          "key": "perf:fcp-slow",
-          "severity": "warning",
-          "count": 1,
-          "label": "unreviewed",
-          "human": false
-        },
-        {
           "key": "perf:heavy-library",
           "severity": "warning",
           "count": 1,
@@ -2176,17 +2169,17 @@
       },
       "perf": {
         "before": {
-          "lcp": 164,
+          "lcp": 152,
           "cls": 0.008,
           "tbt": 0,
-          "weight": 109985,
+          "weight": 109979,
           "requests": 3
         },
         "after": {
-          "lcp": 1992,
+          "lcp": 236,
           "cls": 0,
           "tbt": 0,
-          "weight": 109979,
+          "weight": 98964,
           "requests": 3
         }
       },
@@ -2196,9 +2189,9 @@
         "passedBroken": 3
       },
       "ms": {
-        "before": 52724,
-        "after": 63206,
-        "broken": 55734
+        "before": 51395,
+        "after": 43490,
+        "broken": 39366
       }
     }
   ]

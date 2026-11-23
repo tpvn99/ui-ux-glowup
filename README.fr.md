@@ -221,6 +221,8 @@ Les guides sont en anglais (le README seul est traduit) :
 - [FAQ](docs/faq.md) · [Dépannage](docs/troubleshooting.md) · [Installation par agent](docs/install-by-agent.md)
 - [Benchmark](docs/benchmark.md) : ce que les outils trouvent et manquent sur dix projets aux défauts connus
 - [Liste de contrôle sur vrais appareils](docs/real-device-checklist.md)
+- [Environnements testés](docs/tested-environments.md) : ce qui a été exécuté, sur quoi, et ce qui ne l'a pas été (en anglais)
+- [Faux positifs connus](docs/known-false-positives.md) : constats vrais mais pas toujours applicables, mesures qui varient (en anglais)
 
 ## Utiliser les scripts directement
 

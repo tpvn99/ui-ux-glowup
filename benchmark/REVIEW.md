@@ -1,6 +1,6 @@
 # Review of the findings on the clean pages
 
-34 findings were reported on pages where nothing was seeded. Each was labelled by an AI agent, which is not a review. **Your job: for each one, say whether you agree.**
+33 findings were reported on pages where nothing was seeded. Each was labelled by an AI agent, which is not a review. **Your job: for each one, say whether you agree.**
 
 - **I agree**: the label is right (the tool said something true, or something intended; or it was wrong and the label says so).
 - **I disagree**: the label is wrong. A `valid` or `by-design` finding that you think is NOT a real issue becomes a `false-positive`; a `false-positive` that you think is real becomes `valid`.
@@ -385,19 +385,7 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 - Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
-### 32. multi-journey-app · `perf:fcp-slow` (warning)
-
-**The tool says:** perf:fcp-slow
-
-**Label:** unreviewed
-
-- [ ] I agree
-- [ ] I disagree
-- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
-- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
-- Comment: 
-
-### 33. multi-journey-app · `perf:heavy-library` (warning)
+### 32. multi-journey-app · `perf:heavy-library` (warning)
 
 **The tool says:** A heavy library is loaded (in the examples: Tailwind compiled in the browser from a CDN script).
 
@@ -409,7 +397,7 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 - Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
-### 34. multi-journey-app · `perf:render-blocking-script` (warning)
+### 33. multi-journey-app · `perf:render-blocking-script` (warning)
 
 **The tool says:** A script in <head> blocks rendering (in the examples: the Tailwind browser script).
 

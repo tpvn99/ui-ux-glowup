@@ -237,6 +237,8 @@ skills/ui-ux-glowup/
 - [FAQ](docs/faq.md) · [Troubleshooting](docs/troubleshooting.md) · [Installing for each agent](docs/install-by-agent.md)
 - [Benchmark](docs/benchmark.md): what the tools find and miss on ten projects with known defects
 - [Real device checklist](docs/real-device-checklist.md): what only a real phone or screen reader shows
+- [Tested environments](docs/tested-environments.md): what has been run, on what, and what has not
+- [Known false positives](docs/known-false-positives.md): findings that are true but may not apply, and measurements that vary
 
 ## Using the scripts directly
 
