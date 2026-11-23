@@ -5,6 +5,9 @@
 - **I agree**: the label is right (the tool said something true, or something intended; or it was wrong and the label says so).
 - **I disagree**: the label is wrong. A `valid` or `by-design` finding that you think is NOT a real issue becomes a `false-positive`; a `false-positive` that you think is real becomes `valid`.
 - Tick one box. Leave both empty to skip. Add a comment if you like.
+- **Severity** (optional, only for findings that are real): minor = cosmetic or rare · major = hurts some people or some journeys · critical = blocks a journey, excludes people, or breaks a feature. Tick at most one.
+- **Recommendation** (optional): `relevant` if the advice the tool gives would actually help on this kind of page; `not relevant` if it is generic, wrong for this page, or would make it worse. Tick at most one.
+- The human review is separate from the automatic run: only ticks made by a person set *reviewed by a human*.
 
 When you are done: `node benchmark/review-sheet.mjs --apply` (it updates `labels.json` and the published results). Labels with a tick become *reviewed by a human*.
 
@@ -18,6 +21,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 2. saas-landing · `perf:heavy-library` (warning)
@@ -28,6 +33,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 3. saas-landing · `perf:render-blocking-script` (warning)
@@ -38,6 +45,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 4. saas-landing · `responsive:text-too-small` (warning)
@@ -48,6 +57,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 5. saas-landing · `smoke:empty-link` (warning, ×9)
@@ -58,6 +69,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 6. ecommerce · `perf:heavy-library` (warning)
@@ -68,6 +81,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 7. ecommerce · `perf:third-party-heavy` (warning)
@@ -78,6 +93,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 8. ecommerce · `perf:render-blocking-script` (warning)
@@ -88,6 +105,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 9. ecommerce · `smoke:empty-link` (warning, ×2)
@@ -98,6 +117,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 10. ecommerce · `smoke:dead-control` (warning)
@@ -108,6 +129,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 11. dashboard · `a11y:no-skip-link` (warning)
@@ -118,6 +141,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 12. dashboard · `perf:heavy-library` (warning)
@@ -128,6 +153,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 13. dashboard · `perf:render-blocking-script` (warning)
@@ -138,6 +165,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 14. dashboard · `responsive:text-too-small` (warning)
@@ -148,6 +177,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 15. dashboard · `smoke:dead-control` (warning, ×8)
@@ -158,6 +189,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 16. dashboard · `smoke:empty-link` (warning, ×7)
@@ -168,6 +201,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 17. react-app · `audit:no-js-content-missing` (error)
@@ -178,6 +213,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 18. vue-app · `audit:no-js-content-missing` (error)
@@ -188,6 +225,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 19. vue-app · `audit:tap-target` (warning)
@@ -198,6 +237,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 20. institutional · `perf:heavy-library` (warning)
@@ -208,6 +249,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 21. institutional · `perf:render-blocking-script` (warning)
@@ -218,6 +261,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 22. institutional · `smoke:empty-link` (warning, ×3)
@@ -228,6 +273,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 23. editorial · `perf:heavy-library` (warning)
@@ -238,6 +285,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 24. editorial · `perf:render-blocking-script` (warning)
@@ -248,6 +297,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 25. editorial · `smoke:empty-link` (warning, ×9)
@@ -258,6 +309,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 26. responsive-app · `a11y:no-skip-link` (warning)
@@ -268,6 +321,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 27. responsive-app · `perf:heavy-library` (warning)
@@ -278,6 +333,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 28. responsive-app · `perf:render-blocking-script` (warning)
@@ -288,6 +345,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 29. responsive-app · `smoke:empty-link` (warning, ×2)
@@ -298,6 +357,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 30. responsive-app · `smoke:dead-control` (warning, ×4)
@@ -308,6 +369,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 31. multi-journey-app · `audit:tap-target` (warning)
@@ -318,6 +381,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 32. multi-journey-app · `perf:heavy-library` (warning)
@@ -328,6 +393,8 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 
 
 ### 33. multi-journey-app · `perf:render-blocking-script` (warning)
@@ -338,4 +405,6 @@ Label meaning: **valid**: a real problem or a true statement about the page · *
 
 - [ ] I agree
 - [ ] I disagree
+- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical
+- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant
 - Comment: 

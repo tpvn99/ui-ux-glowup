@@ -143,6 +143,8 @@ export const IMPACT = {
   "table-no-search": "medium", "no-date": "medium", "radio-group-no-legend": "medium",
   "nav-too-many": "low", "table-no-sort": "low", "table-no-count": "low", "no-author": "low", "no-login-link": "low",
 };
+/** Rules that rest on a judgement about what the page is for, not on something measured: shown as such, easy to ignore. */
+export const HEURISTIC = new Set(["no-primary-action", "primary-action-buried", "competing-primary-actions", "nav-too-many", "long-form", "table-no-sort", "table-no-count", "table-no-search", "no-author", "no-login-link", "no-pricing-link", "no-shipping-info", "no-hours-or-address", "no-date", "no-home-link", "no-buy-action", "no-signup-action", "no-contact-method"]);
 const IMPACT_RANK = { high: 0, medium: 1, low: 2 };
 export const CONTEXTS = ["auto", "saas", "ecommerce", "showcase", "dashboard", "content", "app"];
 
@@ -160,9 +162,9 @@ export function inferContext(d) {
   return "app";
 }
 
-export function uxFindings(d, { context = "auto" } = {}) {
+export function uxFindings(d, { context = "auto", ignore = [] } = {}) {
   const out = [];
-  const add = (rule, severity, message, fix, items = []) => out.push({ rule, severity, message, fix, items: items.slice(0, 4), impact: IMPACT[rule] || "medium", kind: "usability" });
+  const add = (rule, severity, message, fix, items = []) => out.push({ rule, severity, message, fix, items: items.slice(0, 4), impact: IMPACT[rule] || "medium", kind: "usability", basis: HEURISTIC.has(rule) ? "judgement" : "measured" });
   const ctx = context === "auto" ? inferContext(d) : context;
   const x = d.extras;
 
@@ -229,19 +231,27 @@ export function uxFindings(d, { context = "auto" } = {}) {
   }
   out.context = ctx;
   if (d.web && !d.isHome && !d.homeLink) add("no-home-link", "warning", "No link back to the home page (logo or menu).", "Make the logo a link to /.");
-  const ranked = out.sort((a, b) => IMPACT_RANK[a.impact] - IMPACT_RANK[b.impact] || (a.severity === "error" ? -1 : 0));
+  const kept = out.filter((f) => !ignore.includes(f.rule));
+  const ranked = kept.sort((a, b) => IMPACT_RANK[a.impact] - IMPACT_RANK[b.impact] || (a.severity === "error" ? -1 : 0));
   ranked.context = ctx;
+  ranked.ignored = out.length - kept.length;
   return ranked;
 }
 
 export function formatUx(findings, viewport) {
   const ctx = findings.context ? `, as ${findings.context}` : "";
-  if (!findings.length) return `UX audit (${viewport}${ctx}): no issue found by these checks.`;
-  const lines = [`UX audit (${viewport}${ctx}): ${findings.length} issue(s), most impactful first`];
+  const ign = findings.ignored ? ` (${findings.ignored} ignored on request)` : "";
+  if (!findings.length) return `UX audit (${viewport}${ctx}): no issue found by these checks${ign}.`;
+  const lines = [`UX audit (${viewport}${ctx}): ${findings.length} issue(s), most impactful first${ign}`];
   for (const f of findings) {
-    lines.push(`  ${f.severity === "error" ? "✗" : "!"} [${f.impact}] ${f.rule} — ${f.message}`);
+    lines.push(`  ${f.severity === "error" ? "✗" : "!"} [${f.impact}${f.basis === "judgement" ? " · judgement" : ""}] ${f.rule} — ${f.message}`);
     if (f.items.length) lines.push(`      ${f.items.join(" · ")}`);
     lines.push(`      → ${f.fix}`);
   }
   return lines.join("\n");
+}
+
+/** One line that tells readers how to read the tags, only when a judgement call is in the list. */
+export function uxLegend(findings) {
+  return findings.some((f) => f.basis === "judgement") ? "  judgement = depends on what this page is for; ignore it with --ignore <rule> when it does not apply." : "";
 }

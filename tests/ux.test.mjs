@@ -57,3 +57,21 @@ test("ux.mjs finds the problems of a bad page and none on the corrected one", { 
   const good = await ux(fixture("ux-good.html"));
   assert.deepEqual(good.findings.map((f) => f.rule), [], JSON.stringify(good.findings));
 });
+
+test("every UX finding says whether it was measured or is a judgement, and a judgement can be ignored", async () => {
+  const { formatUx, uxLegend } = await import("../skills/ui-ux-glowup/scripts/lib/ux.mjs");
+  const d = data({ filled: [], fields: [field({ placeholder: true, labelled: false })] });
+  const all = uxFindings(d, { context: "saas" });
+  const by = Object.fromEntries(all.map((f) => [f.rule, f.basis]));
+  assert.equal(by["no-primary-action"], "judgement");
+  assert.equal(by["placeholder-as-label"], "measured");
+  assert.ok(all.every((f) => f.basis === "judgement" || f.basis === "measured"));
+  assert.match(formatUx(all, "desktop"), /\[high · judgement\] no-primary-action/);
+  assert.match(formatUx(all, "desktop"), /\[high\] placeholder-as-label/);
+  assert.match(uxLegend(all), /ignore it with --ignore/);
+  const kept = uxFindings(d, { context: "saas", ignore: ["no-primary-action"] });
+  assert.ok(!kept.some((f) => f.rule === "no-primary-action"));
+  assert.equal(kept.ignored, 1);
+  assert.match(formatUx(kept, "desktop"), /1 ignored on request/);
+  assert.equal(uxLegend(uxFindings(data(), { context: "saas" })), "");
+});

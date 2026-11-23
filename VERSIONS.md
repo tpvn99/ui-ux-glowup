@@ -8,6 +8,15 @@ Current versions of all skills. Agents can compare against local versions to che
 
 ## Recent Changes
 
+### Unreleased (after 1.15.2)
+
+- `a11y.mjs`: `grid-no-arrow-keys` and `grid-not-focusable` for `role=grid` / `treegrid` (data grids, date-picker day grids). A date picker is only checked when its grid is on the page without opening anything; the popup is not opened automatically.
+- `perf.mjs --interact`: clicks up to 8 safe controls and reports the slowest response (`inp-slow`) as a lab measurement. Not field INP; CrUX is not integrated.
+- `ux.mjs`: every finding is tagged *measured* or *judgement*; `--ignore rule,rule` drops the ones that do not apply.
+- `audit` report: a line under the score says how many errors remain.
+- `pdfcheck`: macOS and Windows system fallback fonts are recognised.
+- Benchmark: rerun on 1.15.2; human-review fields (severity, recommendation relevance); one retry on a browser launch timeout.
+
 ### 1.15.2 (2026-11-19)
 
 - **ui-ux-glowup** (1.15.1 → 1.15.2): `lang-mismatch` is more reliable, and the benchmark now really measures it.

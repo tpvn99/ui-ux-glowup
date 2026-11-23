@@ -119,3 +119,23 @@ test("real pages: layout animation found, calm animation clean; the flaky profil
   assert.ok(runs.every((r) => rules(r.findings).includes("breaks-on-failed-requests")), runs.map((r) => rules(r.findings).join()).join(" | "));
   assert.equal(runs[0].requests, runs[1].requests, "the same requests are lost on every run");
 });
+
+const fx = (n) => fileURLToPath(new URL(`./fixtures/${n}`, import.meta.url));
+
+test("interaction latency: off unless asked, a slow click handler is reported, a fast one and a destructive button are left alone", { skip }, async () => {
+  const off = await perf(fx("inp-slow.html"), { profile: "fast" });
+  assert.equal(off.metrics.inp, null, "no interaction without --interact");
+  const slow = await perf(fx("inp-slow.html"), { profile: "fast", interact: true });
+  assert.ok(slow.metrics.inp >= 400, `inp ${slow.metrics.inp}`);
+  assert.ok(rules(slow.findings).includes("inp-slow"), rules(slow.findings));
+  const fast = await perf(fx("inp-fast.html"), { profile: "fast", interact: true });
+  assert.ok(!rules(fast.findings).includes("inp-slow"), JSON.stringify(fast.findings));
+  assert.equal(fast.metrics.interactions >= 1, true);
+});
+
+test("inp-slow wording: a lab measurement, never presented as the INP of real visitors", () => {
+  const f = perfFindings({ metrics: { lcp: 1000, cls: 0, tbt: 0, longTasks: 0, inp: 620, interactions: 3 }, images: [], resources: [], page: { blockingScripts: [], fonts: [], effects: [], animations: [] } });
+  const x = f.find((y) => y.rule === "inp-slow");
+  assert.equal(x.severity, "error");
+  assert.match(x.message, /lab measurement/); assert.match(x.message, /not the INP of real visitors/);
+});
