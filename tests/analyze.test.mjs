@@ -211,3 +211,16 @@ test("rtl-direction: Arabic or Hebrew text needs dir=rtl (good and bad fixtures)
   const en = page({ textSample: EN, bodyDirection: "ltr" });
   assert.ok(!analyze(en, en).some((f) => f.rule === "rtl-direction"));
 });
+
+test("lang-mismatch: a label-heavy page is still recognised, a near tie is not guessed", () => {
+  const labels = "Dashboard Revenue 12 400 Orders 318 Customers Settings Export the report Filter by date Search for a customer and view the orders Your plan is active Invoices Team members Add a member to the team and set the role for the account Sales by region Last 30 days compared with the previous period Download the data";
+  const bad = page({ lang: "fr", textSample: labels });
+  assert.ok(analyze(bad, bad).some((f) => f.rule === "lang-mismatch"));
+  const tie = page({ lang: "en", textSample: "the and of to in is para com não uma os mais Product Price Cart Checkout Orders Account Search Menu Home About Contact Help Support Pricing Terms Privacy Status Login Signup Settings Profile Billing Docs Blog Careers Press Partners Reports Teams Plans Tours Maps Notes Files Links Tags Items Views" });
+  assert.ok(!analyze(tie, tie).some((f) => f.rule === "lang-mismatch"));
+});
+
+test("lang-mismatch: the \"com\" of an email address is not a Portuguese word", () => {
+  const p = page({ lang: "en", textSample: "Customers Status Balance Amara amara@example.com Active Brightside accounts@example.com Overdue ops@example.com Archived billing@example.com the list of people and companies you invoice with the status of each one in the table and a link to the last invoice for your team at example.com and www.example.com" });
+  assert.ok(!analyze(p, p).some((f) => f.rule === "lang-mismatch"));
+});

@@ -472,16 +472,17 @@ const STOP = {
   es: "el la los las de y es una un para en que con por su se del al como más usted".split(" "),
   de: "der die das und ist nicht ein eine für mit von zu auf den dem sie wir ich auch bei".split(" "),
   it: "il lo gli di e è una un per che con non sono del della le nel più da si".split(" "),
-  pt: "o os as de e é uma um para que com não em do da dos no na por mais você".split(" "),
+  pt: "os de é uma um para que com não em da dos na por mais você".split(" "), // no "o", "e", "as", "do", "no": common English words
 };
 
 /** Best guess of the language of a text from common words; null when the text is short or the guess is not clear. */
 function guessLanguage(text) {
-  const words = String(text).toLowerCase().match(/\p{L}+/gu) || [];
+  const words = String(text).toLowerCase().replace(/\S+@\S+|https?:\/\/\S+|\b[\w-]+\.(com|org|net|io|fr|de|es|co|dev)\b/g, " ").match(/\p{L}+/gu) || [];
   if (words.length < 40) return null;
-  const scores = Object.entries(STOP).map(([lang, list]) => { const set = new Set(list); return [lang, words.filter((w) => set.has(w)).length / words.length]; }).sort((a, b) => b[1] - a[1]);
+  const scores = Object.entries(STOP).map(([lang, list]) => { const set = new Set(list); return [lang, words.filter((w) => set.has(w)).length]; }).sort((a, b) => b[1] - a[1]);
   const [best, second] = scores;
-  return best[1] >= 0.12 && best[1] >= second[1] * 1.5 ? best[0] : null;
+  // Label-heavy pages (shops, dashboards) have few common words: a low share is enough if the winner clearly leads.
+  return best[1] >= 5 && best[1] / words.length >= 0.04 && best[1] >= second[1] * 2 ? best[0] : null;
 }
 
 /** Share of letters written in a right-to-left script. */

@@ -83,5 +83,50 @@
     "cleanWarnings": 28,
     "falsePositives": 0,
     "seconds": 975
+  },
+  {
+    "date": "2026-11-18",
+    "version": "1.15.1",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "recall": 0.992,
+    "trapRecall": 0.95,
+    "attributable": 120,
+    "detected": 119,
+    "cleanErrors": 3,
+    "cleanWarnings": 27,
+    "falsePositives": 0,
+    "seconds": 6778
+  },
+  {
+    "date": "2026-11-18",
+    "version": "1.15.1",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "recall": 0.981,
+    "trapRecall": 1,
+    "attributable": 108,
+    "detected": 106,
+    "cleanErrors": 4,
+    "cleanWarnings": 31,
+    "falsePositives": 1,
+    "seconds": 12089
+  },
+  {
+    "date": "2026-11-18",
+    "version": "1.15.1",
+    "node": "v26.7.0",
+    "os": "darwin arm64",
+    "fast": false,
+    "recall": 1,
+    "trapRecall": 1,
+    "attributable": 133,
+    "detected": 133,
+    "cleanErrors": 2,
+    "cleanWarnings": 31,
+    "falsePositives": 0,
+    "seconds": 1123
   }
 ]

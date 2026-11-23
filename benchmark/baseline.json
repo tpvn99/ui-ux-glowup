@@ -1,7 +1,7 @@
 {
   "meta": {
     "date": "2026-11-18",
-    "version": "1.15.0",
+    "version": "1.15.1",
     "node": "v26.7.0",
     "os": "darwin arm64",
     "fast": false
@@ -9,7 +9,7 @@
   "recall": 1,
   "trapRecall": 1,
   "cleanErrors": 2,
-  "cleanWarnings": 28,
+  "cleanWarnings": 31,
   "falsePositives": 0,
-  "projects": 9
+  "projects": 10
 }
