@@ -3,11 +3,12 @@
 // perfFindings is pure and unit-tested.
 
 export function initPerf() {
-  window.__perf = { lcp: null, lcpNode: null, fcp: null, longTasks: 0, tbt: 0 };
+  window.__perf = { lcp: null, lcpNode: null, fcp: null, longTasks: 0, tbt: 0, inter: {} };
   try {
     new PerformanceObserver((l) => { for (const e of l.getEntries()) { window.__perf.lcp = e.startTime; window.__perf.lcpNode = e.element || null; } }).observe({ type: "largest-contentful-paint", buffered: true });
     new PerformanceObserver((l) => { for (const e of l.getEntries()) if (e.name === "first-contentful-paint") window.__perf.fcp = e.startTime; }).observe({ type: "paint", buffered: true });
     new PerformanceObserver((l) => { for (const e of l.getEntries()) { window.__perf.longTasks++; window.__perf.tbt += Math.max(0, e.duration - 50); } }).observe({ type: "longtask", buffered: true });
+    new PerformanceObserver((l) => { for (const e of l.getEntries()) if (e.interactionId) window.__perf.inter[e.interactionId] = Math.max(window.__perf.inter[e.interactionId] || 0, e.duration); }).observe({ type: "event", durationThreshold: 16, buffered: true });
   } catch {}
 }
 
@@ -19,7 +20,7 @@ export function readPerf() {
   const n = p.lcpNode;
   let lcpEl = null;
   if (n) lcpEl = { sel: n.tagName.toLowerCase() + (n.id ? "#" + n.id : n.classList && n.classList[0] ? "." + n.classList[0] : ""), isImg: n.tagName === "IMG", src: n.currentSrc || n.src || "", loading: n.getAttribute && n.getAttribute("loading"), fetchpriority: n.getAttribute && n.getAttribute("fetchpriority") };
-  return { lcp: p.lcp, fcp: p.fcp, ttfb: nav ? nav.responseStart : null, cls: Math.round(cls * 1000) / 1000, tbt: Math.round(p.tbt || 0), longTasks: p.longTasks || 0, lcpEl };
+  return { lcp: p.lcp, fcp: p.fcp, ttfb: nav ? nav.responseStart : null, cls: Math.round(cls * 1000) / 1000, tbt: Math.round(p.tbt || 0), longTasks: p.longTasks || 0, lcpEl, inp: Object.keys(p.inter || {}).length ? Math.round(Math.max(...Object.values(p.inter))) : null, interactions: Object.keys(p.inter || {}).length };
 }
 
 export function collectImages() {
@@ -80,6 +81,7 @@ export function perfFindings(d) {
   if (m.lcp != null && m.lcp > 2500) add("lcp-slow", m.lcp > 4000 ? "error" : "warning", `Largest Contentful Paint ${sec(m.lcp)} (good ≤ 2.5s)${m.lcpEl ? ` — ${m.lcpEl.sel}` : ""}.`, "Preload or prioritise the LCP image (fetchpriority=\"high\"), shrink it, remove render-blocking scripts and fonts ahead of it.", m.lcpEl ? [m.lcpEl.src ? name(m.lcpEl.src) : m.lcpEl.sel] : []);
   if (m.cls > 0.1) add("cls-high", m.cls > 0.25 ? "error" : "warning", `Cumulative Layout Shift ${m.cls} (good ≤ 0.1).`, "Reserve space: width/height or aspect-ratio on images and embeds, min-height on late content, no insertion above existing content.");
   if (m.tbt > 200) add("tbt-high", m.tbt > 600 ? "error" : "warning", `${m.tbt} ms of blocking main-thread time over ${m.longTasks} long task(s) (INP risk; good ≤ 200 ms).`, "Split or defer heavy scripts, drop unused libraries, load third parties after interaction.");
+  if (m.inp != null && m.inp > 200) add("inp-slow", m.inp > 500 ? "error" : "warning", `The slowest of ${m.interactions} interaction(s) measured here took ${m.inp} ms to respond (good ≤ 200 ms). This is a lab measurement of a few clicks on this machine, not the INP of real visitors.`, "Do less work in the click handler: defer heavy updates (requestIdleCallback, startTransition), split long tasks, avoid layout thrashing, load third parties after interaction.");
   if (m.fcp != null && m.fcp > 1800) add("fcp-slow", "warning", `First Contentful Paint ${sec(m.fcp)} (good ≤ 1.8s).`, "Inline critical CSS, defer scripts, preconnect to the font and image hosts.");
   if (m.ttfb != null && m.ttfb > 800) add("ttfb-slow", "warning", `Server response ${Math.round(m.ttfb)} ms (good ≤ 800 ms).`, "Cache the HTML, use a CDN, remove server-side work from the first byte.");
 
@@ -121,7 +123,7 @@ export function perfFindings(d) {
 }
 
 export function formatPerf(f, summary) {
-  const head = `Performance (${summary.profile}): LCP ${summary.lcp} · CLS ${summary.cls} · TBT ${summary.tbt} ms · ${summary.weight} in ${summary.requests} requests`;
+  const head = `Performance (${summary.profile}): LCP ${summary.lcp} · CLS ${summary.cls} · TBT ${summary.tbt} ms${summary.inp != null ? ` · interaction latency ${summary.inp} ms (lab, ${summary.interactions} interaction(s))` : ""} · ${summary.weight} in ${summary.requests} requests`;
   if (!f.length) return head + "\n  no issue found by these checks.";
   const errors = f.filter((x) => x.severity === "error").length;
   const lines = [head, `  ${errors} error(s), ${f.length - errors} warning(s)`];

@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grid good</title>
+<style>body{margin:0;font:16px/1.5 sans-serif;padding:16px}td,th{padding:8px 12px;min-width:44px;min-height:44px}[role=gridcell]:focus{outline:2px solid #1d4ed8}</style></head><body><a href="#main" class="skip">Skip to content</a><main id="main">
+<h1>Booking</h1>
+<table role="grid" aria-label="Pick a day, July">
+<thead><tr><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th></tr></thead>
+<tbody><tr><td role="gridcell" tabindex="0">1</td><td role="gridcell" tabindex="-1">2</td><td role="gridcell" tabindex="-1">3</td></tr>
+<tr><td role="gridcell" tabindex="-1">8</td><td role="gridcell" tabindex="-1">9</td><td role="gridcell" tabindex="-1">10</td></tr></tbody></table>
+</main><script>
+var cells=[].slice.call(document.querySelectorAll("[role=gridcell]")),cols=3;
+cells.forEach(function(c,i){c.onkeydown=function(e){var n=i;if(e.key==="ArrowRight")n=i+1;if(e.key==="ArrowLeft")n=i-1;if(e.key==="ArrowDown")n=i+cols;if(e.key==="ArrowUp")n=i-cols;if(n!==i&&cells[n]){cells.forEach(function(x){x.tabIndex=-1});cells[n].tabIndex=0;cells[n].focus();e.preventDefault()}}});
+</script></body></html>

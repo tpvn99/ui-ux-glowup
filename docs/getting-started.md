@@ -47,6 +47,18 @@ Open `report.html` in a browser. An [example report](example-report.md) shows wh
 
 The agent first saves a backup, asks only the questions it needs, makes the change, and runs the checks again. You receive the code, a before/after comparison and a **Directions taken** recap. If you dislike the result: `node <skill-dir>/scripts/safeguard.mjs restore latest --yes` puts everything back.
 
+## Which level? Quick, Standard or Full
+
+Say it in your prompt, or the agent picks one and tells you which.
+
+| Level | Use it for | Example prompt |
+|---|---|---|
+| **Quick** | One component or one bug | "Fix the slider on mobile in `Slider.tsx`." |
+| **Standard** (default) | One page to improve or build | "Improve the pricing page. Keep our colors and fonts." |
+| **Full** | A whole site, or a new site from scratch | "Redesign the whole site; list the product decisions you need me to confirm first." |
+
+To only look, say "audit only" or "tell me what to fix first, don't change any code". Anything you do not want changed goes in the prompt ("keep the copy", "keep the logo and colors").
+
 ## Keeping it up to date
 
 `node <skill-dir>/scripts/doctor.mjs --online` says whether a newer release exists and which command updates it (see [installing for each agent](install-by-agent.md)).

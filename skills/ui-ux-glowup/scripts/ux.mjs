@@ -7,17 +7,17 @@
 // for that kind of site; --links also tests every internal link. Findings are sorted by impact.
 //
 // Usage:
-//   node ux.mjs <page | url> [--only mobile] [--context ecommerce] [--links] [--json out.json] [--storage-state state.json] [--wait-for "<css>"]
+//   node ux.mjs <page | url> [--only mobile] [--context ecommerce] [--links] [--ignore rule,rule] [--json out.json] [--storage-state state.json] [--wait-for "<css>"]
 
 import { writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { VIEWPORTS, loadPlaywright, launchBrowser, resolveTarget, openPage, parseArgs, isMain, commonOptions } from "./lib/browser.mjs";
 import { saveJson } from "./lib/redact.mjs";
-import { collectUx, uxFindings, formatUx } from "./lib/ux.mjs";
+import { collectUx, uxFindings, formatUx, uxLegend } from "./lib/ux.mjs";
 
 export { uxFindings, formatUx };
 
-export async function ux(target, { route, viewport = "desktop", context = "auto", links = false, ...options } = {}) {
+export async function ux(target, { route, viewport = "desktop", context = "auto", links = false, ignore = [], ...options } = {}) {
   const pw = await loadPlaywright();
   const browser = await launchBrowser(pw, options.browser);
   try {
@@ -33,10 +33,12 @@ export async function ux(target, { route, viewport = "desktop", context = "auto"
       }
     }
     await close();
-    const findings = uxFindings(data, { context });
+    const findings = uxFindings(data, { context, ignore });
     const ctx = findings.context;
+    const ignored = findings.ignored;
     if (broken.length) findings.unshift({ rule: "broken-internal-link", severity: "error", message: `${broken.length} internal link(s) lead nowhere.`, fix: "Fix the target, redirect the old address, or remove the link.", items: broken.slice(0, 4), impact: "high", kind: "usability" });
     findings.context = ctx;
+    findings.ignored = ignored;
     return { viewport, context: ctx, findings };
   } finally {
     await browser.close();
@@ -51,8 +53,9 @@ if (isMain(import.meta.url)) {
   }
   try {
     const viewport = flags.only === "mobile" ? "mobile" : "desktop";
-    const r = await ux(target, { ...commonOptions(flags), viewport, context: typeof flags.context === "string" ? flags.context : "auto", links: !!flags.links });
+    const r = await ux(target, { ...commonOptions(flags), viewport, context: typeof flags.context === "string" ? flags.context : "auto", links: !!flags.links, ignore: typeof flags.ignore === "string" ? flags.ignore.split(",").map((x) => x.trim()) : [] });
     console.log(formatUx(r.findings, viewport));
+    if (uxLegend(r.findings)) console.log(uxLegend(r.findings));
     if (flags.json) saveJson(flags.json === true ? "ux.json" : flags.json, r);
     process.exit(r.findings.some((f) => f.severity === "error") ? 1 : 0);
   } catch (e) {

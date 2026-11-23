@@ -1,0 +1,3 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Slow click</title></head><body><main><h1>Filters</h1>
+<button id="b" type="button" style="min-height:44px">Apply filters</button><p id="out">idle</p></main>
+<script>document.getElementById("b").addEventListener("click",function(){var t=performance.now();while(performance.now()-t<450){}document.getElementById("out").textContent="done"})</script></body></html>

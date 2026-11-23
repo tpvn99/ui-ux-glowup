@@ -103,3 +103,16 @@ test("brief and delta reports stay short and keep what matters", async () => {
   assert.match(delta, /! NEW contrast/);
   assert.match(delta, /! tap-target: a 1$/m);
 });
+
+test("a high score never hides an error: the report says how many errors remain right under the score", async () => {
+  const { formatReport, blockersLine } = await import("../skills/ui-ux-glowup/scripts/lib/report.mjs");
+  const { CRITERIA } = await import("../skills/ui-ux-glowup/scripts/lib/analyze.mjs");
+  const scores = Object.fromEntries(CRITERIA.map((c) => [c, 5]));
+  const finding = (criterion, severity) => ({ criterion, severity, rule: "r", message: "m", items: [] });
+  const high = { target: "x", scores, total: 44, max: 45, findings: [finding("Accessibility", "error"), finding("Accessibility", "error"), finding("Spacing", "warning")] };
+  const lines = formatReport(high).split("\n");
+  const at = lines.findIndex((l) => /^Audit: /.test(l));
+  assert.match(lines[at + 1], /^2 error\(s\) to fix before anything else \(2 in accessibility\): the score is a summary and does not offset them\.$/);
+  assert.equal(blockersLine({ findings: [finding("Spacing", "warning")] }), "", "no line when there is no error");
+  assert.match(formatReport(high, { brief: true }), /2 error\(s\) to fix before anything else/);
+});

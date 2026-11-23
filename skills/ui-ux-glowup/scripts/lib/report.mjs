@@ -9,11 +9,21 @@ const SHORT = { Hierarchy: "Hierarchy", Typography: "Typography", Spacing: "Spac
  * options.brief: one line per finding (rule id + first items), no explanations or token summary — for re-audits.
  * options.maxItems: offending elements listed per finding (default 4, brief 2).
  */
+/** A good total never hides an error: say how many there are, right under the score. */
+export function blockersLine(result) {
+  const errors = (result.findings || []).filter((f) => f.severity === "error");
+  if (!errors.length) return "";
+  const a11y = errors.filter((f) => /access/i.test(f.criterion || "")).length;
+  return `${errors.length} error(s) to fix before anything else${a11y ? ` (${a11y} in accessibility)` : ""}: the score is a summary and does not offset them.`;
+}
+
 export function formatReport(result, { brief = false, maxItems = brief ? 2 : 4 } = {}) {
   const lines = [];
   if (!brief) lines.push(`Automated audit — ${result.target}`);
   if (result.note) lines.push(result.note);
   lines.push(scoreLine(result));
+  const blockers = blockersLine(result);
+  if (blockers) lines.push(blockers);
   if (noJsLine(result) && !brief) lines.push(noJsLine(result));
   if (!brief) lines.push("(* partly measurable — confirm with a visual review of the screenshots)", "");
   const sorted = sortFindings(result.findings);

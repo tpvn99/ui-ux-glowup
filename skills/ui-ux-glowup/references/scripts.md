@@ -17,9 +17,9 @@ The workflow in `SKILL.md` shows `audit`, `audit-site`, `inventory`, `extract-to
 | `roles.mjs <url> --as a=a.json --as b=none` | What each role sees; `--forbid role:css` / `--require role:css`; `--expect role:GET:/path:401,403` asks the server (safe methods only without `--unsafe`) |
 | `visual-diff.mjs <before> <after>` | Pixel diff with tolerance, changed regions, elements named, moving content ignored |
 | `stack.mjs [dir]` | Framework, styling, token files, WordPress builders |
-| `ux.mjs <page>` | UX audit, a fix per finding |
+| `ux.mjs <page> [--ignore rule,rule]` | UX audit, a fix per finding; each finding is tagged *measured* or *judgement* (depends on what the page is for) and a judgement can be ignored |
 | `a11y.mjs <page>` | WCAG 2.2 AA: Tab walk, ARIA, reflow 320px |
-| `perf.mjs <page> [--baseline]` | LCP, CLS, TBT, weight on a throttled phone |
+| `perf.mjs <page> [--baseline] [--interact]` | LCP, CLS, TBT, weight on a throttled phone; `--interact` also clicks up to 8 safe controls (never delete, pay, send, log out…) and reports the slowest response as a **lab** interaction latency, not the INP of real visitors |
 | `safeguard.mjs backup\|restore\|check` | Snapshot, rollback, secrets and session files |
 | `locate.mjs <audit.json> [src]` | Findings to `file:line` |
 | `scenario.mjs <page> <file.json>` | User journeys; regressions vs a saved run |
