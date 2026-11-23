@@ -2,7 +2,7 @@
 
 Do the tools find real problems, or just produce a score? Ten prepared projects, each with known defects seeded into it and known regressions injected into it, answer that for what was seeded. The full method, the ten projects and how to run it are in [`benchmark/README.md`](../benchmark/README.md); the raw tables are in [`benchmark/RESULTS.md`](../benchmark/RESULTS.md).
 
-## Result (1.15.2, full checks, one machine)
+## Result (1.15.2, run on 2026-11-23, full checks, one machine: macOS arm64, Node 26)
 
 | Indicator | Result |
 |---|---|
@@ -10,8 +10,8 @@ Do the tools find real problems, or just produce a score? Ten prepared projects,
 | Defects seeded | 141; 133 attributable (3 did not apply to their page, 5 were ambiguous because the clean page already reports that rule) |
 | **Found** | **133 of 133** (including `lang-wrong` on 3 projects and `rtl-not-mirrored` on 5) |
 | **Regressions caught** | **25 of 25** (a link removed, a field no longer required, buttons that lost their handlers, a new script error, a heading removed) |
-| Findings on the clean pages | 33 (2 errors, 31 warnings), all reviewed: 33 accurate, 0 false positives left |
-| Run time | about 19 minutes (1123 s) for 10 projects (3 pages each) |
+| Findings on the clean pages | 34 (2 errors, 32 warnings). 33 were labelled by an AI agent (0 false positives among them); 1 is new and unlabelled (`perf:fcp-slow` on the multi-journey app, a lab timing that depends on the CDN: reported in 3 of 3 runs on 2026-11-23, absent on 2026-11-18). **0 reviewed by a human.** |
+| Run time | about 20 minutes (1213 s) for 10 projects (3 pages each) |
 | Tokens | not measurable: the checks are scripts and call no model |
 
 ## How to read it, honestly

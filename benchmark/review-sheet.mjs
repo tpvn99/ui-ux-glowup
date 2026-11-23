@@ -32,13 +32,19 @@ export function buildSheet(results, labels) {
     `${items.length} findings were reported on pages where nothing was seeded. Each was labelled by an AI agent, which is not a review. **Your job: for each one, say whether you agree.**`, "",
     "- **I agree**: the label is right (the tool said something true, or something intended; or it was wrong and the label says so).",
     "- **I disagree**: the label is wrong. A `valid` or `by-design` finding that you think is NOT a real issue becomes a `false-positive`; a `false-positive` that you think is real becomes `valid`.",
-    "- Tick one box. Leave both empty to skip. Add a comment if you like.", "",
+    "- Tick one box. Leave both empty to skip. Add a comment if you like.",
+    "- **Severity** (optional, only for findings that are real): minor = cosmetic or rare · major = hurts some people or some journeys · critical = blocks a journey, excludes people, or breaks a feature. Tick at most one.",
+    "- **Recommendation** (optional): `relevant` if the advice the tool gives would actually help on this kind of page; `not relevant` if it is generic, wrong for this page, or would make it worse. Tick at most one.",
+    "- The human review is separate from the automatic run: only ticks made by a person set *reviewed by a human*.", "",
     "When you are done: `node benchmark/review-sheet.mjs --apply` (it updates `labels.json` and the published results). Labels with a tick become *reviewed by a human*.", "",
     `Label meaning: ${Object.entries(LABELS).map(([k, v]) => `**${k}**: ${v}`).join(" · ")}.`, ""];
   items.forEach((it, i) => {
     L.push(`### ${i + 1}. ${it.project} · \`${it.key}\` (${it.severity}${it.count > 1 ? `, ×${it.count}` : ""})`, "",
       `**The tool says:** ${SAYS[it.key] || it.key}`, "", `**Label:** ${it.label}${it.note ? ` — ${it.note}` : ""}`, "",
-      "- [ ] I agree", "- [ ] I disagree", "- Comment: ", "");
+      "- [ ] I agree", "- [ ] I disagree",
+      "- If the finding is real, how bad is it? (optional) [ ] minor  [ ] major  [ ] critical",
+      "- Is the tool's recommendation useful here? (optional) [ ] relevant  [ ] not relevant",
+      "- Comment: ", "");
   });
   return L.join("\n");
 }
@@ -53,7 +59,8 @@ export function readSheet(text) {
     if (!head) continue;
     const agree = /- \[[xX]\] I agree/.test(block), disagree = /- \[[xX]\] I disagree/.test(block);
     if (agree === disagree) continue;
-    out.push({ index: Number(head[1]), project: head[2], key: head[3], verdict: agree ? "agree" : "disagree", comment: (block.match(/- Comment: (.*)/) || [, ""])[1].trim() });
+    const one = (names) => { const hit = names.filter((n) => new RegExp(`\\[[xX]\\] ${n}(?![a-z])`).test(block)); return hit.length === 1 ? hit[0].replace(" ", "-") : undefined; };
+    out.push({ index: Number(head[1]), project: head[2], key: head[3], verdict: agree ? "agree" : "disagree", comment: (block.match(/- Comment: (.*)/) || [, ""])[1].trim(), severity: one(["minor", "major", "critical"]), recommendation: one(["relevant", "not relevant"]) });
   }
   return out;
 }
@@ -66,6 +73,8 @@ export function applyReview(answers, labels) {
     if (a.verdict === "disagree") cur.label = flip(cur.label);
     cur.reviewedBy = "human";
     if (a.comment) cur.humanComment = a.comment;
+    if (a.severity) cur.humanSeverity = a.severity;
+    if (a.recommendation) cur.recommendation = a.recommendation;
     next[k] = cur;
   }
   return next;

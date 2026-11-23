@@ -25,7 +25,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const labels = existsSync(join(here, "labels.json")) ? JSON.parse(readFileSync(join(here, "labels.json"), "utf8")) : {};
 
-const labelOf = (k) => { const l = labels[k]; return typeof l === "string" ? { label: l } : l ? { label: l.label, note: l.humanComment ? `${l.note ? l.note + "; " : ""}reviewer: ${l.humanComment}` : l.note, human: l.reviewedBy === "human" } : { label: "unreviewed" }; };
+const labelOf = (k) => { const l = labels[k]; return typeof l === "string" ? { label: l } : l ? { label: l.label, note: l.humanComment ? `${l.note ? l.note + "; " : ""}reviewer: ${l.humanComment}` : l.note, human: l.reviewedBy === "human", humanSeverity: l.humanSeverity, recommendation: l.recommendation } : { label: "unreviewed" }; };
 const keys = (snap) => new Set(normalize(snap, snap.smokeFindings).map((f) => `${f.source}:${f.rule}`));
 const sev = (snap, s) => normalize(snap, snap.smokeFindings).filter((f) => f.severity === s);
 const ms = async (fn) => { const t = performance.now(); const v = await fn(); return [v, Math.round(performance.now() - t)]; };
@@ -82,7 +82,7 @@ export async function runProject(p, { fast = false } = {}) {
   });
 
   const cleanAll = normalize(snapAfter, snapAfter.smokeFindings).filter((f) => f.severity !== "info");
-  const clean = [...new Map(cleanAll.map((f) => [`${f.source}:${f.rule}`, f])).values()].map((f) => ({ key: `${f.source}:${f.rule}`, severity: f.severity, count: cleanAll.filter((x) => x.source === f.source && x.rule === f.rule).length, label: labelOf(`${p.id}:${f.source}:${f.rule}`).label, note: labelOf(`${p.id}:${f.source}:${f.rule}`).note, human: labelOf(`${p.id}:${f.source}:${f.rule}`).human || false }));
+  const clean = [...new Map(cleanAll.map((f) => [`${f.source}:${f.rule}`, f])).values()].map((f) => ({ key: `${f.source}:${f.rule}`, severity: f.severity, count: cleanAll.filter((x) => x.source === f.source && x.rule === f.rule).length, label: labelOf(`${p.id}:${f.source}:${f.rule}`).label, note: labelOf(`${p.id}:${f.source}:${f.rule}`).note, human: labelOf(`${p.id}:${f.source}:${f.rule}`).human || false, humanSeverity: labelOf(`${p.id}:${f.source}:${f.rule}`).humanSeverity, recommendation: labelOf(`${p.id}:${f.source}:${f.rule}`).recommendation }));
   const m = (s) => (s.perf ? { lcp: s.perf.metrics.lcp, cls: s.perf.metrics.cls, tbt: s.perf.metrics.tbt, weight: s.perf.weightBytes, requests: s.perf.requests } : null);
   return {
     id: p.id, type: p.type, defects, traps, clean,
@@ -105,12 +105,12 @@ export function summarize(results) {
   const clean = all("clean");
   const reviewed = clean.filter((c) => c.label !== "unreviewed");
   return {
-    projects: ok.length, failedProjects: results.length - ok.length,
+    projects: ok.length, failedProjects: results.length - ok.length, retriedProjects: ok.filter((r) => r.retried).length,
     defectsSeeded: all("defects").length, notApplicable: all("defects").filter((d) => d.status === "not-applicable").length, notMeasured: all("defects").filter((d) => d.status === "not-measured").length, ambiguous: all("defects").filter((d) => d.status === "ambiguous").length,
     attributable: attributable.length, detected, recall: attributable.length ? +(detected / attributable.length).toFixed(3) : null,
     traps: traps.length, trapsDetected: trapsHit, trapRecall: traps.length ? +(trapsHit / traps.length).toFixed(3) : null,
     cleanFindings: clean.length, cleanErrors: clean.filter((c) => c.severity === "error").length, cleanWarnings: clean.filter((c) => c.severity === "warning").length,
-    reviewed: reviewed.length, humanReviewed: clean.filter((c) => c.human).length, falsePositives: reviewed.filter((c) => c.label === "false-positive").length, valid: reviewed.filter((c) => c.label === "valid" || c.label === "by-design").length, unreviewed: clean.length - reviewed.length,
+    reviewed: reviewed.length, humanReviewed: clean.filter((c) => c.human).length, humanSeverity: { minor: clean.filter((c) => c.humanSeverity === "minor").length, major: clean.filter((c) => c.humanSeverity === "major").length, critical: clean.filter((c) => c.humanSeverity === "critical").length }, notRelevant: clean.filter((c) => c.recommendation === "not-relevant").length, falsePositives: reviewed.filter((c) => c.label === "false-positive").length, valid: reviewed.filter((c) => c.label === "valid" || c.label === "by-design").length, unreviewed: clean.length - reviewed.length,
     precision: reviewed.length ? +(reviewed.filter((c) => c.label !== "false-positive").length / reviewed.length).toFixed(3) : null,
     seconds: Math.round(ok.reduce((a, r) => a + r.ms.before + r.ms.after + r.ms.broken, 0) / 1000),
   };
@@ -125,12 +125,17 @@ export function toMarkdown(results, sum, meta) {
   L.push("# Benchmark results", "", `Run on ${meta.date}${meta.mergedFrom ? ` (${meta.mergedFrom.join(", ")} replayed afterwards)` : ""} · skill ${meta.version} · Node ${meta.node} · ${meta.os} · ${meta.fast ? "fast mode (no performance or size sweep)" : "full checks"}`, "");
   L.push("**How to read this.** Each project is one clean page. A copy gets 12 seeded defects (the *before*), another copy gets injected regressions. Because we broke the pages ourselves, recall is exact **for what was seeded** and says nothing about defects nobody thought to seed. False positives are findings reported on the clean page; each one was reviewed and labelled by the author of this benchmark (an AI agent, not a human): the labels are in `labels.json` and need a human second opinion. Scores are not proof of quality.", "");
   L.push("## Summary", "", "| Indicator | Result |", "|---|---|");
-  L.push(`| Projects | ${sum.projects} (${sum.failedProjects} failed to run) |`);
+  L.push(`| Projects | ${sum.projects} (${sum.failedProjects} failed to run${sum.retriedProjects ? `, ${sum.retriedProjects} needed one retry after a browser launch timeout` : ""}) |`);
   L.push(`| Seeded defects | ${sum.defectsSeeded} (${sum.notApplicable} did not apply, ${sum.notMeasured} not measured in fast mode, ${sum.ambiguous} ambiguous: the clean page already reports that rule) |`);
+  L.push(`| Seeded defects missed | ${sum.attributable - sum.detected} of ${sum.attributable} |`);
+  L.push(`| False negatives outside the seeded defects | unknown: not measurable by construction (nobody seeded them) |`);
   L.push(`| **Recall** on attributable defects | **${pct(sum.recall)}** (${sum.detected} of ${sum.attributable}) |`);
   L.push(`| **Regressions caught** | **${pct(sum.trapRecall)}** (${sum.trapsDetected} of ${sum.traps}) |`);
   L.push(`| Findings on the clean pages | ${sum.cleanFindings} (${sum.cleanErrors} errors, ${sum.cleanWarnings} warnings) |`);
+  L.push(`| Unverified anomalies on the clean pages | ${sum.cleanFindings - sum.humanReviewed} (${sum.reviewed - sum.humanReviewed} labelled by an AI agent only, ${sum.unreviewed} without any label) |`);
   L.push(`| Reviewed as false positive | ${sum.falsePositives} of ${sum.reviewed} reviewed (${sum.unreviewed} unreviewed) |`);
+  L.push(`| Human-rated severity (of the reviewed real findings) | ${sum.humanSeverity ? `${sum.humanSeverity.minor} minor, ${sum.humanSeverity.major} major, ${sum.humanSeverity.critical} critical` : "none rated yet"} |`);
+  L.push(`| Recommendations judged not relevant by a human | ${sum.notRelevant || 0} |`);
   L.push(`| **Reviewed by a human** | ${sum.humanReviewed || 0} of ${sum.cleanFindings} (the others were labelled by an AI agent) |`);
   L.push(`| Precision on reviewed findings | ${pct(sum.precision)} |`);
   L.push(`| Total run time | ${sum.seconds} s for ${sum.projects} projects (3 pages each) |`);
@@ -172,7 +177,7 @@ async function main() {
   const { flags } = parseArgs(process.argv.slice(2));
   if (flags.relabel) {
     const old = JSON.parse(readFileSync(join(here, "results.json"), "utf8"));
-    for (const r of old.results) for (const c of r.clean || []) { const l = labelOf(`${r.id}:${c.key}`); c.label = l.label; c.note = l.note; c.human = l.human || false; }
+    for (const r of old.results) for (const c of r.clean || []) { const l = labelOf(`${r.id}:${c.key}`); c.label = l.label; c.note = l.note; c.human = l.human || false; c.humanSeverity = l.humanSeverity; c.recommendation = l.recommendation; }
     const sum = summarize(old.results);
     writeFileSync(join(here, "results.json"), JSON.stringify({ meta: old.meta, summary: sum, results: old.results }, null, 2));
     writeFileSync(join(here, "RESULTS.md"), toMarkdown(old.results, sum, old.meta));
@@ -184,7 +189,17 @@ async function main() {
   const results = [];
   for (const p of PROJECTS.filter((x) => !only || only.includes(x.id))) {
     process.stderr.write(`· ${p.id} …`);
-    try { const r = await runProject(p, { fast }); results.push(r); process.stderr.write(` ${Math.round((r.ms.before + r.ms.after + r.ms.broken) / 1000)} s\n`); }
+    try {
+      let r, retried = 0;
+      try { r = await runProject(p, { fast }); }
+      catch (e) {
+        if (!/launch|Timeout/i.test(String(e.message))) throw e;
+        process.stderr.write(` browser launch timed out, retrying once …`);
+        retried = 1; r = await runProject(p, { fast });
+      }
+      if (retried) r.retried = retried;
+      results.push(r); process.stderr.write(` ${Math.round((r.ms.before + r.ms.after + r.ms.broken) / 1000)} s${retried ? " (after one retry)" : ""}\n`);
+    }
     catch (e) { results.push({ id: p.id, type: p.type, error: String(e.message).split("\n")[0] }); process.stderr.write(` FAILED ${e.message.split("\n")[0]}\n`); }
   }
   const sum = summarize(results);
