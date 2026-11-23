@@ -1,0 +1,28 @@
+[
+  {
+    "id": "nextjs-blog",
+    "framework": "Next.js 15 (App Router, static export)",
+    "repo": "https://github.com/timlrx/tailwind-nextjs-starter-blog.git",
+    "install": "npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund",
+    "build": "EXPORT=1 UNOPTIMIZED=1 npm run build",
+    "dist": "out"
+  },
+  {
+    "id": "vitepress-docs",
+    "framework": "Vue 3 + VitePress (static docs site)",
+    "repo": "https://github.com/vuejs/vitepress.git",
+    "install": "npx --yes pnpm install --frozen-lockfile --ignore-scripts",
+    "build": "npx --yes pnpm docs:build",
+    "dist": "docs/.vitepress/dist",
+    "note": "The repository declares pnpm in `packageManager`; `npx pnpm` downloads it (network)."
+  },
+  {
+    "id": "sveltekit-realworld",
+    "framework": "SvelteKit (RealWorld example, prerendered shell; the API is not running)",
+    "repo": "https://github.com/sveltejs/realworld.git",
+    "install": "npm install --ignore-scripts --legacy-peer-deps --no-audit --no-fund",
+    "build": "npm run build",
+    "start": "npm run preview -- --port {port}",
+    "note": "Built with the Vercel adapter, previewed with `vite preview`. The API is not running, so pages that need it show their empty or error states. Say so when quoting results."
+  }
+]

@@ -4,7 +4,7 @@
 
 import { inflateSync } from "node:zlib";
 
-const FALLBACK_FONTS = /DejaVu|Liberation|Noto(?!.*Emoji)|Bitstream|FreeSans|FreeSerif|Nimbus|TimesNewRoman|Times-Roman|Arial(?!.*Nova)|Helvetica|Courier/i;
+const FALLBACK_FONTS = /DejaVu|Liberation|Noto(?!.*Emoji)|Bitstream|FreeSans|FreeSerif|Nimbus|TimesNewRoman|Times-Roman|Arial(?!.*Nova)|Helvetica|Courier|LucidaGrande|AppleSymbols|PingFang|HiraginoSans|AppleSDGothicNeo|STHeiti|SegoeUISymbol|SegoeUIHistoric|MicrosoftYaHei|MSGothic|Malgun/i;
 
 export function parsePdf(buffer) {
   const src = buffer.toString("latin1");

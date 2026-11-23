@@ -23,6 +23,14 @@ test("pdf: a clean document has no findings", () => {
   assert.deepEqual(analyzePdf(pdf(), { fontFamilies: ["Inter"], lang: "fr", pageNumbers: true }), []);
 });
 
+test("pdf: the system fallback fonts of macOS and Windows are recognised, a chosen font of the same name is not", () => {
+  for (const family of ["LucidaGrande", "AppleSymbols", "SegoeUISymbol", "MicrosoftYaHei"]) {
+    const f = analyzePdf(pdf({ fonts: [{ family: "Inter-Regular", subtype: "Type0", embedded: true }, { family, subtype: "Type0", embedded: true }] }), { fontFamilies: ["Inter"] });
+    assert.ok(rules(f).has("pdf-fallback-font"), family);
+  }
+  assert.ok(!rules(analyzePdf(pdf({ fonts: [{ family: "SegoeUISymbol", subtype: "Type0", embedded: true }] }), { fontFamilies: ["Segoe UI Symbol"] })).has("pdf-fallback-font"));
+});
+
 test("pdf: Type 3, missing embedding and fallback fonts are errors, with the suspect character", () => {
   const f = analyzePdf(pdf({ fonts: [
     { family: "Inter-Bold", subtype: "Type3", embedded: true },

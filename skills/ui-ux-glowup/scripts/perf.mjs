@@ -5,7 +5,7 @@
 // Numbers are lab measurements on this machine: use them to compare before and after, not as field data.
 //
 // Usage:
-//   node perf.mjs <page | url> [--profile phone|desktop|fast|slow|flaky] [--json out.json] [--baseline before.json]
+//   node perf.mjs <page | url> [--profile phone|desktop|fast|slow|flaky] [--json out.json] [--baseline before.json] [--interact]
 //   phone (default) throttled mobile · desktop 1440px, light throttle · fast: no throttling (CI, local files)
 //   slow: 400 kbps, 400 ms, CPU 6× · flaky: phone + 8% of requests lost (same ones every run): does the page degrade or break?
 
@@ -60,7 +60,23 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
     });
     await page.waitForTimeout(500);
     const after = await page.evaluate(readPerf);
-    const metrics = { ...first, cls: after.cls, tbt: after.tbt, longTasks: after.longTasks };
+    let inter = { inp: null, interactions: 0 };
+    if (options.interact) {
+      const SKIP = /delete|remove|supprim|pay|buy|purchase|checkout|order|submit|send|log ?out|sign ?out|d[ée]connex|unsubscribe|cancel/i;
+      const cand = page.locator('button:not([disabled]):not([type=submit]), [role=button], summary, input[type=checkbox], input[type=radio], [role=tab]');
+      const n = Math.min(await cand.count(), 40);
+      let done = 0;
+      for (let i = 0; i < n && done < 8; i++) {
+        const el = cand.nth(i);
+        const label = ((await el.innerText().catch(() => "")) + " " + ((await el.getAttribute("aria-label").catch(() => "")) || "")).trim();
+        if (SKIP.test(label) || !(await el.isVisible().catch(() => false))) continue;
+        await el.scrollIntoViewIfNeeded({ timeout: 1000 }).catch(() => {});
+        if (await el.click({ timeout: 1500 }).then(() => true, () => false)) { done++; await page.waitForTimeout(250); }
+      }
+      const r = await page.evaluate(readPerf);
+      inter = { inp: r.inp, interactions: r.interactions };
+    }
+    const metrics = { ...first, cls: after.cls, tbt: after.tbt, longTasks: after.longTasks, ...inter };
     const images = await page.evaluate(collectImages);
     const pageInfo = await page.evaluate(collectPage);
     const resources = [];
@@ -79,7 +95,7 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
     const data = { metrics, resources, images, page: pageInfo, resilience: prof.lose ? { failed: lost, errors, bodyText: pageInfo.bodyText, hasH1: pageInfo.hasH1 } : null };
     const findings = perfFindings(data);
     const f1 = (n) => (n == null ? "n/a" : (n / 1000).toFixed(1) + "s");
-    return { profile, trackingBlocked, findings, summary: { profile, lcp: f1(metrics.lcp), cls: metrics.cls, tbt: metrics.tbt, requests: resources.length, weight: weight >= 1048576 ? (weight / 1048576).toFixed(1) + " MB" : Math.round(weight / 1024) + " KB" }, metrics, weightBytes: weight, requests: resources.length };
+    return { profile, trackingBlocked, findings, summary: { profile, lcp: f1(metrics.lcp), cls: metrics.cls, tbt: metrics.tbt, inp: metrics.inp, interactions: metrics.interactions, requests: resources.length, weight: weight >= 1048576 ? (weight / 1048576).toFixed(1) + " MB" : Math.round(weight / 1024) + " KB" }, metrics, weightBytes: weight, requests: resources.length };
   } finally {
     await browser.close();
   }
@@ -88,12 +104,12 @@ export async function perf(target, { route, profile = "phone", ...options } = {}
 if (isMain(import.meta.url)) {
   const { _: [target], flags } = parseArgs(process.argv.slice(2));
   if (!target) {
-    console.error("Usage: node perf.mjs <page | url> [--profile phone|desktop|fast] [--json out.json] [--baseline before.json]");
+    console.error("Usage: node perf.mjs <page | url> [--profile phone|desktop|fast] [--json out.json] [--baseline before.json] [--interact]");
     process.exit(1);
   }
   try {
     const profile = typeof flags.profile === "string" ? flags.profile : /^https?:/.test(target) ? "phone" : "fast";
-    const r = await perf(target, { ...commonOptions(flags), profile });
+    const r = await perf(target, { ...commonOptions(flags), profile, interact: !!flags.interact });
     console.log(formatPerf(r.findings, r.summary));
     if (r.trackingBlocked) console.log(`  (${r.trackingBlocked} analytics request(s) were blocked so this audit does not count as a visit: they are not in the weight above; --allow-tracking to include them)`);
     if (typeof flags.baseline === "string") {

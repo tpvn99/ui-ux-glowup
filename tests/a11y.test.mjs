@@ -68,3 +68,11 @@ test("comboboxes, listboxes, trees and drag and drop: operated with the keyboard
   const good = await a11y(fixture("widgets-good.html"));
   assert.deepEqual(rules(good.findings), [], JSON.stringify(good.findings));
 });
+
+test("grids and date pickers: arrow keys move between cells; a grid nobody can reach is reported", { skip }, async () => {
+  const bad = await a11y(fixture("grid-bad.html"));
+  const got = rules(bad.findings);
+  for (const x of ["grid-no-arrow-keys", "grid-not-focusable"]) assert.ok(got.includes(x), `${x} in ${got}`);
+  const good = await a11y(fixture("grid-good.html"));
+  assert.deepEqual(rules(good.findings).filter((r) => r.startsWith("grid-")), [], JSON.stringify(good.findings));
+});

@@ -33,8 +33,12 @@ Brand colors, fonts and logo are kept. Features, routes, data and business logic
 
 ## Known limits
 
-- **A score is not a guarantee.** The /45 audit score and "no issue found" mean that automatic rules found nothing. They say nothing about real usability, real devices, or screen reader experience.
+- **A score is not a guarantee.** The report states how many errors remain right under the score, and an error counts whatever the total. The /45 audit score and "no issue found" mean that automatic rules found nothing. They say nothing about real usability, real devices, or screen reader experience.
 - **Performance numbers are lab measurements** on one machine with a simulated phone. They compare before and after; they are not field data.
+- **Interaction latency is a lab measurement.** `perf.mjs --interact` clicks a few safe controls and reports the slowest response; it is not the INP of real visitors, and CrUX or real-user data are not integrated.
+- **Complex widgets are driven only when they are on the page as built.** Grids (and the day grid of a date picker) get arrow-key checks; a date picker that renders its grid only after a click is not opened automatically, so give the agent a scenario for it.
+- **UX recommendations include judgement calls.** Each finding is tagged *measured* or *judgement*; a judgement depends on what the page is for, and `ux.mjs --ignore <rule>` drops the ones that do not apply (a dashboard is not a landing page).
+- **The benchmark labels are an AI's, not a person's.** No finding on the benchmark's clean pages has been reviewed by a human yet; see [known false positives](known-false-positives.md).
 - **Scenarios are written by hand** (or by the agent from your code). Only the journeys you describe are tested.
 - **Safari is tested through its engine (WebKit)**, not on a real iPhone; `--device` emulates a phone's screen, it is not a phone. See the [real-device checklist](real-device-checklist.md).
 - **No screen reader is driven.** Names, roles, states and focus order are checked, which is what a screen reader receives, not what it announces.

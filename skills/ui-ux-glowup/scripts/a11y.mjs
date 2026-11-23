@@ -164,6 +164,32 @@ export async function componentChecks(page) {
     const moved = !(await items.first().evaluate((el) => el === document.activeElement));
     if (!moved) add("menubar-no-arrow-keys", "error", "A menu bar does not move between its items with ArrowRight / ArrowLeft.", [`menubar ${i + 1}`], "Use a roving tabindex: ArrowRight / ArrowLeft move between top-level items, ArrowDown opens the submenu, Escape closes it.");
   }
+
+  const nGrid = Math.min(await page.locator('[role="grid"], [role="treegrid"]').count(), 2);
+  for (let i = 0; i < nGrid; i++) {
+    await fresh();
+    const grid = page.locator('[role="grid"], [role="treegrid"]').nth(i);
+    const start = await grid.evaluate((g) => {
+      const cells = [...g.querySelectorAll('[role="gridcell"], [role="cell"], [role="columnheader"], [role="rowheader"]')];
+      if (cells.length < 2) return "skip";
+      const focusable = (c) => (c.hasAttribute("tabindex") && c.tabIndex >= -1) || c.querySelector('a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]');
+      const first = cells.find((c) => c.tabIndex === 0 || c.querySelector('[tabindex="0"]')) || cells.find(focusable);
+      if (!first) return "none";
+      first.setAttribute("data-glowup-grid-start", "");
+      return "ok";
+    });
+    if (start === "skip") continue;
+    if (start === "none") { add("grid-not-focusable", "error", "A grid has no cell a keyboard user can reach.", [`grid ${i + 1}`], "Give one cell tabindex=0 (the others tabindex=-1) and move focus between cells with the arrow keys, or use a real <table> if nothing is interactive."); continue; }
+    const startEl = page.locator("[data-glowup-grid-start]");
+    const target = (await startEl.evaluate((el) => (el.matches('a[href], button, input, select, textarea, [tabindex]') ? "self" : "inner"))) === "self" ? startEl : startEl.locator('a[href], button, input, select, textarea, [tabindex]').first();
+    await target.focus();
+    const movedOut = () => page.evaluate(() => { const s = document.querySelector("[data-glowup-grid-start]"); const a = document.activeElement; return !!(s && a && a !== document.body && !s.contains(a) && a.closest('[role="grid"], [role="treegrid"]')); });
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(80);
+    let moved = await movedOut();
+    if (!moved) { await page.keyboard.press("ArrowDown"); await page.waitForTimeout(80); moved = await movedOut(); }
+    if (!moved) add("grid-no-arrow-keys", "error", "A grid does not move between its cells with the arrow keys.", [`grid ${i + 1}`], "ARIA grid pattern: ArrowRight / ArrowLeft move between cells of a row, ArrowDown / ArrowUp between rows, Home / End to the ends of the row, with a roving tabindex (the focused cell has tabindex=0). Date pickers are grids too: the day cells need the same keys, and Escape closes the popup.");
+  }
   return out;
 }
 
