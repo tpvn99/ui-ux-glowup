@@ -26,7 +26,7 @@ Last checked: 2026-11-23, version 1.15.2.
 
 ## Needs real projects
 
-- [ ] **Benchmark on real code**: the ten benchmark projects are prepared pages (three written for the benchmark, seven from the repository's examples). Add real open-source projects built with their bundlers (Next, Nuxt, SvelteKit, Angular, a running WordPress) and, with permission, client projects; publish the same indicators.
+- [ ] **Benchmark on real code**: the ten benchmark projects are prepared pages (three written for the benchmark, seven from the repository's examples). Add real open-source projects built with their bundlers (Next, Nuxt, SvelteKit, Angular, a running WordPress) and, with permission, client projects; publish the same indicators. A runner and three candidate projects are ready in `benchmark/real-projects/` (`projects.json`, `run.mjs`); **nothing has been run**, because it executes third-party build code and must be launched deliberately in a throwaway environment.
 - [ ] **Frameworks by version**: detection and notes exist for major versions; nothing runs a changed project across Next 13/14/15, Vue 2/3, Angular 14/17+, Svelte 4/5.
 - [ ] **Server-side permissions on real systems**: `roles.mjs --expect` has only been tried against a local test server (write operations, multi-step flows, token refresh).
 - [ ] **Case studies from real interventions**: `docs/case-studies.md` describes prepared benchmark pages, not real projects.
